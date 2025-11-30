@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import UserMenu from '../components/UserMenu';
 import { createTransaction } from '../services/pixService';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function QRCodePaymentPage() {
   const navigate = useNavigate();
@@ -41,16 +42,18 @@ export default function QRCodePaymentPage() {
         setPaymentCompleted(true);
         console.log('Main payment completed! Redirecting to receipt upload');
         setTimeout(() => {
-          navigate('/enviar-comprovante', {
-            state: {
+          navigateWithParams(
+            navigate,
+            '/enviar-comprovante',
+            location,
+            {
               userData,
               indemnityAmount,
               pixKeyType,
               pixKey,
-              urlParams,
-              transactionId: transactionData?.id,
-            },
-          });
+              transactionId: transactionData?.id
+            }
+          );
         }, 2000);
       }
     },

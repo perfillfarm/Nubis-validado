@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import Header from '../components/Header';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
+import { navigateWithParams } from '../utils/urlParams';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -79,14 +80,21 @@ export default function PaymentVerificationPage() {
         }
 
         setTimeout(() => {
-          navigate('/receipt-upload', {
-            state: {
+          navigateWithParams(
+            navigate,
+            '/receipt-upload',
+            location,
+            {
               transactionId,
               cpf: userData?.cpf || transaction?.cpf,
               customerName: userData?.name || 'Cliente',
               amount: transaction?.amount || 0,
-            },
-          });
+              userData,
+              indemnityAmount,
+              pixKeyType,
+              pixKey
+            }
+          );
         }, 1500);
       } else {
         proceedToNextPage();
@@ -99,16 +107,18 @@ export default function PaymentVerificationPage() {
 
   const proceedToNextPage = () => {
     setTimeout(() => {
-      navigate('/account-verified', {
-        state: {
+      navigateWithParams(
+        navigate,
+        '/account-verified',
+        location,
+        {
           userData,
           indemnityAmount,
           pixKeyType,
           pixKey,
-          urlParams,
-          transactionId,
-        },
-      });
+          transactionId
+        }
+      );
     }, 2000);
   };
 

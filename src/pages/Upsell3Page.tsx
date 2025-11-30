@@ -59,14 +59,17 @@ export default function Upsell3Page() {
       return;
     }
 
-    navigate('/upsell-payment', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/upsell-payment',
+      location,
+      {
         amount: 18.90,
         title: 'Tarifa de Validação',
         redirectPath: '/upsell-4',
         cpf: cpf
       }
-    });
+    );
   };
 
   return (

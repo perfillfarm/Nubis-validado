@@ -9,6 +9,7 @@ import FAQSection from '../components/FAQSection';
 import BackRedirect from '../components/BackRedirect';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { navigateWithParams } from '../utils/urlParams';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -80,17 +81,16 @@ const HomePage: React.FC = () => {
       // Save complete user data in sessionStorage
       sessionStorage.setItem('userData', JSON.stringify(userData));
 
-      // Preserve all URL parameters including UTMs
-      const currentParams = new URLSearchParams(location.search);
-      currentParams.set('cpf', cpf);
-
-      navigate(`/resultado?${currentParams.toString()}`, {
-        state: {
+      // Navigate with URL parameters preserved
+      navigateWithParams(
+        navigate,
+        '/resultado',
+        location,
+        {
           userData: userData,
-          indemnityAmount: 7854.63,
-          urlParams: currentParams.toString()
+          indemnityAmount: 7854.63
         }
-      });
+      );
     } catch (error) {
       console.error('Error fetching data:', error);
       setError('Ocorreu um erro ao consultar o CPF. Por favor, tente novamente.');

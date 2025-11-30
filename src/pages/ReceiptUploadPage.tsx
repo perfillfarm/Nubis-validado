@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Upload, CheckCircle2, FileImage, X } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { navigateWithParams } from '../utils/urlParams';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -87,17 +88,19 @@ export default function ReceiptUploadPage() {
 
       if (updateError) throw updateError;
 
-      navigate('/upsell-1', {
-        state: {
+      navigateWithParams(
+        navigate,
+        '/upsell-1',
+        location,
+        {
           userData,
           indemnityAmount,
           pixKeyType,
           pixKey,
-          urlParams,
           transactionId,
           receiptUploaded: true
-        },
-      });
+        }
+      );
     } catch (err: any) {
       console.error('Error uploading receipt:', err);
       setError(err.message || 'Erro ao enviar comprovante. Tente novamente.');

@@ -36,14 +36,17 @@ export default function Upsell5Page() {
       return;
     }
 
-    navigate('/upsell-payment', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/upsell-payment',
+      location,
+      {
         amount: 17.30,
         title: 'Regularização de Taxa de Emissão',
         redirectPath: '/',
         cpf: cpf
       }
-    });
+    );
   };
 
   return (

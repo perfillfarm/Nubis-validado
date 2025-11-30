@@ -6,6 +6,7 @@ import UserMenu from '../components/UserMenu';
 import { createTransaction } from '../services/pixService';
 import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export default function UpsellPaymentPage() {
         console.log('Payment completed! Redirecting to:', redirectPath);
         setTimeout(() => {
           if (redirectPath) {
-            navigate(redirectPath, { state: { cpf, amount } });
+            navigateWithParams(navigate, redirectPath, location, { cpf, amount });
           } else {
             navigate('/');
           }
@@ -139,7 +140,7 @@ export default function UpsellPaymentPage() {
 
       setTimeout(() => {
         if (redirectPath) {
-          navigate(redirectPath, { state: { cpf, amount } });
+          navigateWithParams(navigate, redirectPath, location, { cpf, amount });
         } else {
           navigate('/');
         }

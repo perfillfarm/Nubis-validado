@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { CheckCircle2, XCircle, AlertTriangle, Loader2, Clock } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
+import { navigateWithParams } from '../utils/urlParams';
 
 interface LoadingStep {
   id: number;
@@ -15,6 +16,7 @@ interface LoadingStep {
 
 export default function Upsell2Page() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showCalculatingModal, setShowCalculatingModal] = useState(false);
@@ -124,14 +126,17 @@ export default function Upsell2Page() {
       return;
     }
 
-    navigate('/upsell-payment', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/upsell-payment',
+      location,
+      {
         amount: 21.80,
         title: 'Tarifa de Cadastro',
         redirectPath: '/upsell-3',
         cpf: cpf
       }
-    });
+    );
   };
 
   const handleMenuClick = () => {

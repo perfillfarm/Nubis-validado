@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function AvailableValuesPage() {
   const navigate = useNavigate();
@@ -37,13 +38,15 @@ export default function AvailableValuesPage() {
   };
 
   const handleContinue = () => {
-    navigate('/dados-recebimento', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/dados-recebimento',
+      location,
+      {
         userData,
-        indemnityAmount: values.total,
-        urlParams
+        indemnityAmount: values.total
       }
-    });
+    );
   };
 
   return (

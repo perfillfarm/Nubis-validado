@@ -34,14 +34,17 @@ export default function Upsell4Page() {
       return;
     }
 
-    navigate('/upsell-payment', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/upsell-payment',
+      location,
+      {
         amount: 17.20,
         title: 'Taxa de Emissão de Nota Fiscal',
         redirectPath: '/upsell-5',
         cpf: cpf
       }
-    });
+    );
   };
 
   return (
