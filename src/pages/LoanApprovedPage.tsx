@@ -1,0 +1,204 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { CheckCircle, Zap, BadgePercent } from 'lucide-react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import UserMenu from '../components/UserMenu';
+
+export default function LoanApprovedPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { userData, indemnityAmount, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const firstName = userData?.nome ? userData.nome.split(' ')[0] : 'Usuário';
+
+  useEffect(() => {
+    if (!userData) {
+      navigate('/');
+      return;
+    }
+  }, [navigate, userData]);
+
+  if (!userData) {
+    return null;
+  }
+
+  const handleContinue = () => {
+    navigate('/resumo-emprestimo', {
+      state: {
+        userData,
+        indemnityAmount,
+        urlParams,
+        profileAnswers,
+        loanPriority,
+        nubankCustomer,
+        creditStatus
+      }
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f4f4f4] flex flex-col">
+      <Header showUserIcon={true} onMenuClick={() => setIsMenuOpen(true)} />
+      <UserMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        userName={firstName}
+      />
+
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 pt-24 sm:pt-28 pb-20">
+        <div className="w-full max-w-sm sm:max-w-md">
+          <div className="text-center animate-scale-in">
+            <div className="flex justify-center mb-6 animate-bounce-in">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-12 h-12 text-green-600" />
+              </div>
+            </div>
+
+            <div className="bg-green-50 border-2 border-green-500 rounded-xl p-4 mb-6 animate-slide-up">
+              <h2 className="text-xl font-bold text-green-900 mb-1">
+                Seu empréstimo foi aprovado!
+              </h2>
+              <div className="mt-3">
+                <p className="text-3xl font-bold text-green-600 mb-1">
+                  R$ 12.600,00
+                </p>
+                <p className="text-sm text-gray-600">
+                  Valor pré-aprovado para você:
+                </p>
+              </div>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl font-bold text-purple-600 mb-4 animate-fade-in-down">
+              Parabéns!
+            </h1>
+
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-6 px-2 animate-fade-in-delayed">
+              Com base no seu perfil, preparamos uma oferta especial para você. Sabemos que imprevistos podem acontecer e estamos aqui para ajudar. Estamos oferecendo condições facilitadas para que você possa superar esse momento e restabelecer sua vida financeira. Aproveite essa chance de reconstruir seu futuro!
+            </p>
+
+            <div className="space-y-3 mb-6 animate-slide-up-delayed">
+              <div className="bg-white border-2 border-green-200 rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      Aprovação Instantânea
+                    </h3>
+                    <p className="text-xs text-gray-600">
+                      Sem burocracia
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border-2 border-green-200 rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BadgePercent className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      Taxa Especial
+                    </h3>
+                    <p className="text-xs text-gray-600">
+                      Condições exclusivas
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleContinue}
+              className="w-full py-4 px-6 rounded-xl font-semibold text-base bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200 shadow-md animate-slide-up-button"
+            >
+              Continuar
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+
+      <style>{`
+        @keyframes scale-in {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-scale-in {
+          animation: scale-in 0.4s ease-out;
+        }
+
+        @keyframes bounce-in {
+          0% {
+            opacity: 0;
+            transform: scale(0);
+          }
+          50% {
+            transform: scale(1.1);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-bounce-in {
+          animation: bounce-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
+        }
+
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-slide-up {
+          animation: slide-up 0.5s ease-out 0.4s backwards;
+        }
+
+        @keyframes fade-in-down {
+          from {
+            opacity: 0;
+            transform: translateY(-15px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-down {
+          animation: fade-in-down 0.5s ease-out 0.6s backwards;
+        }
+
+        @keyframes fade-in-delayed {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        .animate-fade-in-delayed {
+          animation: fade-in-delayed 0.5s ease-out 0.8s backwards;
+        }
+
+        .animate-slide-up-delayed {
+          animation: slide-up 0.6s ease-out 1s backwards;
+        }
+      `}</style>
+    </div>
+  );
+}
