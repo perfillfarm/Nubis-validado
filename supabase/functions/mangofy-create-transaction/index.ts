@@ -57,69 +57,79 @@ Deno.serve(async (req: Request) => {
 
     const data: CreateTransactionRequest = await req.json();
 
+    const cleanCpf = data.cpf.replace(/\D/g, "");
+    const externalCode = data.externalCode || `TXN-${Date.now()}`;
+    const amountInCents = Math.round(data.amount * 100);
+
+    const payload = {
+      store_code: settings.store_code,
+      external_code: externalCode,
+      payment_method: "pix",
+      payment_format: "regular",
+      installments: 1,
+      payment_amount: amountInCents,
+      shipping_amount: 0,
+      postback_url: `${Deno.env.get("SUPABASE_URL")}/functions/v1/mangofy-webhook`,
+      items: [
+        {
+          name: "Pagamento PIX",
+          quantity: 1,
+          unit_price: amountInCents,
+        },
+      ],
+      customer: {
+        email: data.customerEmail || `${cleanCpf}@cliente.com`,
+        name: data.customerName || "Cliente",
+        document: cleanCpf,
+        phone: data.customerPhone || "11999999999",
+        ip: "216.198.79.131",
+      },
+      pix: {
+        expiration_time: 1800,
+      },
+    };
+
     console.log("Creating Mangofy transaction:", {
       url: `${settings.api_url}/api/v1/payment`,
       storeCode: settings.store_code,
       hasApiKey: !!settings.api_key,
+      apiKeyPrefix: settings.api_key?.substring(0, 20),
     });
+
+    console.log("Mangofy payload:", JSON.stringify(payload, null, 2));
 
     const response = await fetch(`${settings.api_url}/api/v1/payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": settings.api_key,
+        "Authorization": `Bearer ${settings.api_key}`,
         "Store-Code": settings.store_code,
       },
-      body: JSON.stringify({
-        store_code: settings.store_code,
-        external_code: data.externalCode || `TXN-${Date.now()}`,
-        payment_method: "pix",
-        payment_format: "regular",
-        installments: 1,
-        payment_amount: Math.round(data.amount * 100),
-        shipping_amount: 0,
-        postback_url: `${Deno.env.get("SUPABASE_URL")}/functions/v1/mangofy-webhook`,
-        items: [
-          {
-            name: "Pagamento PIX",
-            quantity: 1,
-            unit_price: Math.round(data.amount * 100),
-          },
-        ],
-        customer: {
-          email: data.customerEmail || `${data.cpf.replace(/\D/g, "")}@cliente.com`,
-          name: data.customerName || "Cliente",
-          document: data.cpf.replace(/\D/g, ""),
-          phone: data.customerPhone || "11999999999",
-          ip: "127.0.0.1",
-          ...(data.utmSource && { utm_source: data.utmSource }),
-          ...(data.utmMedium && { utm_medium: data.utmMedium }),
-          ...(data.utmCampaign && { utm_campaign: data.utmCampaign }),
-          ...(data.utmTerm && { utm_term: data.utmTerm }),
-          ...(data.utmContent && { utm_content: data.utmContent }),
-          ...(data.src && { src: data.src }),
-        },
-        pix: {
-          expiration_time: 1800,
-        },
-      }),
+      body: JSON.stringify(payload),
     });
 
     console.log("Mangofy response status:", response.status);
+    console.log("Mangofy response headers:", JSON.stringify(Object.fromEntries(response.headers.entries())));
+
+    const responseText = await response.text();
+    console.log("Mangofy raw response:", responseText);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Mangofy error response:", errorText);
+      console.error("Mangofy error response:", responseText);
 
       let error;
       try {
-        error = JSON.parse(errorText);
+        error = JSON.parse(responseText);
       } catch {
-        error = { message: errorText || "Failed to create Mangofy transaction" };
+        error = { message: responseText || "Failed to create Mangofy transaction" };
       }
 
       return new Response(
-        JSON.stringify({ error: error.message || "Failed to create Mangofy transaction" }),
+        JSON.stringify({ 
+          error: error.message || error.error || "Failed to create Mangofy transaction",
+          details: error,
+          status: response.status
+        }),
         {
           status: response.status,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -127,7 +137,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const mangofyTransaction = await response.json();
+    const mangofyTransaction = JSON.parse(responseText);
     console.log("Mangofy transaction created:", mangofyTransaction);
 
     const pixPayload = mangofyTransaction.pix?.qr_code || "";
@@ -142,7 +152,7 @@ Deno.serve(async (req: Request) => {
       .insert({
         external_transaction_id: mangofyTransaction.payment_code,
         provider: "mangofy",
-        cpf: data.cpf.replace(/\D/g, ""),
+        cpf: cleanCpf,
         amount: data.amount,
         pix_key: data.pixKey,
         qr_code: pixPayload,
