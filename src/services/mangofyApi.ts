@@ -57,60 +57,39 @@ export async function createMangofyTransaction(
   data: CreateMangofyTransactionRequest
 ): Promise<Transaction> {
   try {
-    console.log('Creating Mangofy transaction with:', {
-      url: `${config.apiUrl}/api/v1/payment`,
-      hasApiKey: !!config.apiKey,
-      storeCode: config.storeCode,
-      data,
-    });
+    console.log('Creating Mangofy transaction via Edge Function');
 
-    const response = await fetch(`${config.apiUrl}/api/v1/payment`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': config.apiKey,
-        'Store-Code': config.storeCode,
-      },
-      body: JSON.stringify({
-        store_code: config.storeCode,
-        external_code: data.externalCode || `TXN-${Date.now()}`,
-        payment_method: 'pix',
-        payment_format: 'regular',
-        installments: 1,
-        payment_amount: Math.round(data.amount * 100),
-        shipping_amount: 0,
-        postback_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mangofy-webhook`,
-        items: [
-          {
-            name: 'Pagamento PIX',
-            quantity: 1,
-            unit_price: Math.round(data.amount * 100),
-          }
-        ],
-        customer: {
-          email: data.customerEmail || `${data.cpf.replace(/\D/g, '')}@cliente.com`,
-          name: data.customerName || 'Cliente',
-          document: data.cpf.replace(/\D/g, ''),
-          phone: data.customerPhone || '11999999999',
-          ip: '127.0.0.1',
-          ...(data.utmSource && { utm_source: data.utmSource }),
-          ...(data.utmMedium && { utm_medium: data.utmMedium }),
-          ...(data.utmCampaign && { utm_campaign: data.utmCampaign }),
-          ...(data.utmTerm && { utm_term: data.utmTerm }),
-          ...(data.utmContent && { utm_content: data.utmContent }),
-          ...(data.src && { src: data.src }),
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mangofy-create-transaction`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
-        pix: {
-          expiration_time: 1800,
-        }
-      }),
-    });
+        body: JSON.stringify({
+          cpf: data.cpf,
+          amount: data.amount,
+          pixKey: data.pixKey,
+          customerName: data.customerName,
+          customerEmail: data.customerEmail,
+          customerPhone: data.customerPhone,
+          externalCode: data.externalCode,
+          utmSource: data.utmSource,
+          utmMedium: data.utmMedium,
+          utmCampaign: data.utmCampaign,
+          utmTerm: data.utmTerm,
+          utmContent: data.utmContent,
+          src: data.src,
+        }),
+      }
+    );
 
-    console.log('Mangofy response status:', response.status);
+    console.log('Edge Function response status:', response.status);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Mangofy error response:', errorText);
+      console.error('Edge Function error response:', errorText);
 
       let error;
       try {
@@ -118,46 +97,12 @@ export async function createMangofyTransaction(
       } catch {
         error = { message: errorText || 'Failed to create Mangofy transaction' };
       }
-      throw new Error(error.message || 'Failed to create Mangofy transaction');
+      throw new Error(error.error || error.message || 'Failed to create Mangofy transaction');
     }
 
-    const mangofyTransaction: MangofyTransaction = await response.json();
+    const transaction = await response.json();
 
-    console.log('Mangofy transaction response:', mangofyTransaction);
-
-    const pixPayload = mangofyTransaction.pix?.qr_code || '';
-    const qrCodeImageUrl = mangofyTransaction.pix?.qr_code_image ||
-      (pixPayload
-        ? `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(pixPayload)}`
-        : '');
-
-    const { data: transaction, error: dbError } = await supabase
-      .from('transactions')
-      .insert({
-        external_transaction_id: mangofyTransaction.payment_code,
-        provider: 'mangofy',
-        cpf: data.cpf.replace(/\D/g, ''),
-        amount: data.amount,
-        pix_key: data.pixKey,
-        qr_code: pixPayload,
-        qr_code_image: qrCodeImageUrl,
-        status: mangofyTransaction.status.toLowerCase() === 'pending' ? 'pending' : 'completed',
-        expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        utm_source: data.utmSource,
-        utm_medium: data.utmMedium,
-        utm_campaign: data.utmCampaign,
-        utm_term: data.utmTerm,
-        utm_content: data.utmContent,
-        src: data.src,
-      })
-      .select()
-      .single();
-
-    if (dbError) {
-      throw new Error(`Database error: ${dbError.message}`);
-    }
-
-    console.log('Transaction saved to database:', transaction);
+    console.log('Transaction created:', transaction);
 
     if (data.createReceipt !== false) {
       await supabase
