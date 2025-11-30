@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 
 export function useUrlParams() {
   const location = useLocation();
@@ -8,43 +8,25 @@ export function useUrlParams() {
     const searchParams = new URLSearchParams(location.search);
     const stateParams = (location.state as any)?.urlParams;
 
-    // Always try to merge with sessionStorage first
-    try {
-      const stored = sessionStorage.getItem('_app_url_params');
-      if (stored) {
-        const storedParams = JSON.parse(stored);
-        Object.entries(storedParams).forEach(([key, value]) => {
-          if (!searchParams.has(key)) {
-            searchParams.set(key, String(value));
-          }
-        });
-      }
-    } catch (e) {
-      console.error('Error reading stored params:', e);
-    }
-
-    // Then merge with state params (state takes precedence)
     if (stateParams) {
       if (typeof stateParams === 'string') {
         const parsed = new URLSearchParams(stateParams);
         parsed.forEach((value, key) => {
-          searchParams.set(key, value);
+          if (!searchParams.has(key)) {
+            searchParams.set(key, value);
+          }
         });
       } else if (typeof stateParams === 'object') {
         Object.entries(stateParams).forEach(([key, value]) => {
-          searchParams.set(key, String(value));
+          if (!searchParams.has(key)) {
+            searchParams.set(key, String(value));
+          }
         });
       }
     }
 
     return Object.fromEntries(searchParams.entries());
   }, [location.search, location.state]);
-
-  useEffect(() => {
-    if (Object.keys(urlParams).length > 0) {
-      sessionStorage.setItem('_app_url_params', JSON.stringify(urlParams));
-    }
-  }, [urlParams]);
 
   const getUrlParamsString = () => {
     const params = new URLSearchParams(urlParams);

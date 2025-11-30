@@ -74,26 +74,15 @@ const ResultPage: React.FC = () => {
   const handleChatClick = () => {
     // Preserve all URL parameters including UTMs
     const currentParams = new URLSearchParams(location.search);
-
-    // Also merge any params from state
-    if (urlParams) {
-      const stateParams = new URLSearchParams(urlParams);
-      stateParams.forEach((value, key) => {
-        if (!currentParams.has(key)) {
-          currentParams.set(key, value);
-        }
-      });
-    }
-
     currentParams.set('cpf', userData?.cpf || '');
 
-    navigate(`/chat?${currentParams.toString()}`, {
-      state: {
+    navigate(`/chat?${currentParams.toString()}`, { 
+      state: { 
         cpf: userData.cpf,
         indemnityAmount,
         urlParams: currentParams.toString(),
         userData
-      }
+      } 
     });
   };
 
