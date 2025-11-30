@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { User, Mail, Phone, Key } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { navigateWithParams } from '../utils/urlParams';
 
 type PixKeyType = 'cpf' | 'email' | 'phone' | 'random';
 
@@ -53,33 +54,31 @@ export default function PixConfirmationPage() {
   };
 
   const handleConfirm = () => {
-    const currentParams = new URLSearchParams(urlParams || location.search);
-    currentParams.set('cpf', userData.cpf);
-    currentParams.set('pixType', pixKeyType);
-    currentParams.set('pixKey', pixKey);
-    currentParams.set('confirmed', 'true');
-
-    navigate('/detalhamento-taxas', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/detalhamento-taxas',
+      location,
+      {
         userData,
         indemnityAmount,
-        pixKeyType,
-        pixKey,
-        urlParams: currentParams.toString()
-      }
-    });
-  };
-
-  const handleBack = () => {
-    navigate('/dados-para-recebimento', {
-      state: {
-        userData,
-        indemnityAmount,
-        urlParams,
         pixKeyType,
         pixKey
       }
-    });
+    );
+  };
+
+  const handleBack = () => {
+    navigateWithParams(
+      navigate,
+      '/dados-para-recebimento',
+      location,
+      {
+        userData,
+        indemnityAmount,
+        pixKeyType,
+        pixKey
+      }
+    );
   };
 
   const Icon = getPixIcon();

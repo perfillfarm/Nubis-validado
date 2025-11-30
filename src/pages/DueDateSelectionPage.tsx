@@ -4,6 +4,7 @@ import { Calendar } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function DueDateSelectionPage() {
   const navigate = useNavigate();
@@ -44,13 +45,15 @@ export default function DueDateSelectionPage() {
   const handleContinue = () => {
     if (!selectedDay) return;
 
-    navigate('/detalhamento-taxas', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/detalhamento-taxas',
+      location,
+      {
         userData,
         indemnityAmount: loanAmount,
         pixKeyType: 'cpf',
         pixKey: userData.cpf,
-        urlParams,
         loanAmount,
         selectedInstallments,
         installmentValue,
@@ -61,7 +64,7 @@ export default function DueDateSelectionPage() {
         nubankCustomer,
         creditStatus
       }
-    });
+    );
   };
 
   return (

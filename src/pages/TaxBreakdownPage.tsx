@@ -4,6 +4,7 @@ import { FileText, CheckCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function TaxBreakdownPage() {
   const navigate = useNavigate();
@@ -39,15 +40,17 @@ export default function TaxBreakdownPage() {
   };
 
   const handleContinue = () => {
-    navigate('/pagamento-qrcode', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/pagamento-qrcode',
+      location,
+      {
         userData,
         indemnityAmount,
         pixKeyType,
-        pixKey,
-        urlParams
+        pixKey
       }
-    });
+    );
   };
 
   return (

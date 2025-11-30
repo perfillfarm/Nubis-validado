@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { navigateWithParams } from '../utils/urlParams';
 
 type PixKeyType = 'cpf' | 'email' | 'phone' | 'random';
 
@@ -109,17 +110,17 @@ export default function DataForReceivingPage() {
   const handleContinue = () => {
     if (!detectedType || !pixKey.trim()) return;
 
-    const currentParams = new URLSearchParams(urlParams || location.search);
-
-    navigate('/confirmar-pix', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/confirmar-pix',
+      location,
+      {
         userData,
         indemnityAmount,
         pixKeyType: detectedType,
-        pixKey: pixKey,
-        urlParams: currentParams.toString()
+        pixKey: pixKey
       }
-    });
+    );
   };
 
   return (
