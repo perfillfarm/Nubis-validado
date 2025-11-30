@@ -93,7 +93,7 @@ Deno.serve(async (req: Request) => {
       url: `${settings.api_url}/api/v1/payment`,
       storeCode: settings.store_code,
       hasApiKey: !!settings.api_key,
-      apiKeyPrefix: settings.api_key?.substring(0, 20),
+      apiKeyLength: settings.api_key?.length,
     });
 
     console.log("Mangofy payload:", JSON.stringify(payload, null, 2));
@@ -102,14 +102,13 @@ Deno.serve(async (req: Request) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${settings.api_key}`,
+        "Authorization": settings.api_key,
         "Store-Code": settings.store_code,
       },
       body: JSON.stringify(payload),
     });
 
     console.log("Mangofy response status:", response.status);
-    console.log("Mangofy response headers:", JSON.stringify(Object.fromEntries(response.headers.entries())));
 
     const responseText = await response.text();
     console.log("Mangofy raw response:", responseText);
