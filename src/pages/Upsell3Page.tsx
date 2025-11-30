@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useUrlParams } from '../hooks/useUrlParams';
+import { useNavigate } from 'react-router-dom';
 import { AlertTriangle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -9,8 +8,6 @@ import { getUserName } from '../utils/userUtils';
 
 export default function Upsell3Page() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { urlParams } = useUrlParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
@@ -67,8 +64,7 @@ export default function Upsell3Page() {
         amount: 18.90,
         title: 'Tarifa de Validação',
         redirectPath: '/upsell-4',
-        cpf: cpf,
-        urlParams
+        cpf: cpf
       }
     });
   };

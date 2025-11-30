@@ -10,7 +10,7 @@ import { useTransactionPolling } from '../hooks/useTransactionPolling';
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { amount, title, redirectPath, cpf, urlParams } = location.state || {};
+  const { amount, title, redirectPath, cpf } = location.state || {};
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function UpsellPaymentPage() {
         console.log('Payment completed! Redirecting to:', redirectPath);
         setTimeout(() => {
           if (redirectPath) {
-            navigate(redirectPath, { state: { cpf, amount, urlParams } });
+            navigate(redirectPath, { state: { cpf, amount } });
           } else {
             navigate('/');
           }
@@ -139,7 +139,7 @@ export default function UpsellPaymentPage() {
 
       setTimeout(() => {
         if (redirectPath) {
-          navigate(redirectPath, { state: { cpf, amount, urlParams } });
+          navigate(redirectPath, { state: { cpf, amount } });
         } else {
           navigate('/');
         }
