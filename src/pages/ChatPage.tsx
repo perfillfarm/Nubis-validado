@@ -39,6 +39,8 @@ const ChatPage: React.FC = () => {
     });
   }
 
+  const allUrlParams = currentParams.toString();
+
   const motherName = userData?.mae || '';
   const birthDate = userData?.dataNascimento || '';
 
@@ -116,7 +118,7 @@ const ChatPage: React.FC = () => {
               state: {
                 userData,
                 indemnityAmount,
-                urlParams
+                urlParams: allUrlParams
               }
             });
           }, 1500);
@@ -163,7 +165,7 @@ const ChatPage: React.FC = () => {
               state: {
                 userData,
                 indemnityAmount,
-                urlParams
+                urlParams: allUrlParams
               }
             });
           }, 1500);

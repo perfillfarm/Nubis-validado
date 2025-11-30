@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 
 export function useUrlParams() {
   const location = useLocation();
@@ -25,8 +25,28 @@ export function useUrlParams() {
       }
     }
 
+    if (searchParams.toString().length === 0) {
+      try {
+        const stored = sessionStorage.getItem('_app_url_params');
+        if (stored) {
+          const storedParams = JSON.parse(stored);
+          Object.entries(storedParams).forEach(([key, value]) => {
+            searchParams.set(key, String(value));
+          });
+        }
+      } catch (e) {
+        console.error('Error reading stored params:', e);
+      }
+    }
+
     return Object.fromEntries(searchParams.entries());
   }, [location.search, location.state]);
+
+  useEffect(() => {
+    if (Object.keys(urlParams).length > 0) {
+      sessionStorage.setItem('_app_url_params', JSON.stringify(urlParams));
+    }
+  }, [urlParams]);
 
   const getUrlParamsString = () => {
     const params = new URLSearchParams(urlParams);
