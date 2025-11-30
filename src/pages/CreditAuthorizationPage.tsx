@@ -4,6 +4,7 @@ import { Shield, FileText, AlertCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function CreditAuthorizationPage() {
   const navigate = useNavigate();
@@ -35,14 +36,16 @@ export default function CreditAuthorizationPage() {
   const handleContinue = () => {
     if (!agreed) return;
 
-    navigate('/prioridade-emprestimo', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/prioridade-emprestimo',
+      location,
+      {
         userData,
         indemnityAmount,
-        urlParams,
         profileAnswers
       }
-    });
+    );
   };
 
   return (

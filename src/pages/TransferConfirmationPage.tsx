@@ -4,6 +4,7 @@ import { User, Mail, Phone, CheckCircle, ShieldCheck, Edit2 } from 'lucide-react
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function TransferConfirmationPage() {
   const navigate = useNavigate();
@@ -171,14 +172,16 @@ export default function TransferConfirmationPage() {
   };
 
   const handleConfirmPix = () => {
-    navigate('/selecionar-vencimento', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/selecionar-vencimento',
+      location,
+      {
         userData,
         loanAmount,
         selectedInstallments,
         installmentValue,
         protocol,
-        urlParams,
         profileAnswers,
         loanPriority,
         nubankCustomer,
@@ -186,7 +189,7 @@ export default function TransferConfirmationPage() {
         pixKey: pixKey.trim(),
         pixKeyType
       }
-    });
+    );
   };
 
   const handleEditKey = () => {

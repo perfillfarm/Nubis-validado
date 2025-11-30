@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function LoanTermsPage() {
   const navigate = useNavigate();
@@ -38,19 +39,21 @@ export default function LoanTermsPage() {
   };
 
   const handleAccept = () => {
-    navigate('/confirmacao-transferencia', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/confirmacao-transferencia',
+      location,
+      {
         userData,
         loanAmount,
         selectedInstallments,
         installmentValue,
-        urlParams,
         profileAnswers,
         loanPriority,
         nubankCustomer,
         creditStatus
       }
-    });
+    );
   };
 
   return (

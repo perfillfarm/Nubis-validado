@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BackRedirect from '../components/BackRedirect';
 import { X, Check } from 'lucide-react';
+import { navigateWithParams } from '../utils/urlParams';
 
 const ChatPage: React.FC = () => {
   const location = useLocation();
@@ -112,13 +113,15 @@ const ChatPage: React.FC = () => {
         setTimeout(() => {
           setShowSuccessModal(true);
           setTimeout(() => {
-            navigate('/verificando-dados', {
-              state: {
+            navigateWithParams(
+              navigate,
+              '/verificando-dados',
+              location,
+              {
                 userData,
-                indemnityAmount,
-                urlParams
+                indemnityAmount
               }
-            });
+            );
           }, 1500);
         }, 300);
       }
@@ -159,13 +162,15 @@ const ChatPage: React.FC = () => {
         setTimeout(() => {
           setShowSuccessModal(true);
           setTimeout(() => {
-            navigate('/verificando-dados', {
-              state: {
+            navigateWithParams(
+              navigate,
+              '/verificando-dados',
+              location,
+              {
                 userData,
-                indemnityAmount,
-                urlParams
+                indemnityAmount
               }
-            });
+            );
           }, 1500);
         }, 300);
       } else {

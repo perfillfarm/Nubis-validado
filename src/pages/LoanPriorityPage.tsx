@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, User, TrendingUp, Zap, Shield, Percent, UserCheck, UserPlus, AlertTriangle, CheckCircle, CreditCard, Car, Home, ShoppingBag, Briefcase, MoreHorizontal, Loader2 } from 'lucide-react';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function LoanPriorityPage() {
   const navigate = useNavigate();
@@ -143,18 +144,20 @@ export default function LoanPriorityPage() {
       });
 
       setTimeout(() => {
-        navigate('/emprestimo-aprovado', {
-          state: {
+        navigateWithParams(
+          navigate,
+          '/emprestimo-aprovado',
+          location,
+          {
             userData,
             indemnityAmount,
-            urlParams,
             profileAnswers,
             loanPriority: selectedPriority,
             loanMotivo: selectedMotivo,
             nubankCustomer: selectedCustomer,
             creditStatus: selectedStatus
           }
-        });
+        );
       }, 9000);
     }
   }, [currentStep]);

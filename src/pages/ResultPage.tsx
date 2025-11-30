@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import BackRedirect from '../components/BackRedirect';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 const ResultPage: React.FC = () => {
   const location = useLocation();
@@ -72,18 +73,16 @@ const ResultPage: React.FC = () => {
   }
 
   const handleChatClick = () => {
-    // Preserve all URL parameters including UTMs
-    const currentParams = new URLSearchParams(location.search);
-    currentParams.set('cpf', userData?.cpf || '');
-
-    navigate(`/chat?${currentParams.toString()}`, { 
-      state: { 
+    navigateWithParams(
+      navigate,
+      '/chat',
+      location,
+      {
         cpf: userData.cpf,
         indemnityAmount,
-        urlParams: currentParams.toString(),
         userData
-      } 
-    });
+      }
+    );
   };
 
   const firstName = userData.nome.split(' ')[0];

@@ -4,6 +4,7 @@ import { CheckCircle, Zap, BadgePercent } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function LoanApprovedPage() {
   const navigate = useNavigate();
@@ -24,17 +25,19 @@ export default function LoanApprovedPage() {
   }
 
   const handleContinue = () => {
-    navigate('/resumo-emprestimo', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/resumo-emprestimo',
+      location,
+      {
         userData,
         indemnityAmount,
-        urlParams,
         profileAnswers,
         loanPriority,
         nubankCustomer,
         creditStatus
       }
-    });
+    );
   };
 
   return (

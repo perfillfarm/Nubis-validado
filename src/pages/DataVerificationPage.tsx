@@ -4,6 +4,7 @@ import { CheckCircle2 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function DataVerificationPage() {
   const navigate = useNavigate();
@@ -42,13 +43,15 @@ export default function DataVerificationPage() {
     }, 1500);
 
     const finalTimer = setTimeout(() => {
-      navigate('/conta-verificada', {
-        state: {
+      navigateWithParams(
+        navigate,
+        '/conta-verificada',
+        location,
+        {
           userData,
-          indemnityAmount,
-          urlParams
+          indemnityAmount
         }
-      });
+      );
     }, 7000);
 
     return () => {

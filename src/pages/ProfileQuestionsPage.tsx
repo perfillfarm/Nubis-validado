@@ -4,6 +4,7 @@ import { User, Calendar, Briefcase, GraduationCap } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function ProfileQuestionsPage() {
   const navigate = useNavigate();
@@ -97,14 +98,16 @@ export default function ProfileQuestionsPage() {
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
-        navigate('/autorizacao-credito', {
-          state: {
+        navigateWithParams(
+          navigate,
+          '/autorizacao-credito',
+          location,
+          {
             userData,
             indemnityAmount,
-            urlParams,
             profileAnswers: newAnswers
           }
-        });
+        );
       }
     }, 300);
   };

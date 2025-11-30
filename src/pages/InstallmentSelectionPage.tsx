@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function InstallmentSelectionPage() {
   const navigate = useNavigate();
@@ -45,19 +46,21 @@ export default function InstallmentSelectionPage() {
   };
 
   const handleContinue = () => {
-    navigate('/termos-emprestimo', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/termos-emprestimo',
+      location,
+      {
         userData,
         loanAmount,
         selectedInstallments,
         installmentValue: calculateInstallmentValue(selectedInstallments),
-        urlParams,
         profileAnswers,
         loanPriority,
         nubankCustomer,
         creditStatus
       }
-    });
+    );
   };
 
   return (

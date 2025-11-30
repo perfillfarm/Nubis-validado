@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function CreditStatusPage() {
   const navigate = useNavigate();
@@ -35,17 +36,19 @@ export default function CreditStatusPage() {
   ];
 
   const handleOptionSelect = (value: string) => {
-    navigate('/emprestimo-aprovado', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/emprestimo-aprovado',
+      location,
+      {
         userData,
         indemnityAmount,
-        urlParams,
         profileAnswers,
         loanPriority,
         nubankCustomer,
         creditStatus: value
       }
-    });
+    );
   };
 
   return (

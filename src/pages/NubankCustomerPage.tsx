@@ -4,6 +4,7 @@ import { UserCheck, UserPlus } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function NubankCustomerPage() {
   const navigate = useNavigate();
@@ -45,16 +46,18 @@ export default function NubankCustomerPage() {
   ];
 
   const handleOptionSelect = (value: string) => {
-    navigate('/status-credito', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/status-credito',
+      location,
+      {
         userData,
         indemnityAmount,
-        urlParams,
         profileAnswers,
         loanPriority,
         nubankCustomer: value
       }
-    });
+    );
   };
 
   return (

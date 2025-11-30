@@ -4,6 +4,7 @@ import { DollarSign, Calendar, CheckCircle, User, Zap, Shield, TrendingUp } from
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function LoanSummaryPage() {
   const navigate = useNavigate();
@@ -51,17 +52,19 @@ export default function LoanSummaryPage() {
   };
 
   const handleContinue = () => {
-    navigate('/selecionar-parcelas', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/selecionar-parcelas',
+      location,
+      {
         userData,
         loanAmount,
-        urlParams,
         profileAnswers,
         loanPriority,
         nubankCustomer,
         creditStatus
       }
-    });
+    );
   };
 
   return (

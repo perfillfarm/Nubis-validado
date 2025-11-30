@@ -4,6 +4,7 @@ import { Shield, CheckCircle2 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function AccountVerifiedPage() {
   const navigate = useNavigate();
@@ -12,13 +13,15 @@ export default function AccountVerifiedPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleContinue = () => {
-    navigate('/perguntas-perfil', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/perguntas-perfil',
+      location,
+      {
         userData,
-        indemnityAmount,
-        urlParams
+        indemnityAmount
       }
-    });
+    );
   };
 
   useEffect(() => {
@@ -28,13 +31,15 @@ export default function AccountVerifiedPage() {
     }
 
     const timer = setTimeout(() => {
-      navigate('/perguntas-perfil', {
-        state: {
+      navigateWithParams(
+        navigate,
+        '/perguntas-perfil',
+        location,
+        {
           userData,
-          indemnityAmount,
-          urlParams
+          indemnityAmount
         }
-      });
+      );
     }, 5000);
 
     return () => clearTimeout(timer);
