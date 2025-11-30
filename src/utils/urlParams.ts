@@ -40,3 +40,47 @@ export const navigateWithParams = (
 
   navigate(`${path}${urlParams ? `?${urlParams}` : ''}`, { state: finalState });
 };
+
+export interface UtmParams {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+  src?: string;
+}
+
+export const extractUtmParams = (location: any): UtmParams => {
+  let params = new URLSearchParams(location.search);
+
+  if (!params.toString() && location.state?.urlParams) {
+    params = new URLSearchParams(location.state.urlParams);
+  }
+
+  const utmParams: UtmParams = {};
+
+  const utmKeys: (keyof UtmParams)[] = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+    'src'
+  ];
+
+  utmKeys.forEach(key => {
+    const value = params.get(key);
+    if (value) {
+      utmParams[key] = value;
+    }
+  });
+
+  return utmParams;
+};
+
+export const getUtmString = (utmParams: UtmParams): string => {
+  return Object.entries(utmParams)
+    .filter(([_, value]) => value)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&');
+};

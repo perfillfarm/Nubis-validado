@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import UserMenu from '../components/UserMenu';
 import { createTransaction } from '../services/pixService';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
-import { navigateWithParams } from '../utils/urlParams';
+import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 
 export default function QRCodePaymentPage() {
   const navigate = useNavigate();
@@ -76,6 +76,9 @@ export default function QRCodePaymentPage() {
         setLoading(true);
         setError(null);
 
+        const utmParams = extractUtmParams(location);
+        console.log('UTM Parameters extracted:', utmParams);
+
         const transaction = await createTransaction({
           cpf: userData.cpf.replace(/\D/g, ''),
           amount: totalTaxes,
@@ -93,6 +96,12 @@ export default function QRCodePaymentPage() {
             city: userData.endereco.cidade,
             state: userData.endereco.estado,
           } : undefined,
+          utmSource: utmParams.utm_source,
+          utmMedium: utmParams.utm_medium,
+          utmCampaign: utmParams.utm_campaign,
+          utmTerm: utmParams.utm_term,
+          utmContent: utmParams.utm_content,
+          src: utmParams.src,
         });
 
         setTransactionData(transaction);

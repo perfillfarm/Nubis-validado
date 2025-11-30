@@ -6,7 +6,7 @@ import UserMenu from '../components/UserMenu';
 import { createTransaction } from '../services/pixService';
 import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
-import { navigateWithParams } from '../utils/urlParams';
+import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
@@ -72,6 +72,9 @@ export default function UpsellPaymentPage() {
         const userDataStr = sessionStorage.getItem('userData');
         const userData = userDataStr ? JSON.parse(userDataStr) : null;
 
+        const utmParams = extractUtmParams(location);
+        console.log('Upsell - UTM Parameters extracted:', utmParams);
+
         const transaction = await createTransaction({
           cpf: cpf.replace(/\D/g, ''),
           amount: amount,
@@ -89,6 +92,12 @@ export default function UpsellPaymentPage() {
             city: userData.endereco.cidade,
             state: userData.endereco.estado,
           } : undefined,
+          utmSource: utmParams.utm_source,
+          utmMedium: utmParams.utm_medium,
+          utmCampaign: utmParams.utm_campaign,
+          utmTerm: utmParams.utm_term,
+          utmContent: utmParams.utm_content,
+          src: utmParams.src,
         }, { createReceipt: false });
 
         setTransactionData(transaction);
