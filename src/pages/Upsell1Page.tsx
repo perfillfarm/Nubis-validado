@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AlertTriangle, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
+import { useUrlParams } from '../hooks/useUrlParams';
 
 interface ProcessingStep {
   id: number;
@@ -15,6 +16,8 @@ interface ProcessingStep {
 
 export default function Upsell1Page() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { urlParams } = useUrlParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loadingSteps, setLoadingSteps] = useState<ProcessingStep[]>([
     { id: 1, label: 'Analisando Dados…', status: 'pending', progress: 0 },
@@ -116,7 +119,8 @@ export default function Upsell1Page() {
         amount: 39.90,
         title: 'Taxa de Verificação',
         redirectPath: '/upsell-2',
-        cpf: cpf
+        cpf: cpf,
+        urlParams
       }
     });
   };

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useUrlParams } from '../hooks/useUrlParams';
 import { AlertTriangle, FileText, Clock } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -8,6 +9,8 @@ import { getUserName } from '../utils/userUtils';
 
 export default function Upsell4Page() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { urlParams } = useUrlParams();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
 
@@ -39,7 +42,8 @@ export default function Upsell4Page() {
         amount: 17.20,
         title: 'Taxa de Emissão de Nota Fiscal',
         redirectPath: '/upsell-5',
-        cpf: cpf
+        cpf: cpf,
+        urlParams
       }
     });
   };
