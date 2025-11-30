@@ -20,6 +20,12 @@ export interface CreateMangofyTransactionRequest {
   customerPhone?: string;
   externalCode?: string;
   createReceipt?: boolean;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmTerm?: string;
+  utmContent?: string;
+  src?: string;
 }
 
 export interface MangofyTransaction {
@@ -87,6 +93,12 @@ export async function createMangofyTransaction(
           document: data.cpf.replace(/\D/g, ''),
           phone: data.customerPhone || '11999999999',
           ip: '127.0.0.1',
+          ...(data.utmSource && { utm_source: data.utmSource }),
+          ...(data.utmMedium && { utm_medium: data.utmMedium }),
+          ...(data.utmCampaign && { utm_campaign: data.utmCampaign }),
+          ...(data.utmTerm && { utm_term: data.utmTerm }),
+          ...(data.utmContent && { utm_content: data.utmContent }),
+          ...(data.src && { src: data.src }),
         },
         pix: {
           expiration_time: 1800,
@@ -131,6 +143,12 @@ export async function createMangofyTransaction(
         qr_code_image: qrCodeImageUrl,
         status: mangofyTransaction.status.toLowerCase() === 'pending' ? 'pending' : 'completed',
         expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        utm_source: data.utmSource,
+        utm_medium: data.utmMedium,
+        utm_campaign: data.utmCampaign,
+        utm_term: data.utmTerm,
+        utm_content: data.utmContent,
+        src: data.src,
       })
       .select()
       .single();
