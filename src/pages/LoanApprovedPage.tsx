@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CheckCircle, Zap, BadgePercent, Volume2, VolumeX, Play, Pause } from 'lucide-react';
+import { CheckCircle, Zap, BadgePercent, Volume2, Play, Pause } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
@@ -13,7 +13,6 @@ export default function LoanApprovedPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const firstName = userData?.nome ? userData.nome.split(' ')[0] : 'Usuário';
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -87,12 +86,6 @@ export default function LoanApprovedPage() {
     }
   };
 
-  const toggleMute = () => {
-    if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
-    }
-  };
 
   const formatTime = (time: number) => {
     if (isNaN(time)) return '0:00';
@@ -171,10 +164,10 @@ export default function LoanApprovedPage() {
                 </div>
                 <div className="text-left flex-1">
                   <h3 className="text-base font-bold text-gray-900">
-                    Mensagem da Rafaela
+                    Rafaela
                   </h3>
                   <p className="text-xs text-purple-700">
-                    Ouça as instruções importantes
+                    Gerente de Crédito
                   </p>
                 </div>
               </div>
@@ -206,17 +199,6 @@ export default function LoanApprovedPage() {
                       <span>{formatTime(duration)}</span>
                     </div>
                   </div>
-
-                  <button
-                    onClick={toggleMute}
-                    className="w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                  >
-                    {isMuted ? (
-                      <VolumeX className="w-4 h-4" />
-                    ) : (
-                      <Volume2 className="w-4 h-4" />
-                    )}
-                  </button>
                 </div>
               </div>
             </div>
@@ -279,7 +261,7 @@ export default function LoanApprovedPage() {
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {buttonEnabled ? 'Receber Empréstimo' : `Aguarde ${countdown}s para continuar`}
+              {buttonEnabled ? 'RECEBER EMPRÉSTIMO' : `Aguarde ${countdown}s para continuar`}
             </button>
           </div>
         </div>
