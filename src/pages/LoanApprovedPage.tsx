@@ -94,14 +94,6 @@ export default function LoanApprovedPage() {
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = parseFloat(e.target.value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-      setCurrentTime(time);
-    }
-  };
-
   const formatTime = (time: number) => {
     if (isNaN(time)) return '0:00';
     const minutes = Math.floor(time / 60);
@@ -201,14 +193,14 @@ export default function LoanApprovedPage() {
                   </button>
 
                   <div className="flex-1">
-                    <input
-                      type="range"
-                      min="0"
-                      max={duration || 0}
-                      value={currentTime}
-                      onChange={handleSeek}
-                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
-                    />
+                    <div className="relative w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-0.5">
+                      <div
+                        className="absolute h-full bg-purple-600 rounded-full transition-all duration-100"
+                        style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                      >
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full shadow-md"></div>
+                      </div>
+                    </div>
                     <div className="flex justify-between text-xs text-gray-500 mt-0.5">
                       <span>{formatTime(currentTime)}</span>
                       <span>{formatTime(duration)}</span>
@@ -383,34 +375,6 @@ export default function LoanApprovedPage() {
         }
         .animate-pulse-audio {
           animation: pulse-audio 2s ease-in-out infinite;
-        }
-
-        .slider-thumb::-webkit-slider-thumb {
-          appearance: none;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #7c3aed;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .slider-thumb::-webkit-slider-thumb:hover {
-          transform: scale(1.2);
-        }
-
-        .slider-thumb::-moz-range-thumb {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #7c3aed;
-          cursor: pointer;
-          border: none;
-          transition: all 0.2s;
-        }
-
-        .slider-thumb::-moz-range-thumb:hover {
-          transform: scale(1.2);
         }
       `}</style>
     </div>
