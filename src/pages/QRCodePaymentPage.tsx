@@ -112,7 +112,7 @@ export default function QRCodePaymentPage() {
           value: totalTaxes,
           currency: 'BRL',
           content_type: 'product',
-          content_name: 'Pagamento de Taxas Obrigatórias',
+          content_name: 'Desafio 30 dias',
           content_ids: [transaction.id],
           num_items: 1,
         });
