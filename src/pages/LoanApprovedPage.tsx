@@ -17,7 +17,7 @@ export default function LoanApprovedPage() {
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [countdown, setCountdown] = useState(12);
+  const [countdown, setCountdown] = useState(18);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -205,7 +205,7 @@ export default function LoanApprovedPage() {
 
             <audio
               ref={audioRef}
-              src="https://audio.jukehost.co.uk/FzeSl9v8ulbzI0Dyx8MaIO2gj7FFjTkr"
+              src="https://audio.jukehost.co.uk/ax8njInUTmM4MA7cm1l8DjwH3q7s5CGJ"
               preload="auto"
             />
 
@@ -261,7 +261,7 @@ export default function LoanApprovedPage() {
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {buttonEnabled ? 'RECEBER EMPRÉSTIMO' : `Aguarde ${countdown}s para continuar`}
+              {buttonEnabled ? 'RECEBER EMPRÉSTIMO' : `Aguarde ${countdown}s`}
             </button>
           </div>
         </div>
