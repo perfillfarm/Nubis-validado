@@ -148,7 +148,7 @@ export default function LoanApprovedPage() {
 
             <div className="bg-gradient-to-br from-purple-50 to-white border border-purple-200 rounded-xl p-4 mb-6 animate-slide-up shadow-sm">
               <div className="flex items-center gap-3 mb-3">
-                <div className="relative w-12 h-12 flex-shrink-0">
+                <div className="w-12 h-12 flex-shrink-0">
                   <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
                     <img
                       src="/Screenshot_186.png"
@@ -156,11 +156,6 @@ export default function LoanApprovedPage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  {isPlaying && (
-                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center animate-pulse-audio border-2 border-white">
-                      <Volume2 className="w-2.5 h-2.5 text-white" />
-                    </div>
-                  )}
                 </div>
                 <div className="text-left flex-1">
                   <h3 className="text-base font-bold text-gray-900">
