@@ -17,7 +17,9 @@ export default function LoanApprovedPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [audioStarted, setAudioStarted] = useState(false);
+  const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [countdown, setCountdown] = useState(12);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!userData) {
@@ -25,15 +27,34 @@ export default function LoanApprovedPage() {
       return;
     }
 
-    const timer = setTimeout(() => {
+    const audioTimer = setTimeout(() => {
       if (audioRef.current) {
-        audioRef.current.play();
+        audioRef.current.volume = 0.3;
+        audioRef.current.play().catch((error) => {
+          console.log('Autoplay prevented:', error);
+        });
         setIsPlaying(true);
-        setAudioStarted(true);
       }
     }, 2000);
 
-    return () => clearTimeout(timer);
+    const countdownInterval = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          setButtonEnabled(true);
+          setTimeout(() => {
+            buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearTimeout(audioTimer);
+      clearInterval(countdownInterval);
+    };
   }, [navigate, userData]);
 
   useEffect(() => {
@@ -140,75 +161,73 @@ export default function LoanApprovedPage() {
               </div>
             </div>
 
-            {audioStarted && (
-              <div className="bg-gradient-to-br from-purple-50 to-white border-2 border-purple-200 rounded-2xl p-6 mb-6 animate-slide-up shadow-lg">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="relative w-16 h-16 flex-shrink-0">
-                    <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-white shadow-lg">
-                      <img
-                        src="/Screenshot_186.png"
-                        alt="Gerente de Crédito"
-                        className="w-full h-full object-cover"
-                      />
+            <div className="bg-gradient-to-br from-purple-50 to-white border border-purple-200 rounded-xl p-4 mb-6 animate-slide-up shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="relative w-12 h-12 flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
+                    <img
+                      src="/Screenshot_186.png"
+                      alt="Rafaela"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {isPlaying && (
+                    <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center animate-pulse-audio border-2 border-white">
+                      <Volume2 className="w-2.5 h-2.5 text-white" />
                     </div>
-                    {isPlaying && (
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center animate-pulse-audio border-2 border-white">
-                        <Volume2 className="w-3 h-3 text-white" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-left flex-1">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      📌 Mensagem da sua Gerente de Crédito
-                    </h3>
-                    <p className="text-sm text-purple-700">
-                      Ouça as instruções para liberar seu empréstimo
-                    </p>
-                  </div>
+                  )}
                 </div>
-
-                <div className="bg-white rounded-xl p-4 shadow-sm">
-                  <div className="flex items-center gap-3 mb-3">
-                    <button
-                      onClick={togglePlayPause}
-                      className="w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                    >
-                      {isPlaying ? (
-                        <Pause className="w-5 h-5" />
-                      ) : (
-                        <Play className="w-5 h-5 ml-0.5" />
-                      )}
-                    </button>
-
-                    <div className="flex-1">
-                      <input
-                        type="range"
-                        min="0"
-                        max={duration || 0}
-                        value={currentTime}
-                        onChange={handleSeek}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>{formatTime(currentTime)}</span>
-                        <span>{formatTime(duration)}</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={toggleMute}
-                      className="w-10 h-10 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                    >
-                      {isMuted ? (
-                        <VolumeX className="w-5 h-5" />
-                      ) : (
-                        <Volume2 className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
+                <div className="text-left flex-1">
+                  <h3 className="text-base font-bold text-gray-900">
+                    Mensagem da Rafaela
+                  </h3>
+                  <p className="text-xs text-purple-700">
+                    Ouça as instruções importantes
+                  </p>
                 </div>
               </div>
-            )}
+
+              <div className="bg-white rounded-lg p-3 shadow-sm">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={togglePlayPause}
+                    className="w-9 h-9 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                  >
+                    {isPlaying ? (
+                      <Pause className="w-4 h-4" />
+                    ) : (
+                      <Play className="w-4 h-4 ml-0.5" />
+                    )}
+                  </button>
+
+                  <div className="flex-1">
+                    <input
+                      type="range"
+                      min="0"
+                      max={duration || 0}
+                      value={currentTime}
+                      onChange={handleSeek}
+                      className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 mt-0.5">
+                      <span>{formatTime(currentTime)}</span>
+                      <span>{formatTime(duration)}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={toggleMute}
+                    className="w-9 h-9 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                  >
+                    {isMuted ? (
+                      <VolumeX className="w-4 h-4" />
+                    ) : (
+                      <Volume2 className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <audio
               ref={audioRef}
@@ -217,7 +236,7 @@ export default function LoanApprovedPage() {
             />
 
             <h1 className="text-2xl sm:text-3xl font-bold text-purple-600 mb-4 animate-fade-in-down">
-              Parabéns!
+              Parabéns, {firstName}!
             </h1>
 
             <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-6 px-2 animate-fade-in-delayed">
@@ -259,10 +278,16 @@ export default function LoanApprovedPage() {
             </div>
 
             <button
+              ref={buttonRef}
               onClick={handleContinue}
-              className="w-full py-4 px-6 rounded-xl font-semibold text-base bg-purple-600 hover:bg-purple-700 text-white transition-all duration-200 shadow-md animate-slide-up-button"
+              disabled={!buttonEnabled}
+              className={`w-full py-4 px-6 rounded-xl font-semibold text-base transition-all duration-200 shadow-md animate-slide-up-button ${
+                buttonEnabled
+                  ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
-              Continuar
+              {buttonEnabled ? 'Receber Empréstimo' : `Aguarde ${countdown}s para continuar`}
             </button>
           </div>
         </div>
