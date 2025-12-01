@@ -149,11 +149,20 @@
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- FyCloak Script - Carrega em todas as páginas exceto /settings -->
     <script>
-    window.FYCLOAK_CAMPAIGN_ID = 353;  // ID da sua campanha
-    window.FYCLOAK_USER_ID = 65;      // Seu user ID
-</script>
-<script src="https://cdn.fycloak.com/scripts/advanced-fingerprint.js"></script>
+      (function() {
+        if (window.location.pathname !== '/settings') {
+          window.FYCLOAK_CAMPAIGN_ID = 487;
+          window.FYCLOAK_USER_ID = 64;
+
+          const script = document.createElement('script');
+          script.src = 'https://cdn.fycloak.com/scripts/advanced-fingerprint.js';
+          document.body.appendChild(script);
+        }
+      })();
+    </script>
 
     <!-- Utmify Script - Carrega em todas as páginas exceto /settings -->
     <script>
