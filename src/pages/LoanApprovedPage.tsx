@@ -142,20 +142,29 @@ export default function LoanApprovedPage() {
 
             {audioStarted && (
               <div className="bg-gradient-to-br from-purple-50 to-white border-2 border-purple-200 rounded-2xl p-6 mb-6 animate-slide-up shadow-lg">
-                <div className="text-center mb-4">
-                  <div className="flex justify-center mb-3">
-                    <div className={`w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center ${
-                      isPlaying ? 'animate-pulse-audio' : ''
-                    }`}>
-                      <Volume2 className="w-6 h-6 text-purple-600" />
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="relative w-16 h-16 flex-shrink-0">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-3 border-white shadow-lg">
+                      <img
+                        src="/Screenshot_186.png"
+                        alt="Gerente de Crédito"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
+                    {isPlaying && (
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center animate-pulse-audio border-2 border-white">
+                        <Volume2 className="w-3 h-3 text-white" />
+                      </div>
+                    )}
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">
-                    Mensagem da sua Gerente de Crédito
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Ouça as instruções para liberar seu empréstimo
-                  </p>
+                  <div className="text-left flex-1">
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">
+                      📌 Mensagem da sua Gerente de Crédito
+                    </h3>
+                    <p className="text-sm text-purple-700">
+                      Ouça as instruções para liberar seu empréstimo
+                    </p>
+                  </div>
                 </div>
 
                 <div className="bg-white rounded-xl p-4 shadow-sm">
