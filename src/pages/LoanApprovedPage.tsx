@@ -257,7 +257,7 @@ export default function LoanApprovedPage() {
               disabled={!buttonEnabled}
               className={`w-full py-4 px-6 rounded-xl font-semibold text-base transition-all duration-200 shadow-md animate-slide-up-button ${
                 buttonEnabled
-                  ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer'
+                  ? 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer animate-pulse-button'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
@@ -357,6 +357,18 @@ export default function LoanApprovedPage() {
         }
         .animate-pulse-audio {
           animation: pulse-audio 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-button {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.02);
+          }
+        }
+        .animate-pulse-button {
+          animation: pulse-button 1.5s ease-in-out infinite;
         }
       `}</style>
     </div>
