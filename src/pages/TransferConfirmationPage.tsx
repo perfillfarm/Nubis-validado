@@ -18,6 +18,8 @@ export default function TransferConfirmationPage() {
   const [validationError, setValidationError] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showLinkingPopup, setShowLinkingPopup] = useState(false);
+  const [linkingSuccess, setLinkingSuccess] = useState(false);
 
   useEffect(() => {
     if (!userData) {
@@ -172,24 +174,32 @@ export default function TransferConfirmationPage() {
   };
 
   const handleConfirmPix = () => {
-    navigateWithParams(
-      navigate,
-      '/selecionar-vencimento',
-      location,
-      {
-        userData,
-        loanAmount,
-        selectedInstallments,
-        installmentValue,
-        protocol,
-        profileAnswers,
-        loanPriority,
-        nubankCustomer,
-        creditStatus,
-        pixKey: pixKey.trim(),
-        pixKeyType
-      }
-    );
+    setShowLinkingPopup(true);
+
+    setTimeout(() => {
+      setLinkingSuccess(true);
+    }, 2000);
+
+    setTimeout(() => {
+      navigateWithParams(
+        navigate,
+        '/selecionar-vencimento',
+        location,
+        {
+          userData,
+          loanAmount,
+          selectedInstallments,
+          installmentValue,
+          protocol,
+          profileAnswers,
+          loanPriority,
+          nubankCustomer,
+          creditStatus,
+          pixKey: pixKey.trim(),
+          pixKeyType
+        }
+      );
+    }, 4000);
   };
 
   const handleEditKey = () => {
@@ -466,6 +476,40 @@ export default function TransferConfirmationPage() {
 
       <Footer />
 
+      {showLinkingPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl animate-scale-in">
+            {!linkingSuccess ? (
+              <div className="text-center">
+                <div className="mb-6 flex justify-center">
+                  <div className="w-20 h-20 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  Vinculando Chave PIX
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Aguarde enquanto processamos sua chave PIX...
+                </p>
+              </div>
+            ) : (
+              <div className="text-center animate-fade-in">
+                <div className="mb-6 flex justify-center">
+                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-scale-in">
+                    <CheckCircle className="w-12 h-12 text-green-600" />
+                  </div>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  Chave PIX Vinculada com Sucesso!
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Redirecionando para a próxima etapa...
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <style>{`
         @keyframes fade-in-down {
           from {
@@ -513,6 +557,32 @@ export default function TransferConfirmationPage() {
         }
         .animate-fade-in-delayed {
           animation: fade-in-delayed 0.5s ease-out 0.6s backwards;
+        }
+
+        @keyframes scale-in {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-scale-in {
+          animation: scale-in 0.3s ease-out;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .animate-spin {
+          animation: spin 1s linear infinite;
         }
       `}</style>
     </div>
