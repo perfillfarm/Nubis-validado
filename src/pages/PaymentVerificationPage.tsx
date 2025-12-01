@@ -39,17 +39,6 @@ export default function PaymentVerificationPage() {
     try {
       setReceiptChecked(true);
 
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'Purchase', {
-          value: transaction?.amount || 0,
-          currency: 'BRL',
-        });
-        console.log('Facebook Pixel: Purchase event fired', {
-          value: transaction?.amount || 0,
-          currency: 'BRL',
-        });
-      }
-
       const { data: existingReceipts, error: checkError } = await supabase
         .from('payment_receipts')
         .select('*')

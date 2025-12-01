@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Clock, Wallet, AlertCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
+import { trackPurchase } from '../utils/facebookPixel';
 
 export default function FinalPage() {
   const navigate = useNavigate();
@@ -17,6 +18,16 @@ export default function FinalPage() {
   const handleMenuClose = () => {
     setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    trackPurchase({
+      value: 17.30,
+      currency: 'BRL',
+      content_type: 'upsell',
+      content_name: 'Upsell',
+      num_items: 1,
+    });
+  }, []);
 
   const handleBackToHome = () => {
     navigate('/');

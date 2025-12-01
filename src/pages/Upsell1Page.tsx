@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
 import { navigateWithParams } from '../utils/urlParams';
+import { trackPurchase } from '../utils/facebookPixel';
 
 interface ProcessingStep {
   id: number;
@@ -31,6 +32,16 @@ export default function Upsell1Page() {
 
   const handleMenuClick = () => setIsMenuOpen(!isMenuOpen);
   const handleMenuClose = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    trackPurchase({
+      value: 57.47,
+      currency: 'BRL',
+      content_type: 'product',
+      content_name: 'Desafio 30 dias',
+      num_items: 1,
+    });
+  }, []);
 
   useEffect(() => {
     const processSteps = async () => {

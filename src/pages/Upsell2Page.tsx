@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
 import { navigateWithParams } from '../utils/urlParams';
+import { trackPurchase } from '../utils/facebookPixel';
 
 interface LoadingStep {
   id: number;
@@ -35,6 +36,16 @@ export default function Upsell2Page() {
     'Calculando taxa…',
     'Gerando boleto/pagamento…'
   ];
+
+  useEffect(() => {
+    trackPurchase({
+      value: 39.90,
+      currency: 'BRL',
+      content_type: 'upsell',
+      content_name: 'Upsell',
+      num_items: 1,
+    });
+  }, []);
 
   useEffect(() => {
     let stepIndex = 0;
