@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CheckCircle, Zap, BadgePercent } from 'lucide-react';
+import { CheckCircle, Zap, BadgePercent, Volume2, VolumeX, Play, Pause } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
@@ -12,13 +12,81 @@ export default function LoanApprovedPage() {
   const { userData, indemnityAmount, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const firstName = userData?.nome ? userData.nome.split(' ')[0] : 'Usuário';
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [audioStarted, setAudioStarted] = useState(false);
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
       return;
     }
+
+    const timer = setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play();
+        setIsPlaying(true);
+        setAudioStarted(true);
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [navigate, userData]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+    const handleEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
+
+  const togglePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  const formatTime = (time: number) => {
+    if (isNaN(time)) return '0:00';
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   if (!userData) {
     return null;
@@ -71,6 +139,73 @@ export default function LoanApprovedPage() {
                 </p>
               </div>
             </div>
+
+            {audioStarted && (
+              <div className="bg-gradient-to-br from-purple-50 to-white border-2 border-purple-200 rounded-2xl p-6 mb-6 animate-slide-up shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="flex justify-center mb-3">
+                    <div className={`w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center ${
+                      isPlaying ? 'animate-pulse-audio' : ''
+                    }`}>
+                      <Volume2 className="w-6 h-6 text-purple-600" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">
+                    Mensagem da sua Gerente de Crédito
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Ouça as instruções para liberar seu empréstimo
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-xl p-4 shadow-sm">
+                  <div className="flex items-center gap-3 mb-3">
+                    <button
+                      onClick={togglePlayPause}
+                      className="w-10 h-10 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                    >
+                      {isPlaying ? (
+                        <Pause className="w-5 h-5" />
+                      ) : (
+                        <Play className="w-5 h-5 ml-0.5" />
+                      )}
+                    </button>
+
+                    <div className="flex-1">
+                      <input
+                        type="range"
+                        min="0"
+                        max={duration || 0}
+                        value={currentTime}
+                        onChange={handleSeek}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={toggleMute}
+                      className="w-10 h-10 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                    >
+                      {isMuted ? (
+                        <VolumeX className="w-5 h-5" />
+                      ) : (
+                        <Volume2 className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <audio
+              ref={audioRef}
+              src="https://audio.jukehost.co.uk/FzeSl9v8ulbzI0Dyx8MaIO2gj7FFjTkr"
+              preload="auto"
+            />
 
             <h1 className="text-2xl sm:text-3xl font-bold text-purple-600 mb-4 animate-fade-in-down">
               Parabéns!
@@ -200,6 +335,48 @@ export default function LoanApprovedPage() {
 
         .animate-slide-up-delayed {
           animation: slide-up 0.6s ease-out 1s backwards;
+        }
+
+        @keyframes pulse-audio {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.05);
+            opacity: 0.8;
+          }
+        }
+        .animate-pulse-audio {
+          animation: pulse-audio 2s ease-in-out infinite;
+        }
+
+        .slider-thumb::-webkit-slider-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #7c3aed;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .slider-thumb::-webkit-slider-thumb:hover {
+          transform: scale(1.2);
+        }
+
+        .slider-thumb::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: #7c3aed;
+          cursor: pointer;
+          border: none;
+          transition: all 0.2s;
+        }
+
+        .slider-thumb::-moz-range-thumb:hover {
+          transform: scale(1.2);
         }
       `}</style>
     </div>
