@@ -142,16 +142,18 @@ export default function QRCodePaymentPage() {
   };
 
   const handlePaymentComplete = () => {
-    navigate('/verificar-pagamento', {
-      state: {
+    navigateWithParams(
+      navigate,
+      '/verificar-pagamento',
+      location,
+      {
         userData,
         indemnityAmount,
         pixKeyType,
         pixKey,
-        urlParams,
         transactionId: transactionData?.id,
-      },
-    });
+      }
+    );
   };
 
   if (loading) {
