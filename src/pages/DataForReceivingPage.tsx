@@ -14,6 +14,7 @@ export default function DataForReceivingPage() {
   const [detectedType, setDetectedType] = useState<PixKeyType | null>(initialPixKeyType || null);
   const [showTypeSelector, setShowTypeSelector] = useState(false);
   const [manualType, setManualType] = useState<'cpf' | 'phone' | null>(null);
+  const [selectedKeyType, setSelectedKeyType] = useState<PixKeyType | null>(null);
 
   if (!userData) {
     navigate('/');
@@ -92,6 +93,18 @@ export default function DataForReceivingPage() {
     setPixKey(value);
   };
 
+  const handleKeyTypeSelection = (type: PixKeyType) => {
+    setSelectedKeyType(type);
+    setDetectedType(type);
+
+    if (type === 'cpf' && userData?.cpf) {
+      const formattedCPF = userData.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+      setPixKey(formattedCPF);
+    } else {
+      setPixKey('');
+    }
+  };
+
   const getKeyTypeLabel = () => {
     switch (detectedType) {
       case 'cpf':
@@ -152,54 +165,73 @@ export default function DataForReceivingPage() {
 
           <div className="mb-5 sm:mb-6 animate-slide-up-delayed">
             <label className="block text-gray-900 font-semibold mb-2 sm:mb-3 text-sm">
-              Digite sua chave PIX: CPF, e-mail, telefone ou aleatória
+              Selecione o tipo de chave PIX
             </label>
-            <input
-              type="text"
-              value={pixKey}
-              onChange={(e) => handlePixKeyChange(e.target.value)}
-              placeholder="Digite sua chave PIX"
-              className="w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 transition-all duration-200 text-sm sm:text-base"
-              autoFocus
-            />
-            {detectedType && !showTypeSelector && (
-              <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm text-green-600 animate-fade-in">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>{getKeyTypeLabel()}</span>
-              </div>
-            )}
 
-            {showTypeSelector && (
-              <div className="mt-3 bg-white border-2 border-purple-200 rounded-xl p-4 animate-fade-in">
-                <p className="text-gray-900 font-semibold text-xs sm:text-sm mb-3">
-                  Sua chave é CPF ou número de telefone?
-                </p>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-3 p-3 rounded-lg border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all">
-                    <input
-                      type="radio"
-                      name="keyType"
-                      value="cpf"
-                      checked={manualType === 'cpf'}
-                      onChange={(e) => setManualType(e.target.value as 'cpf')}
-                      className="w-4 h-4 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">CPF</span>
-                  </label>
-                  <label className="flex items-center gap-3 p-3 rounded-lg border-2 border-gray-200 hover:border-purple-300 cursor-pointer transition-all">
-                    <input
-                      type="radio"
-                      name="keyType"
-                      value="phone"
-                      checked={manualType === 'phone'}
-                      onChange={(e) => setManualType(e.target.value as 'phone')}
-                      className="w-4 h-4 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span className="text-sm font-medium text-gray-700">Número de Telefone</span>
-                  </label>
-                </div>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <button
+                onClick={() => handleKeyTypeSelection('cpf')}
+                className={`py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  selectedKeyType === 'cpf'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
+                }`}
+              >
+                CPF
+              </button>
+              <button
+                onClick={() => handleKeyTypeSelection('email')}
+                className={`py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  selectedKeyType === 'email'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
+                }`}
+              >
+                E-mail
+              </button>
+              <button
+                onClick={() => handleKeyTypeSelection('phone')}
+                className={`py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  selectedKeyType === 'phone'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
+                }`}
+              >
+                Telefone
+              </button>
+              <button
+                onClick={() => handleKeyTypeSelection('random')}
+                className={`py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  selectedKeyType === 'random'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-purple-300'
+                }`}
+              >
+                Aleatória
+              </button>
+            </div>
+
+            {selectedKeyType && (
+              <div className="animate-fade-in">
+                <label className="block text-gray-700 font-medium mb-2 text-sm">
+                  {selectedKeyType === 'cpf' && 'Sua chave PIX CPF'}
+                  {selectedKeyType === 'email' && 'Digite seu e-mail'}
+                  {selectedKeyType === 'phone' && 'Digite seu telefone'}
+                  {selectedKeyType === 'random' && 'Digite sua chave aleatória'}
+                </label>
+                <input
+                  type="text"
+                  value={pixKey}
+                  onChange={(e) => handlePixKeyChange(e.target.value)}
+                  placeholder={
+                    selectedKeyType === 'cpf' ? 'CPF preenchido automaticamente' :
+                    selectedKeyType === 'email' ? 'exemplo@email.com' :
+                    selectedKeyType === 'phone' ? '(00) 00000-0000' :
+                    'Chave aleatória'
+                  }
+                  className="w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-100 transition-all duration-200 text-sm sm:text-base"
+                  disabled={selectedKeyType === 'cpf'}
+                />
               </div>
             )}
           </div>
