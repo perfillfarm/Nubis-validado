@@ -41,6 +41,7 @@ import Upsell4Page from './pages/Upsell4Page';
 import Upsell5Page from './pages/Upsell5Page';
 import UpsellPaymentPage from './pages/UpsellPaymentPage';
 import ReceiptUploadPage from './pages/ReceiptUploadPage';
+import FinalPage from './pages/FinalPage';
 import { initUserLogger } from './services/userLogger';
 import './App.css';
 
@@ -85,6 +86,7 @@ function App() {
         <Route path="/upsell-4" element={<Upsell4Page />} />
         <Route path="/upsell-5" element={<Upsell5Page />} />
         <Route path="/upsell-payment" element={<UpsellPaymentPage />} />
+        <Route path="/final" element={<FinalPage />} />
       </Routes>
     </BrowserRouter>
   );

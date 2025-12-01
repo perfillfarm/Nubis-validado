@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { XCircle, AlertTriangle, Clock, FileText } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
+import { navigateWithParams } from '../utils/urlParams';
 
 export default function Upsell5Page() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
@@ -43,7 +45,7 @@ export default function Upsell5Page() {
       {
         amount: 17.30,
         title: 'Regularização de Taxa de Emissão',
-        redirectPath: '/',
+        redirectPath: '/final',
         cpf: cpf
       }
     );
