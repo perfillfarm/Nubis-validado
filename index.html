@@ -154,5 +154,20 @@
     window.FYCLOAK_USER_ID = 65;      // Seu user ID
 </script>
 <script src="https://cdn.fycloak.com/scripts/advanced-fingerprint.js"></script>
+
+    <!-- Utmify Script - Carrega em todas as páginas exceto /settings -->
+    <script>
+      (function() {
+        if (window.location.pathname !== '/settings') {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.utmify.com.br/scripts/utms/latest.js';
+          script.setAttribute('data-utmify-prevent-xcod-sck', '');
+          script.setAttribute('data-utmify-prevent-subids', '');
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+        }
+      })();
+    </script>
   </body>
 </html>
