@@ -20,6 +20,7 @@ export default function TransferConfirmationPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLinkingPopup, setShowLinkingPopup] = useState(false);
   const [linkingSuccess, setLinkingSuccess] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     if (!userData) {
@@ -170,7 +171,11 @@ export default function TransferConfirmationPage() {
       return;
     }
 
-    setShowConfirmation(true);
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setShowConfirmation(true);
+      setIsTransitioning(false);
+    }, 400);
   };
 
   const handleConfirmPix = () => {
@@ -203,10 +208,14 @@ export default function TransferConfirmationPage() {
   };
 
   const handleEditKey = () => {
-    setShowConfirmation(false);
-    setPixKey('');
-    setPixKeyType('');
-    setValidationError('');
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setShowConfirmation(false);
+      setPixKey('');
+      setPixKeyType('');
+      setValidationError('');
+      setIsTransitioning(false);
+    }, 400);
   };
 
   const getPixKeyTypeLabel = () => {
@@ -230,7 +239,7 @@ export default function TransferConfirmationPage() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 pt-24 sm:pt-28 pb-20">
         <div className="w-full max-w-sm sm:max-w-md">
           {showConfirmation ? (
-            <div className="animate-slide-up">
+            <div className={isTransitioning ? 'animate-fade-out' : 'animate-fade-in-screen'}>
               <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
                 Confirme sua Chave PIX
               </h1>
@@ -311,8 +320,8 @@ export default function TransferConfirmationPage() {
               </button>
             </div>
           ) : (
-            <>
-          <div className="bg-white rounded-xl shadow-md p-5 mb-6 animate-slide-up">
+            <div className={isTransitioning ? 'animate-fade-out' : 'animate-fade-in-screen'}>
+          <div className="bg-white rounded-xl shadow-md p-5 mb-6">
             <h1 className="text-xl font-semibold text-gray-800 text-center mb-5 flex items-center justify-center gap-2">
               <CheckCircle className="w-6 h-6 text-gray-900 flex-shrink-0" />
               <span className="whitespace-nowrap">Confirmação de Transferência</span>
@@ -340,7 +349,7 @@ export default function TransferConfirmationPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-6 animate-slide-up-delayed">
+          <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mb-6">
             <h2 className="text-base font-normal text-gray-900 mb-4">
               Selecione o tipo da sua chave PIX:
             </h2>
@@ -444,7 +453,7 @@ export default function TransferConfirmationPage() {
           <button
             onClick={handleAuthorize}
             disabled={!pixKey.trim() || !pixKeyType}
-            className={`w-full py-4 px-6 rounded-xl font-semibold text-base transition-all duration-200 shadow-md animate-slide-up-button flex items-center justify-center gap-2 ${
+            className={`w-full py-4 px-6 rounded-xl font-semibold text-base transition-all duration-200 shadow-md flex items-center justify-center gap-2 ${
               pixKey.trim() && pixKeyType
                 ? 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -455,7 +464,7 @@ export default function TransferConfirmationPage() {
           </button>
 
           {pixKeyType && (
-            <div className="mt-6 bg-teal-50 border border-teal-200 rounded-xl p-4 animate-fade-in-delayed">
+            <div className="mt-6 bg-teal-50 border border-teal-200 rounded-xl p-4">
               <div className="flex items-start gap-3">
                 <ShieldCheck className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                 <div>
@@ -469,7 +478,7 @@ export default function TransferConfirmationPage() {
               </div>
             </div>
           )}
-            </>
+            </div>
           )}
         </div>
       </main>
@@ -583,6 +592,34 @@ export default function TransferConfirmationPage() {
         }
         .animate-spin {
           animation: spin 1s linear infinite;
+        }
+
+        @keyframes fade-out {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+        }
+        .animate-fade-out {
+          animation: fade-out 0.4s ease-out forwards;
+        }
+
+        @keyframes fade-in-screen {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-screen {
+          animation: fade-in-screen 0.5s ease-out;
         }
       `}</style>
     </div>
