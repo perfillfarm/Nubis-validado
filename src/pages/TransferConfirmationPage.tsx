@@ -340,7 +340,12 @@ export default function TransferConfirmationPage() {
                 type="button"
                 onClick={() => {
                   setPixKeyType('cpf');
-                  setPixKey('');
+                  if (userData?.cpf) {
+                    const formattedCPF = userData.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                    setPixKey(formattedCPF);
+                  } else {
+                    setPixKey('');
+                  }
                   setValidationError('');
                 }}
                 className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
@@ -410,11 +415,12 @@ export default function TransferConfirmationPage() {
                   value={pixKey}
                   onChange={(e) => handlePixKeyChange(e.target.value)}
                   placeholder={getPixKeyPlaceholder()}
+                  disabled={pixKeyType === 'cpf'}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent text-base ${
                     validationError
                       ? 'border-red-500 focus:ring-red-500'
                       : 'border-gray-300 focus:ring-blue-500'
-                  }`}
+                  } ${pixKeyType === 'cpf' ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                 />
                 {validationError && (
                   <p className="mt-2 text-sm text-red-600">
