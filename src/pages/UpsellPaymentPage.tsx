@@ -7,6 +7,7 @@ import { createTransaction } from '../services/pixService';
 import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
+import { trackInitiateCheckout } from '../utils/facebookPixel';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
@@ -102,6 +103,15 @@ export default function UpsellPaymentPage() {
 
         setTransactionData(transaction);
         setLoading(false);
+
+        trackInitiateCheckout({
+          value: amount,
+          currency: 'BRL',
+          content_type: 'upsell',
+          content_name: title || 'Upsell',
+          content_ids: [transaction.id],
+          num_items: 1,
+        });
       } catch (err: any) {
         console.error('Failed to create transaction:', err);
         setError(err.message || 'Falha ao criar transação. Tente novamente.');

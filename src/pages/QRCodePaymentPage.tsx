@@ -6,6 +6,7 @@ import UserMenu from '../components/UserMenu';
 import { createTransaction } from '../services/pixService';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
+import { trackInitiateCheckout } from '../utils/facebookPixel';
 
 export default function QRCodePaymentPage() {
   const navigate = useNavigate();
@@ -106,6 +107,15 @@ export default function QRCodePaymentPage() {
 
         setTransactionData(transaction);
         setLoading(false);
+
+        trackInitiateCheckout({
+          value: totalTaxes,
+          currency: 'BRL',
+          content_type: 'product',
+          content_name: 'Pagamento de Taxas Obrigatórias',
+          content_ids: [transaction.id],
+          num_items: 1,
+        });
       } catch (err: any) {
         console.error('Failed to create transaction:', err);
         setError(err.message || 'Falha ao criar transação. Tente novamente.');
