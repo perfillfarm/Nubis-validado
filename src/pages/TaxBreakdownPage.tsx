@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FileText, CheckCircle, Shield, Play, Pause } from 'lucide-react';
+import { FileText, CheckCircle, Shield, Play, Pause, Volume2 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
@@ -11,9 +11,10 @@ export default function TaxBreakdownPage() {
   const location = useLocation();
   const { userData, indemnityAmount = 5960.50, pixKeyType, pixKey, urlParams } = location.state || {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [countdown, setCountdown] = useState(32);
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
 
@@ -45,33 +46,41 @@ export default function TaxBreakdownPage() {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const audioTimer = setTimeout(() => {
       if (audioRef.current) {
-        audioRef.current.play().catch(err => console.log('Audio autoplay blocked:', err));
+        audioRef.current.volume = 0.3;
+        audioRef.current.play().catch((error) => {
+          console.log('Autoplay prevented:', error);
+        });
         setIsPlaying(true);
       }
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(audioTimer);
+    };
   }, []);
 
   useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => {
-        setCountdown(countdown - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setIsButtonEnabled(true);
-      setTimeout(() => {
-        if (buttonRef.current) {
-          buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 300);
-    }
-  }, [countdown]);
+    const audio = audioRef.current;
+    if (!audio) return;
 
-  const toggleAudio = () => {
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+    const handleEnded = () => setIsPlaying(false);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
+
+  const togglePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
@@ -82,8 +91,11 @@ export default function TaxBreakdownPage() {
     }
   };
 
-  const handleAudioEnded = () => {
-    setIsPlaying(false);
+  const formatTime = (time: number) => {
+    if (isNaN(time)) return '0:00';
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   const handleContinue = () => {
@@ -119,44 +131,63 @@ export default function TaxBreakdownPage() {
               CPF: {userData.cpf}
             </p>
 
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-4 mt-4 mx-auto max-w-md shadow-sm">
+            <div className="bg-gradient-to-br from-purple-50 to-white border border-purple-200 rounded-xl p-4 mt-4 mx-auto max-w-md shadow-sm animate-slide-up">
               <div className="flex items-center gap-3 mb-3">
-                <img
-                  src="/Screenshot_166.png"
-                  alt="Gerente"
-                  className="w-12 h-12 rounded-full object-cover border-2 border-purple-300"
-                />
+                <div className="w-12 h-12 flex-shrink-0">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
+                    <img
+                      src="/Screenshot_186.png"
+                      alt="Rafaela"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
                 <div className="text-left flex-1">
-                  <p className="font-semibold text-gray-900 text-sm">Rafaela</p>
-                  <p className="text-xs text-gray-600">Gerente de Crédito</p>
+                  <h3 className="text-base font-bold text-gray-900">
+                    Rafaela
+                  </h3>
+                  <p className="text-xs text-purple-700">
+                    Gerente de Crédito
+                  </p>
                 </div>
               </div>
 
               <div className="bg-white rounded-lg p-3 shadow-sm">
-                <audio
-                  ref={audioRef}
-                  src="https://audio.jukehost.co.uk/I29mBaNwha9tQ3H88bIoUbIydPLTwZwL"
-                  onEnded={handleAudioEnded}
-                  className="hidden"
-                />
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <button
-                    onClick={toggleAudio}
-                    className="w-10 h-10 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                    onClick={togglePlayPause}
+                    className="w-9 h-9 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
                   >
                     {isPlaying ? (
-                      <Pause className="w-5 h-5 text-white" fill="white" />
+                      <Pause className="w-4 h-4" />
                     ) : (
-                      <Play className="w-5 h-5 text-white" fill="white" />
+                      <Play className="w-4 h-4 ml-0.5" />
                     )}
                   </button>
-                  <div className="flex-1 bg-gray-200 rounded-full h-1.5 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 h-full bg-purple-600 rounded-full transition-all duration-300" style={{ width: isPlaying ? '50%' : '0%' }}></div>
+
+                  <div className="flex-1">
+                    <div className="relative w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-0.5">
+                      <div
+                        className="absolute h-full bg-purple-600 rounded-full transition-all duration-100"
+                        style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                      >
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full shadow-md"></div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500 mt-0.5">
+                      <span>{formatTime(currentTime)}</span>
+                      <span>{formatTime(duration)}</span>
+                    </div>
                   </div>
-                  <span className="text-xs text-gray-500 font-mono">0:16</span>
                 </div>
               </div>
             </div>
+
+            <audio
+              ref={audioRef}
+              src="https://audio.jukehost.co.uk/I29mBaNwha9tQ3H88bIoUbIydPLTwZwL"
+              preload="auto"
+            />
           </div>
 
           <div className="text-center mb-5 sm:mb-6 mt-8">
@@ -235,52 +266,25 @@ export default function TaxBreakdownPage() {
             </div>
           </div>
 
-          <div className="mb-5 animate-slide-up-security">
-            <div className="bg-blue-50 border-2 border-blue-400 rounded-xl p-4 mb-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Shield className="w-5 h-5 text-blue-600" />
-                <span className="text-blue-900 font-semibold text-sm">Validando segurança do pagamento...</span>
-              </div>
-              <div className="bg-white rounded-full h-2 overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-1000 ease-linear"
-                  style={{ width: `${((32 - countdown) / 32) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-
-            {!isButtonEnabled && (
-              <div className="bg-gray-100 border border-gray-300 rounded-xl p-4 flex items-center justify-center gap-3">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-600"></div>
-                <span className="text-gray-600 font-medium text-sm">Aguarde {countdown}s</span>
-              </div>
-            )}
-          </div>
 
           <div ref={buttonRef}>
             <button
               onClick={handleContinue}
-              disabled={!isButtonEnabled}
-              className={`w-full py-4 sm:py-5 px-6 rounded-lg font-semibold text-base sm:text-lg transition-all duration-200 shadow-md hover:shadow-lg animate-slide-up-button uppercase ${
-                isButtonEnabled
-                  ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white animate-button-pulse cursor-pointer'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
+              className="w-full py-4 sm:py-5 px-6 rounded-lg font-semibold text-base sm:text-lg transition-all duration-200 shadow-md hover:shadow-lg animate-slide-up-button uppercase bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white animate-button-pulse cursor-pointer"
             >
-              {isButtonEnabled ? 'Fazer Pagamento e Receber Empréstimo' : 'Aguarde a validação...'}
+              Fazer Pagamento e Receber Empréstimo
             </button>
           </div>
 
-          {isButtonEnabled && (
-            <div className="mt-5 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl p-5 shadow-sm animate-slide-up-security">
-              <div className="flex items-center gap-2 mb-3">
-                <Shield className="w-6 h-6 text-green-600" />
-                <h3 className="text-green-900 font-bold text-base">Pagamento 100% Seguro</h3>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-green-800 text-sm">Ambiente protegido por SSL</span>
+          <div className="mt-5 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl p-5 shadow-sm animate-slide-up-security">
+            <div className="flex items-center gap-2 mb-3">
+              <Shield className="w-6 h-6 text-green-600" />
+              <h3 className="text-green-900 font-bold text-base">Pagamento 100% Seguro</h3>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                <span className="text-green-800 text-sm">Ambiente protegido por SSL</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
@@ -296,7 +300,6 @@ export default function TaxBreakdownPage() {
                 </div>
               </div>
             </div>
-          )}
         </div>
       </main>
 
