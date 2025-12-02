@@ -183,7 +183,7 @@ export default function VSLPage() {
                 disabled={!isButtonEnabled}
                 className={`w-full text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl transition-all duration-300 uppercase ${
                   isButtonEnabled
-                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-1'
+                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-1 animate-pulse-subtle'
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
