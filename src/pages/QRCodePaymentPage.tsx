@@ -206,7 +206,7 @@ export default function QRCodePaymentPage() {
         <div className="w-full max-w-sm sm:max-w-md">
           <div className="text-center mb-5 sm:mb-6 animate-fade-in-down">
             <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
-              Pagamento das Taxas
+              Para receber seu empréstimo, efetue o pagamento
             </h1>
             <p className="text-sm text-gray-600">
               Escaneie o QR Code ou copie o código PIX
