@@ -182,7 +182,7 @@ export default function VSLPage() {
                 <div className="bg-purple-100 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-purple-900 font-semibold text-sm">Preparando seu empréstimo...</span>
+                    <span className="text-purple-900 font-semibold text-sm">Liberando seu empréstimo...</span>
                   </div>
                   <div className="bg-white rounded-full h-2 overflow-hidden">
                     <div
