@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertTriangle, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { AlertTriangle, Loader2, CheckCircle2, XCircle, Volume2 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
@@ -29,6 +29,8 @@ export default function Upsell1Page() {
   const [exibirErroFinal, setExibirErroFinal] = useState(false);
   const [mostrarTaxa, setMostrarTaxa] = useState(false);
   const [popupCalculandoProgress, setPopupCalculandoProgress] = useState(0);
+  const [showAudio, setShowAudio] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const handleMenuClick = () => setIsMenuOpen(!isMenuOpen);
   const handleMenuClose = () => setIsMenuOpen(false);
@@ -102,6 +104,15 @@ export default function Upsell1Page() {
           setTimeout(() => {
             setShowPopupTaxa(false);
             setMostrarTaxa(true);
+            setShowAudio(true);
+
+            setTimeout(() => {
+              if (audioRef.current) {
+                audioRef.current.play().catch(err => {
+                  console.log('Autoplay blocked:', err);
+                });
+              }
+            }, 2000);
           }, 300);
           return 100;
         }
@@ -252,6 +263,32 @@ export default function Upsell1Page() {
 
           {mostrarTaxa && (
             <div className="space-y-4 animate-fade-in">
+              {showAudio && (
+                <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl shadow-lg p-6 border-2 border-purple-200 animate-fade-in">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                      <Volume2 className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-gray-900">Mensagem Importante</h3>
+                      <p className="text-xs text-gray-600">Ouça a explicação completa</p>
+                    </div>
+                  </div>
+                  <audio
+                    ref={audioRef}
+                    controls
+                    className="w-full"
+                    style={{
+                      outline: 'none',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <source src="https://audio.jukehost.co.uk/pVutsGcgGTjg0ArHKrWGVShwHmFisCXW" type="audio/mpeg" />
+                    Seu navegador não suporta o elemento de áudio.
+                  </audio>
+                </div>
+              )}
+
               <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border-2 border-red-300">
                 <div className="mb-4">
                   <h3 className="text-base font-bold text-red-900 mb-3 uppercase">
