@@ -19,6 +19,8 @@ export default function UpsellPaymentPage() {
   const [transactionData, setTransactionData] = useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [paymentCompleted, setPaymentCompleted] = useState(false);
+  const [showPaymentButton, setShowPaymentButton] = useState(false);
+  const [countdown, setCountdown] = useState(60);
   const hasInitialized = useRef(false);
   const hasNavigated = useRef(false);
 
@@ -60,6 +62,21 @@ export default function UpsellPaymentPage() {
   const handleMenuClose = () => {
     setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setShowPaymentButton(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (hasInitialized.current) return;
@@ -332,12 +349,21 @@ export default function UpsellPaymentPage() {
             </ol>
           </div>
 
-          <button
-            onClick={handlePaymentComplete}
-            className="w-full py-3 px-4 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition-colors"
-          >
-            Já fiz o pagamento
-          </button>
+          {showPaymentButton ? (
+            <button
+              onClick={handlePaymentComplete}
+              className="w-full py-3 px-4 rounded-lg font-semibold bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+            >
+              Já fiz o pagamento
+            </button>
+          ) : (
+            <div className="w-full py-3 px-4 rounded-lg font-semibold bg-gray-300 text-gray-600 cursor-not-allowed text-center">
+              <div className="flex items-center justify-center gap-2">
+                <Clock className="w-5 h-5" />
+                <span>Aguarde {countdown}s para continuar</span>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
