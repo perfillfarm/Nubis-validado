@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, AlertCircle, CheckCircle2, Settings, CreditCard } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import UserLogsViewer from '../components/UserLogsViewer';
 import ReceiptsViewer from '../components/ReceiptsViewer';
@@ -204,98 +204,168 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 py-4 sm:py-8 px-4">
+      <div className="max-w-6xl mx-auto">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 sm:mb-6 transition-colors touch-manipulation"
+          className="group flex items-center gap-2 text-gray-600 hover:text-[#8A05BE] mb-6 sm:mb-8 transition-all duration-300 font-medium touch-manipulation"
         >
-          <ArrowLeft className="w-5 h-5" />
-          Voltar
+          <div className="p-2 rounded-lg bg-white shadow-sm group-hover:shadow-md group-hover:bg-[#8A05BE]/10 transition-all duration-300">
+            <ArrowLeft className="w-5 h-5" />
+          </div>
+          <span>Voltar ao início</span>
         </button>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
-            Configurações de Pagamento PIX
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">
-            Configure qual provedor de pagamento PIX será utilizado no sistema
-          </p>
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-6">
+          <div className="bg-gradient-to-r from-[#8A05BE] to-[#a020f0] p-6 sm:p-8">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                <Settings className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                  Configurações do Sistema
+                </h1>
+                <p className="text-white/90 mt-1">Gerencie provedores de pagamento e comprovantes</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 sm:p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2.5 bg-[#8A05BE]/10 rounded-lg">
+              <CreditCard className="w-6 h-6 text-[#8A05BE]" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+                Provedores de Pagamento PIX
+              </h2>
+              <p className="text-sm text-gray-600 mt-0.5">
+                Configure qual gateway será utilizado no sistema
+              </p>
+            </div>
+          </div>
 
           {error && (
-            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 sm:gap-3">
-              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm sm:text-base text-red-800">{error}</p>
+            <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-red-50/50 border-l-4 border-red-500 rounded-lg flex items-start gap-3 animate-in slide-in-from-top duration-300">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-red-900 mb-0.5">Erro</p>
+                <p className="text-sm text-red-800">{error}</p>
+              </div>
             </div>
           )}
 
           {success && (
-            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
-              <p className="text-sm sm:text-base text-green-800">{success}</p>
+            <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-green-50/50 border-l-4 border-green-500 rounded-lg flex items-start gap-3 animate-in slide-in-from-top duration-300">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-green-900 mb-0.5">Sucesso</p>
+                <p className="text-sm text-green-800">{success}</p>
+              </div>
             </div>
           )}
 
-          <div className="mb-6 sm:mb-8">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+          <div className="mb-8">
+            <label className="block text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+              <div className="w-1.5 h-5 bg-[#8A05BE] rounded-full"></div>
               Provedor Ativo
             </label>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
                 onClick={() => setActiveProvider('genesys')}
-                className={`flex-1 py-3 sm:py-4 px-4 sm:px-6 rounded-lg border-2 font-medium text-sm sm:text-base transition-all relative touch-manipulation ${
+                className={`group relative py-4 px-5 rounded-xl border-2 font-semibold text-sm transition-all duration-300 touch-manipulation overflow-hidden ${
                   activeProvider === 'genesys'
-                    ? 'border-[#8A05BE] bg-[#8A05BE]/10 text-[#8A05BE]'
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                    ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/10 to-[#8A05BE]/5 text-[#8A05BE] shadow-lg shadow-[#8A05BE]/20'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-[#8A05BE]/50 hover:shadow-md'
                 }`}
               >
-                Genesys
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <span className="text-base">Genesys</span>
+                  {activeProvider === 'genesys' && (
+                    <span className="flex items-center gap-1.5 text-xs font-medium">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      Ativo
+                    </span>
+                  )}
+                </div>
                 {activeProvider === 'genesys' && (
-                  <span className="absolute top-2 right-2 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#8A05BE]/5 to-transparent"></div>
                 )}
               </button>
               <button
                 onClick={() => setActiveProvider('mangofy')}
-                className={`flex-1 py-3 sm:py-4 px-4 sm:px-6 rounded-lg border-2 font-medium text-sm sm:text-base transition-all relative touch-manipulation ${
+                className={`group relative py-4 px-5 rounded-xl border-2 font-semibold text-sm transition-all duration-300 touch-manipulation overflow-hidden ${
                   activeProvider === 'mangofy'
-                    ? 'border-[#8A05BE] bg-[#8A05BE]/10 text-[#8A05BE]'
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                    ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/10 to-[#8A05BE]/5 text-[#8A05BE] shadow-lg shadow-[#8A05BE]/20'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-[#8A05BE]/50 hover:shadow-md'
                 }`}
               >
-                Mangofy
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <span className="text-base">Mangofy</span>
+                  {activeProvider === 'mangofy' && (
+                    <span className="flex items-center gap-1.5 text-xs font-medium">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      Ativo
+                    </span>
+                  )}
+                </div>
                 {activeProvider === 'mangofy' && (
-                  <span className="absolute top-2 right-2 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#8A05BE]/5 to-transparent"></div>
                 )}
               </button>
               <button
                 onClick={() => setActiveProvider('aureo')}
-                className={`flex-1 py-3 sm:py-4 px-4 sm:px-6 rounded-lg border-2 font-medium text-sm sm:text-base transition-all relative touch-manipulation ${
+                className={`group relative py-4 px-5 rounded-xl border-2 font-semibold text-sm transition-all duration-300 touch-manipulation overflow-hidden ${
                   activeProvider === 'aureo'
-                    ? 'border-[#8A05BE] bg-[#8A05BE]/10 text-[#8A05BE]'
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                    ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/10 to-[#8A05BE]/5 text-[#8A05BE] shadow-lg shadow-[#8A05BE]/20'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-[#8A05BE]/50 hover:shadow-md'
                 }`}
               >
-                Aureo
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <span className="text-base">Aureo</span>
+                  {activeProvider === 'aureo' && (
+                    <span className="flex items-center gap-1.5 text-xs font-medium">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      Ativo
+                    </span>
+                  )}
+                </div>
                 {activeProvider === 'aureo' && (
-                  <span className="absolute top-2 right-2 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full animate-pulse"></span>
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#8A05BE]/5 to-transparent"></div>
                 )}
               </button>
             </div>
           </div>
 
-          <div className="space-y-4 sm:space-y-6 md:space-y-8">
+          <div className="space-y-6">
             <div
-              className={`p-4 sm:p-5 md:p-6 rounded-lg border-2 transition-all ${
+              className={`p-6 rounded-xl border-2 transition-all duration-300 ${
                 activeProvider === 'genesys'
-                  ? 'border-[#8A05BE] bg-[#8A05BE]/10'
-                  : 'border-gray-200 bg-gray-50'
+                  ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/5 to-transparent shadow-lg'
+                  : 'border-gray-200 bg-gray-50/50'
               }`}
             >
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
-                Configuração Genesys
-              </h2>
-              <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <div className={`w-1 h-6 rounded-full ${
+                    activeProvider === 'genesys' ? 'bg-[#8A05BE]' : 'bg-gray-300'
+                  }`}></div>
+                  Configuração Genesys
+                </h2>
+                {activeProvider === 'genesys' && (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                    PROVEDOR ATIVO
+                  </span>
+                )}
+              </div>
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     URL da API
                   </label>
                   <input
@@ -305,11 +375,11 @@ export default function SettingsPage() {
                       handleInputChange('genesys', 'api_url', e.target.value)
                     }
                     placeholder="https://api.genesys.com"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     API Secret
                   </label>
                   <input
@@ -319,25 +389,35 @@ export default function SettingsPage() {
                       handleInputChange('genesys', 'api_key', e.target.value)
                     }
                     placeholder="Sua API Secret da Genesys"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
               </div>
             </div>
 
             <div
-              className={`p-4 sm:p-5 md:p-6 rounded-lg border-2 transition-all ${
+              className={`p-6 rounded-xl border-2 transition-all duration-300 ${
                 activeProvider === 'mangofy'
-                  ? 'border-[#8A05BE] bg-[#8A05BE]/10'
-                  : 'border-gray-200 bg-gray-50'
+                  ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/5 to-transparent shadow-lg'
+                  : 'border-gray-200 bg-gray-50/50'
               }`}
             >
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
-                Configuração Mangofy
-              </h2>
-              <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <div className={`w-1 h-6 rounded-full ${
+                    activeProvider === 'mangofy' ? 'bg-[#8A05BE]' : 'bg-gray-300'
+                  }`}></div>
+                  Configuração Mangofy
+                </h2>
+                {activeProvider === 'mangofy' && (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                    PROVEDOR ATIVO
+                  </span>
+                )}
+              </div>
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     URL da API
                   </label>
                   <input
@@ -347,11 +427,11 @@ export default function SettingsPage() {
                       handleInputChange('mangofy', 'api_url', e.target.value)
                     }
                     placeholder="https://checkout.mangofy.com.br"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     API Key (Authorization)
                   </label>
                   <input
@@ -361,11 +441,11 @@ export default function SettingsPage() {
                       handleInputChange('mangofy', 'api_key', e.target.value)
                     }
                     placeholder="Sua API Key da Mangofy"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Store Code
                   </label>
                   <input
@@ -375,25 +455,35 @@ export default function SettingsPage() {
                       handleInputChange('mangofy', 'store_code', e.target.value)
                     }
                     placeholder="Código da sua loja na Mangofy"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
               </div>
             </div>
 
             <div
-              className={`p-4 sm:p-5 md:p-6 rounded-lg border-2 transition-all ${
+              className={`p-6 rounded-xl border-2 transition-all duration-300 ${
                 activeProvider === 'aureo'
-                  ? 'border-[#8A05BE] bg-[#8A05BE]/10'
-                  : 'border-gray-200 bg-gray-50'
+                  ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/5 to-transparent shadow-lg'
+                  : 'border-gray-200 bg-gray-50/50'
               }`}
             >
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
-                Configuração Aureo
-              </h2>
-              <div className="space-y-3 sm:space-y-4">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <div className={`w-1 h-6 rounded-full ${
+                    activeProvider === 'aureo' ? 'bg-[#8A05BE]' : 'bg-gray-300'
+                  }`}></div>
+                  Configuração Aureo
+                </h2>
+                {activeProvider === 'aureo' && (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                    PROVEDOR ATIVO
+                  </span>
+                )}
+              </div>
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     URL da API
                   </label>
                   <input
@@ -403,11 +493,11 @@ export default function SettingsPage() {
                       handleInputChange('aureo', 'api_url', e.target.value)
                     }
                     placeholder="https://api.aureolink.com.br"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Chave Pública (Public Key)
                   </label>
                   <input
@@ -417,11 +507,11 @@ export default function SettingsPage() {
                       handleInputChange('aureo', 'public_key', e.target.value)
                     }
                     placeholder="Sua chave pública da Aureo"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Chave Secreta (Secret Key)
                   </label>
                   <input
@@ -431,28 +521,32 @@ export default function SettingsPage() {
                       handleInputChange('aureo', 'secret_key', e.target.value)
                     }
                     placeholder="Sua chave secreta da Aureo"
-                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent touch-manipulation"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row sm:justify-end">
+          <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row sm:justify-end gap-3">
             <button
               onClick={handleSave}
               disabled={saving}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#8A05BE] text-white px-6 sm:px-8 py-3 sm:py-3 text-sm sm:text-base rounded-lg font-semibold hover:bg-[#8A05BE]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+              className="group relative w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-[#8A05BE] to-[#a020f0] text-white px-8 py-3.5 text-sm font-bold rounded-xl hover:shadow-lg hover:shadow-[#8A05BE]/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none touch-manipulation overflow-hidden"
             >
-              <Save className="w-4 h-4 sm:w-5 sm:h-5" />
-              {saving ? 'Salvando...' : 'Salvar Configurações'}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#a020f0] to-[#8A05BE] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <Save className={`w-5 h-5 relative z-10 ${saving ? 'animate-spin' : ''}`} />
+              <span className="relative z-10">
+                {saving ? 'Salvando...' : 'Salvar Configurações'}
+              </span>
             </button>
           </div>
         </div>
+      </div>
 
-        <ReceiptsViewer />
+      <ReceiptsViewer />
 
-        <UserLogsViewer />
+      <UserLogsViewer />
       </div>
     </div>
   );

@@ -190,12 +190,16 @@ export default function ReceiptsViewer() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mt-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Comprovantes de Pagamento
-        </h2>
-        <div className="flex items-center justify-center py-12">
-          <div className="w-12 h-12 border-4 border-[#8A05BE] border-t-transparent rounded-full animate-spin"></div>
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mt-6">
+        <div className="bg-gradient-to-r from-gray-50 to-white p-6 border-b border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <FileImage className="w-6 h-6 text-[#8A05BE]" />
+            Comprovantes de Pagamento
+          </h2>
+        </div>
+        <div className="flex flex-col items-center justify-center py-16">
+          <div className="w-16 h-16 border-4 border-[#8A05BE] border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-gray-600 font-medium">Carregando comprovantes...</p>
         </div>
       </div>
     );
@@ -203,12 +207,18 @@ export default function ReceiptsViewer() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 mt-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Comprovantes de Pagamento
-        </h2>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800">{error}</p>
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mt-6">
+        <div className="bg-gradient-to-r from-gray-50 to-white p-6 border-b border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <FileImage className="w-6 h-6 text-[#8A05BE]" />
+            Comprovantes de Pagamento
+          </h2>
+        </div>
+        <div className="p-6">
+          <div className="bg-gradient-to-r from-red-50 to-red-50/50 border-l-4 border-red-500 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <p className="text-red-800 font-medium">{error}</p>
+          </div>
         </div>
       </div>
     );
@@ -230,51 +240,57 @@ export default function ReceiptsViewer() {
 
   return (
     <>
-      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 mt-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              Comprovantes de Pagamento
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              {filteredReceipts.length} de {receipts.length} comprovante{receipts.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors relative"
-            >
-              <Filter className="w-4 h-4" />
-              Filtros
-              {getActiveFiltersCount() > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#8A05BE] text-white text-xs rounded-full flex items-center justify-center">
-                  {getActiveFiltersCount()}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={exportToCSV}
-              disabled={filteredReceipts.length === 0}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#8A05BE] rounded-lg hover:bg-[#8A05BE]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Download className="w-4 h-4" />
-              Exportar
-            </button>
-            <button
-              onClick={loadReceipts}
-              className="px-4 py-2 text-sm font-medium text-[#8A05BE] hover:bg-[#8A05BE]/10 rounded-lg transition-colors"
-            >
-              Atualizar
-            </button>
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mt-6">
+        <div className="bg-gradient-to-r from-gray-50 to-white p-6 border-b border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <FileImage className="w-6 h-6 text-[#8A05BE]" />
+                Comprovantes de Pagamento
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                <span className="font-semibold text-[#8A05BE]">{filteredReceipts.length}</span> de <span className="font-semibold">{receipts.length}</span> comprovante{receipts.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:border-[#8A05BE] hover:bg-[#8A05BE]/5 transition-all duration-200 relative"
+              >
+                <Filter className="w-4 h-4" />
+                Filtros
+                {getActiveFiltersCount() > 0 && (
+                  <span className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-[#8A05BE] to-[#a020f0] text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                    {getActiveFiltersCount()}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={exportToCSV}
+                disabled={filteredReceipts.length === 0}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#8A05BE] to-[#a020f0] rounded-xl hover:shadow-lg hover:shadow-[#8A05BE]/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
+              >
+                <Download className="w-4 h-4" />
+                Exportar
+              </button>
+              <button
+                onClick={loadReceipts}
+                className="p-2.5 text-[#8A05BE] hover:bg-[#8A05BE]/10 rounded-xl transition-all duration-200"
+                title="Atualizar"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
         {showFilters && (
-          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="p-6 bg-gradient-to-br from-gray-50 to-white border-b border-gray-100 animate-in slide-in-from-top duration-300">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Buscar
                 </label>
                 <div className="relative">
@@ -284,19 +300,19 @@ export default function ReceiptsViewer() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Nome, CPF ou ID"
-                    className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2.5 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Status
                 </label>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                  className="w-full px-3 py-2.5 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200"
                 >
                   <option value="all">Todos</option>
                   <option value="pending_receipt">Aguardando Comprovante</option>
@@ -306,7 +322,7 @@ export default function ReceiptsViewer() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Data Início
                 </label>
                 <div className="relative">
@@ -315,13 +331,13 @@ export default function ReceiptsViewer() {
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2.5 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Data Fim
                 </label>
                 <div className="relative">
@@ -330,7 +346,7 @@ export default function ReceiptsViewer() {
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                    className="w-full pl-10 pr-3 py-2.5 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200"
                   />
                 </div>
               </div>
@@ -340,213 +356,227 @@ export default function ReceiptsViewer() {
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-[#8A05BE] hover:underline font-medium"
+                  className="px-4 py-2 text-sm text-[#8A05BE] hover:bg-[#8A05BE]/10 rounded-lg font-semibold transition-all duration-200"
                 >
-                  Limpar filtros
+                  Limpar todos os filtros
                 </button>
               </div>
             )}
           </div>
         )}
 
-        {receipts.length === 0 ? (
-          <div className="text-center py-12">
-            <FileImage className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600">Nenhum comprovante encontrado</p>
-          </div>
-        ) : filteredReceipts.length === 0 ? (
-          <div className="text-center py-12">
-            <AlertCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600">Nenhum resultado para os filtros aplicados</p>
-            <button
-              onClick={clearFilters}
-              className="mt-4 text-sm text-[#8A05BE] hover:underline font-medium"
-            >
-              Limpar filtros
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="space-y-3 sm:space-y-4">
-              {paginatedReceipts.map((receipt) => {
-              const status = getStatusBadge(receipt.status);
-              const StatusIcon = status.icon;
-              const isExpanded = expandedReceipt === receipt.id;
-
-              return (
-                <div
-                  key={receipt.id}
-                  className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
-                >
-                  <button
-                    onClick={() => toggleExpand(receipt.id)}
-                    className="w-full p-4 sm:p-5 flex items-center justify-between hover:bg-gray-50 transition-colors text-left"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
-                        <h3 className="font-bold text-gray-900 text-base sm:text-lg">
-                          {receipt.customer_name || 'Cliente'}
-                        </h3>
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.color} w-fit`}>
-                          <StatusIcon className="w-3.5 h-3.5" />
-                          {status.text}
-                        </span>
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-gray-600">
-                        <span>CPF: {formatCPF(receipt.cpf)}</span>
-                        <span className="hidden sm:inline">•</span>
-                        <span>Valor: {formatCurrency(Number(receipt.amount))}</span>
-                        <span className="hidden sm:inline">•</span>
-                        <span>{formatDate(receipt.created_at)}</span>
-                      </div>
-                    </div>
-                    {isExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2" />
-                    )}
-                  </button>
-
-                  {isExpanded && (
-                    <div className="border-t border-gray-200 p-4 sm:p-5 bg-gray-50">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <p className="text-xs sm:text-sm text-gray-600 mb-1">ID da Transação</p>
-                          <p className="text-xs sm:text-sm font-mono text-gray-900 break-all">
-                            {receipt.transaction_id}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs sm:text-sm text-gray-600 mb-1">Data de Upload</p>
-                          <p className="text-xs sm:text-sm text-gray-900">
-                            {formatDate(receipt.receipt_uploaded_at)}
-                          </p>
-                        </div>
-                        {receipt.verified_at && (
-                          <div>
-                            <p className="text-xs sm:text-sm text-gray-600 mb-1">Verificado em</p>
-                            <p className="text-xs sm:text-sm text-gray-900">
-                              {formatDate(receipt.verified_at)}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-
-                      {receipt.admin_notes && (
-                        <div className="mb-4">
-                          <p className="text-xs sm:text-sm text-gray-600 mb-1">Notas do Admin</p>
-                          <p className="text-xs sm:text-sm text-gray-900 bg-white p-3 rounded border border-gray-200">
-                            {receipt.admin_notes}
-                          </p>
-                        </div>
-                      )}
-
-                      {receipt.receipt_image_url ? (
-                        <div>
-                          <p className="text-xs sm:text-sm text-gray-600 mb-2">Comprovante</p>
-                          <div className="relative group">
-                            <img
-                              src={receipt.receipt_image_url}
-                              alt="Comprovante"
-                              className="w-full max-w-md rounded-lg border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
-                              onClick={() => setImageModal(receipt.receipt_image_url)}
-                            />
-                            <button
-                              onClick={() => setImageModal(receipt.receipt_image_url)}
-                              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg"
-                            >
-                              <span className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                                Clique para ampliar
-                              </span>
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <FileImage className="w-4 h-4" />
-                          <span>Sem comprovante anexado</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {totalPages > 1 && (
-            <div className="mt-6 flex items-center justify-between border-t pt-4">
-              <p className="text-sm text-gray-600">
-                Página {currentPage} de {totalPages}
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Anterior
-                </button>
-                <div className="hidden sm:flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 5) {
-                      pageNum = i + 1;
-                    } else if (currentPage <= 3) {
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      pageNum = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setCurrentPage(pageNum)}
-                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                          currentPage === pageNum
-                            ? 'bg-[#8A05BE] text-white'
-                            : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                </div>
-                <button
-                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Próximo
-                </button>
+        <div className="p-6">
+          {receipts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <FileImage className="w-10 h-10 text-gray-400" />
               </div>
+              <p className="text-gray-600 font-medium text-lg">Nenhum comprovante encontrado</p>
+              <p className="text-gray-500 text-sm mt-2">Os comprovantes aparecerão aqui quando forem enviados</p>
             </div>
+          ) : filteredReceipts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-yellow-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-10 h-10 text-yellow-500" />
+              </div>
+              <p className="text-gray-900 font-semibold text-lg mb-2">Nenhum resultado encontrado</p>
+              <p className="text-gray-600 text-sm mb-4">Tente ajustar os filtros para encontrar o que procura</p>
+              <button
+                onClick={clearFilters}
+                className="px-6 py-2.5 text-sm text-white bg-gradient-to-r from-[#8A05BE] to-[#a020f0] rounded-xl font-semibold hover:shadow-lg hover:shadow-[#8A05BE]/30 transition-all duration-200"
+              >
+                Limpar filtros
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-3">
+                {paginatedReceipts.map((receipt) => {
+                  const status = getStatusBadge(receipt.status);
+                  const StatusIcon = status.icon;
+                  const isExpanded = expandedReceipt === receipt.id;
+
+                  return (
+                    <div
+                      key={receipt.id}
+                      className="group border-2 border-gray-100 rounded-xl overflow-hidden hover:border-[#8A05BE]/30 hover:shadow-lg transition-all duration-300"
+                    >
+                      <button
+                        onClick={() => toggleExpand(receipt.id)}
+                        className="w-full p-5 flex items-center justify-between hover:bg-gray-50/50 transition-all duration-200 text-left"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                            <h3 className="font-bold text-gray-900 text-base sm:text-lg group-hover:text-[#8A05BE] transition-colors">
+                              {receipt.customer_name || 'Cliente'}
+                            </h3>
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${status.color} w-fit`}>
+                              <StatusIcon className="w-3.5 h-3.5" />
+                              {status.text}
+                            </span>
+                          </div>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-gray-600">
+                            <span className="font-medium">CPF: <span className="font-normal">{formatCPF(receipt.cpf)}</span></span>
+                            <span className="hidden sm:inline text-gray-300">•</span>
+                            <span className="font-medium">Valor: <span className="font-semibold text-[#8A05BE]">{formatCurrency(Number(receipt.amount))}</span></span>
+                            <span className="hidden sm:inline text-gray-300">•</span>
+                            <span className="text-gray-500">{formatDate(receipt.created_at)}</span>
+                          </div>
+                        </div>
+                        <div className={`p-2 rounded-lg transition-all duration-200 ${isExpanded ? 'bg-[#8A05BE]/10' : 'group-hover:bg-gray-100'}`}>
+                          {isExpanded ? (
+                            <ChevronUp className="w-5 h-5 text-[#8A05BE] flex-shrink-0" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                          )}
+                        </div>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="border-t border-gray-100 p-5 bg-gradient-to-br from-gray-50 to-white animate-in slide-in-from-top duration-300">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div className="p-3 bg-white rounded-lg border border-gray-100">
+                              <p className="text-xs font-semibold text-gray-600 mb-1.5">ID da Transação</p>
+                              <p className="text-xs font-mono text-gray-900 break-all">
+                                {receipt.transaction_id}
+                              </p>
+                            </div>
+                            <div className="p-3 bg-white rounded-lg border border-gray-100">
+                              <p className="text-xs font-semibold text-gray-600 mb-1.5">Data de Upload</p>
+                              <p className="text-xs font-medium text-gray-900">
+                                {formatDate(receipt.receipt_uploaded_at)}
+                              </p>
+                            </div>
+                            {receipt.verified_at && (
+                              <div className="p-3 bg-green-50 rounded-lg border border-green-100">
+                                <p className="text-xs font-semibold text-green-700 mb-1.5">Verificado em</p>
+                                <p className="text-xs font-medium text-green-900">
+                                  {formatDate(receipt.verified_at)}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+
+                          {receipt.admin_notes && (
+                            <div className="mb-4">
+                              <p className="text-xs font-semibold text-gray-700 mb-2">Notas do Admin</p>
+                              <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-lg">
+                                <p className="text-sm text-blue-900">
+                                  {receipt.admin_notes}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {receipt.receipt_image_url ? (
+                            <div>
+                              <p className="text-xs font-semibold text-gray-700 mb-3">Comprovante</p>
+                              <div className="relative group">
+                                <img
+                                  src={receipt.receipt_image_url}
+                                  alt="Comprovante"
+                                  className="w-full max-w-md rounded-xl border-2 border-gray-200 cursor-pointer hover:border-[#8A05BE] transition-all duration-200 shadow-sm hover:shadow-lg"
+                                  onClick={() => setImageModal(receipt.receipt_image_url)}
+                                />
+                                <button
+                                  onClick={() => setImageModal(receipt.receipt_image_url)}
+                                  className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 rounded-xl"
+                                >
+                                  <span className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
+                                    🔍 Clique para ampliar
+                                  </span>
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-100 p-3 rounded-lg">
+                              <FileImage className="w-4 h-4" />
+                              <span>Sem comprovante anexado</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-200">
+                  <p className="text-sm text-gray-600 font-medium">
+                    Página <span className="text-[#8A05BE] font-bold">{currentPage}</span> de <span className="font-semibold">{totalPages}</span>
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:border-[#8A05BE] hover:bg-[#8A05BE]/5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white transition-all duration-200"
+                    >
+                      Anterior
+                    </button>
+                    <div className="hidden sm:flex items-center gap-1">
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let pageNum;
+                        if (totalPages <= 5) {
+                          pageNum = i + 1;
+                        } else if (currentPage <= 3) {
+                          pageNum = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          pageNum = totalPages - 4 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setCurrentPage(pageNum)}
+                            className={`min-w-[40px] px-3 py-2 text-sm font-bold rounded-xl transition-all duration-200 ${
+                              currentPage === pageNum
+                                ? 'bg-gradient-to-r from-[#8A05BE] to-[#a020f0] text-white shadow-lg shadow-[#8A05BE]/30'
+                                : 'text-gray-700 bg-white border-2 border-gray-200 hover:border-[#8A05BE] hover:bg-[#8A05BE]/5'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:border-[#8A05BE] hover:bg-[#8A05BE]/5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white transition-all duration-200"
+                    >
+                      Próximo
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
-          </>
-        )}
+        </div>
       </div>
 
       {imageModal && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
           onClick={() => setImageModal(null)}
         >
-          <div className="relative max-w-4xl w-full">
+          <div className="relative max-w-4xl w-full animate-in zoom-in duration-300">
             <button
               onClick={() => setImageModal(null)}
-              className="absolute -top-12 right-0 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+              className="absolute -top-14 right-0 w-12 h-12 bg-white hover:bg-red-500 rounded-full flex items-center justify-center transition-all duration-200 shadow-xl group"
             >
-              <X className="w-6 h-6 text-gray-900" />
+              <X className="w-6 h-6 text-gray-900 group-hover:text-white transition-colors" />
             </button>
-            <img
-              src={imageModal}
-              alt="Comprovante ampliado"
-              className="w-full h-auto rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className="bg-white p-2 rounded-2xl shadow-2xl">
+              <img
+                src={imageModal}
+                alt="Comprovante ampliado"
+                className="w-full h-auto rounded-xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
         </div>
       )}
