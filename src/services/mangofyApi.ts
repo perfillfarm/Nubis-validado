@@ -15,6 +15,7 @@ export interface CreateMangofyTransactionRequest {
   cpf: string;
   amount: number;
   pixKey: string;
+  productName?: string;
   customerName?: string;
   customerEmail?: string;
   customerPhone?: string;
@@ -71,6 +72,7 @@ export async function createMangofyTransaction(
           cpf: data.cpf,
           amount: data.amount,
           pixKey: data.pixKey,
+          productName: data.productName,
           customerName: data.customerName,
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone,

@@ -2,11 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 import { createTransaction as createGenesysTransaction, getTransactionStatus as getGenesysTransactionStatus, type CreateTransactionRequest, type Transaction } from './genesysApi';
 import { createMangofyTransaction, getMangofyTransactionStatus, type MangofyConfig } from './mangofyApi';
 import { createAureoTransaction, getAureoTransactionStatus, type AureoConfig } from './aureoApi';
+import { getNextProductName } from '../utils/productNameRotation';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
+
+export { supabase };
 
 export interface PixProviderSettings {
   id: string;
@@ -42,8 +45,12 @@ export async function createTransaction(data: CreateTransactionRequest, options?
 
   console.log('Using PIX provider:', provider.provider);
 
+  const productName = await getNextProductName();
+  console.log('✓ Product name for transaction:', productName);
+
   const transactionData = {
     ...data,
+    productName: productName,
     createReceipt: options?.createReceipt !== false,
   };
 

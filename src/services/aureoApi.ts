@@ -45,7 +45,7 @@ export async function createAureoTransaction(
       externalRef: `pix_${objectId}`,
       items: [
         {
-          title: 'Desafio 30 dias',
+          title: data.productName || 'Produto Digital',
           quantity: 1,
           tangible: false,
           unitPrice: amountInCents,

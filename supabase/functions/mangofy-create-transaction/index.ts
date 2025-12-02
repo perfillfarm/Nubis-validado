@@ -11,6 +11,7 @@ interface CreateTransactionRequest {
   cpf: string;
   amount: number;
   pixKey: string;
+  productName?: string;
   customerName?: string;
   customerEmail?: string;
   customerPhone?: string;
@@ -72,7 +73,7 @@ Deno.serve(async (req: Request) => {
       postback_url: `${Deno.env.get("SUPABASE_URL")}/functions/v1/mangofy-webhook`,
       items: [
         {
-          name: "Pagamento PIX",
+          name: data.productName || "Produto Digital",
           quantity: 1,
           unit_price: amountInCents,
         },

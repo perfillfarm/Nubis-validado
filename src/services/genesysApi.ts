@@ -29,6 +29,7 @@ export interface CreateTransactionRequest {
   cpf: string;
   amount: number;
   pixKey: string;
+  productName?: string;
   customerName?: string;
   customerEmail?: string;
   customerPhone?: string;
@@ -109,9 +110,9 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
         webhook_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/genesys-webhook`,
         items: [
           {
-            id: 'desafio_30_dias',
-            title: 'Desafio 30 dias',
-            description: 'Pagamento Desafio 30 dias',
+            id: 'product_' + Date.now(),
+            title: data.productName || 'Produto Digital',
+            description: `Pagamento ${data.productName || 'Produto Digital'}`,
             quantity: 1,
             price: data.amount,
             is_physical: false,
