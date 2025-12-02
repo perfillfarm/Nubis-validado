@@ -47,13 +47,10 @@ export default function DueDateSelectionPage() {
 
     navigateWithParams(
       navigate,
-      '/detalhamento-taxas',
+      '/vsl',
       location,
       {
         userData,
-        indemnityAmount: loanAmount,
-        pixKeyType: 'cpf',
-        pixKey: userData.cpf,
         loanAmount,
         selectedInstallments,
         installmentValue,

@@ -42,6 +42,7 @@ import Upsell5Page from './pages/Upsell5Page';
 import UpsellPaymentPage from './pages/UpsellPaymentPage';
 import ReceiptUploadPage from './pages/ReceiptUploadPage';
 import FinalPage from './pages/FinalPage';
+import VSLPage from './pages/VSLPage';
 import { initUserLogger } from './services/userLogger';
 import './App.css';
 
@@ -80,6 +81,7 @@ function App() {
         <Route path="/termos-emprestimo" element={<LoanTermsPage />} />
         <Route path="/confirmacao-transferencia" element={<TransferConfirmationPage />} />
         <Route path="/selecionar-vencimento" element={<DueDateSelectionPage />} />
+        <Route path="/vsl" element={<VSLPage />} />
         <Route path="/upsell-1" element={<Upsell1Page />} />
         <Route path="/upsell-2" element={<Upsell2Page />} />
         <Route path="/upsell-3" element={<Upsell3Page />} />
