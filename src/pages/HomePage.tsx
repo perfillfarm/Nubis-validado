@@ -10,6 +10,7 @@ import BackRedirect from '../components/BackRedirect';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { navigateWithParams } from '../utils/urlParams';
+import { trackViewContent } from '../utils/facebookPixel';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,13 +21,10 @@ const HomePage: React.FC = () => {
   const buttonAnimation = useScrollAnimation();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'ViewContent', {
-        content_name: 'Home Page',
-        content_category: 'Landing Page',
-      });
-      console.log('Facebook Pixel: ViewContent event fired');
-    }
+    trackViewContent({
+      content_name: 'Home Page',
+      content_category: 'Landing Page',
+    });
   }, []);
 
   const handleCPFSubmit = async (cpf: string) => {

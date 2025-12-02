@@ -79,3 +79,42 @@ export const trackAddToCart = (params: InitiateCheckoutParams): void => {
     console.warn('Facebook Pixel not initialized');
   }
 };
+
+export interface ViewContentParams {
+  content_name?: string;
+  content_category?: string;
+  content_ids?: string[];
+  content_type?: string;
+  value?: number;
+  currency?: string;
+}
+
+export const trackViewContent = (params: ViewContentParams): void => {
+  if (typeof window !== 'undefined' && window.fbq) {
+    if (!window._fbqTrackedEvents) {
+      window._fbqTrackedEvents = new Set();
+    }
+
+    const eventKey = `viewcontent_${params.content_name || params.content_category}`;
+
+    if (window._fbqTrackedEvents.has(eventKey)) {
+      console.log('Facebook Pixel - ViewContent already tracked, skipping:', eventKey);
+      return;
+    }
+
+    const eventParams = {
+      content_name: params.content_name,
+      content_category: params.content_category,
+      content_ids: params.content_ids,
+      content_type: params.content_type,
+      value: params.value,
+      currency: params.currency || 'BRL',
+    };
+
+    console.log('Facebook Pixel - ViewContent:', eventParams);
+    window.fbq('track', 'ViewContent', eventParams);
+    window._fbqTrackedEvents.add(eventKey);
+  } else {
+    console.warn('Facebook Pixel not initialized');
+  }
+};
