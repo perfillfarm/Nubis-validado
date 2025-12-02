@@ -1,6 +1,7 @@
 declare global {
   interface Window {
     fbq?: (track: string, event: string, params?: Record<string, any>) => void;
+    _fbqTrackedEvents?: Set<string>;
   }
 }
 
@@ -33,6 +34,17 @@ export const trackInitiateCheckout = (params: InitiateCheckoutParams): void => {
 
 export const trackPurchase = (params: InitiateCheckoutParams): void => {
   if (typeof window !== 'undefined' && window.fbq) {
+    if (!window._fbqTrackedEvents) {
+      window._fbqTrackedEvents = new Set();
+    }
+
+    const eventKey = `purchase_${params.value}_${params.content_name || params.content_type}`;
+
+    if (window._fbqTrackedEvents.has(eventKey)) {
+      console.log('Facebook Pixel - Purchase already tracked, skipping:', eventKey);
+      return;
+    }
+
     const eventParams = {
       value: params.value,
       currency: params.currency || 'BRL',
@@ -44,6 +56,7 @@ export const trackPurchase = (params: InitiateCheckoutParams): void => {
 
     console.log('Facebook Pixel - Purchase:', eventParams);
     window.fbq('track', 'Purchase', eventParams);
+    window._fbqTrackedEvents.add(eventKey);
   } else {
     console.warn('Facebook Pixel not initialized');
   }
