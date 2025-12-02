@@ -301,7 +301,7 @@ export default function Upsell1Page() {
                   onClick={handleCalcularTaxa}
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  CALCULAR TAXA
+                  CONFIRMAR VERIFICAÇÃO
                 </button>
               )}
             </div>
