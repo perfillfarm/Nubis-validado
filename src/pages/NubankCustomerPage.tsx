@@ -10,13 +10,22 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function NubankCustomerPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams, profileAnswers, loanPriority } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, urlParams, profileAnswers, loanPriority } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
-    }
+      return;
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/nubank-customer'
+    });
+  }
   }, [navigate, userData]);
 
   if (!userData) {

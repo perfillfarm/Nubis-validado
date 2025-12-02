@@ -9,14 +9,23 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function InstallmentSelectionPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, loanAmount = 4600.00, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, loanAmount = 4600.00, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [selectedInstallments, setSelectedInstallments] = useState(60);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
-    }
+      return;
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/installment-selection'
+    });
+  }
   }, [navigate, userData]);
 
   if (!userData) {

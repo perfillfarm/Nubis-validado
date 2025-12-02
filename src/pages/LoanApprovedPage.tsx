@@ -10,7 +10,9 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function LoanApprovedPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const firstName = userData?.nome ? userData.nome.split(' ')[0] : 'Usuário';
   const [isPlaying, setIsPlaying] = useState(false);
@@ -25,7 +27,13 @@ export default function LoanApprovedPage() {
     if (!userData) {
       navigate('/');
       return;
-    }
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/loan-approved'
+    });
+  }
 
     const audioTimer = setTimeout(() => {
       if (audioRef.current) {

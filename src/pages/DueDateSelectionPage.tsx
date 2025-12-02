@@ -10,14 +10,23 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function DueDateSelectionPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, loanAmount, selectedInstallments, installmentValue, protocol, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, loanAmount, selectedInstallments, installmentValue, protocol, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
-    }
+      return;
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/due-date-selection'
+    });
+  }
   }, [navigate, userData]);
 
   if (!userData) {

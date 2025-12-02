@@ -10,7 +10,9 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function TransferConfirmationPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, loanAmount, selectedInstallments, installmentValue, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, loanAmount, selectedInstallments, installmentValue, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [protocol] = useState(() => {
     return Math.random().toString(36).substring(2, 15).toUpperCase();
   });
@@ -26,7 +28,14 @@ export default function TransferConfirmationPage() {
   useEffect(() => {
     if (!userData) {
       navigate('/');
-    }
+      return;
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/transfer-confirmation'
+    });
+  }
   }, [navigate, userData]);
 
   if (!userData) {

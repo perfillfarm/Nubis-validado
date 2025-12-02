@@ -15,7 +15,9 @@ const supabase = createClient(
 export default function PaymentVerificationPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, pixKeyType, pixKey, urlParams, transactionId } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, pixKeyType, pixKey, urlParams, transactionId } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [receiptChecked, setReceiptChecked] = useState(false);
   const [isFirstPayment, setIsFirstPayment] = useState(false);
 

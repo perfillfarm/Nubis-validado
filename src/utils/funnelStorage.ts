@@ -17,6 +17,7 @@ export const saveFunnelData = (data: Partial<FunnelData>) => {
     const existing = getFunnelData();
     const updated = { ...existing, ...data };
     localStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(updated));
+    console.log('✓ Funnel data saved:', updated);
 
     if (data.userData) {
       sessionStorage.setItem('userData', JSON.stringify(data.userData));
@@ -30,8 +31,11 @@ export const getFunnelData = (): FunnelData => {
   try {
     const data = localStorage.getItem(FUNNEL_STORAGE_KEY);
     if (data) {
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      console.log('✓ Funnel data loaded:', parsed);
+      return parsed;
     }
+    console.log('⚠ No funnel data found in localStorage');
   } catch (error) {
     console.error('Error loading funnel data:', error);
   }

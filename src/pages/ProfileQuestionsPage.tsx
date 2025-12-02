@@ -10,7 +10,9 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function ProfileQuestionsPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,7 +20,13 @@ export default function ProfileQuestionsPage() {
   useEffect(() => {
     if (!userData) {
       navigate('/');
+      return;
     }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/perguntas-perfil'
+    });
   }, [navigate, userData]);
 
   if (!userData) {

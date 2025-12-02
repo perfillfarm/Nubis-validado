@@ -10,7 +10,10 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function AccountVerifiedPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount: stateIndemnityAmount, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
+  const indemnityAmount = stateIndemnityAmount || 7854.63;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleContinue = () => {
@@ -30,6 +33,11 @@ export default function AccountVerifiedPage() {
       navigate('/');
       return;
     }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/conta-verificada'
+    });
 
     const timer = setTimeout(() => {
       navigateWithParams(

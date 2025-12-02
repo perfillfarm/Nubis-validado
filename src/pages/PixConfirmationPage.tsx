@@ -10,7 +10,9 @@ type PixKeyType = 'cpf' | 'email' | 'phone' | 'random';
 export default function PixConfirmationPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount = 5960.50, pixKeyType, pixKey, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount = 5960.50, pixKeyType, pixKey, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
 
   if (!userData || !pixKeyType || !pixKey) {
     navigate('/');

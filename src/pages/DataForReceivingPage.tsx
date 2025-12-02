@@ -10,14 +10,28 @@ type PixKeyType = 'cpf' | 'email' | 'phone' | 'random';
 export default function DataForReceivingPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount = 5960.50, urlParams, pixKeyType: initialPixKeyType, pixKey: initialPixKey } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount: stateIndemnityAmount = 5960.50, urlParams, pixKeyType: initialPixKeyType, pixKey: initialPixKey } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
+  const indemnityAmount = stateIndemnityAmount || 7854.63;
   const [pixKey, setPixKey] = useState(initialPixKey || '');
   const [detectedType, setDetectedType] = useState<PixKeyType | null>(initialPixKeyType || null);
   const [showTypeSelector, setShowTypeSelector] = useState(false);
   const [manualType, setManualType] = useState<'cpf' | 'phone' | null>(null);
 
+  useEffect(() => {
+    if (!userData) {
+      navigate('/');
+      return;
+    }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/dados-para-recebimento'
+    });
+  }, [userData, navigate]);
+
   if (!userData) {
-    navigate('/');
     return null;
   }
 

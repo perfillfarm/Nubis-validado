@@ -9,7 +9,9 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function LoanPriorityPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams, profileAnswers } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, urlParams, profileAnswers } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
   const [selectedMotivo, setSelectedMotivo] = useState<string | null>(null);
@@ -20,7 +22,14 @@ export default function LoanPriorityPage() {
   useEffect(() => {
     if (!userData) {
       navigate('/');
-    }
+      return;
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/loan-priority'
+    });
+  }
   }, [navigate, userData]);
 
   if (!userData) {

@@ -10,14 +10,22 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function CreditAuthorizationPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams, profileAnswers } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, urlParams, profileAnswers } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [agreed, setAgreed] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
+      return;
     }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/autorizacao-credito'
+    });
   }, [navigate, userData]);
 
   if (!userData) {

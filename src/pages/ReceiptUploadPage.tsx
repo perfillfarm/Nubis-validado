@@ -13,7 +13,9 @@ const supabase = createClient(
 export default function ReceiptUploadPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, pixKeyType, pixKey, urlParams, transactionId } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, pixKeyType, pixKey, urlParams, transactionId } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const cpf = userData?.cpf;
   const customerName = userData?.nome;
   const amount = 57.47;

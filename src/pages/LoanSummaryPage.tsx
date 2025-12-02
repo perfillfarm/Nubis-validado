@@ -10,7 +10,9 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function LoanSummaryPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -25,7 +27,14 @@ export default function LoanSummaryPage() {
   useEffect(() => {
     if (!userData) {
       navigate('/');
-    }
+      return;
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/loan-summary'
+    });
+  }
   }, [navigate, userData]);
 
   useEffect(() => {

@@ -10,7 +10,9 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function TaxBreakdownPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount = 5960.50, pixKeyType, pixKey, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount = 5960.50, pixKeyType, pixKey, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [countdown, setCountdown] = useState(32);

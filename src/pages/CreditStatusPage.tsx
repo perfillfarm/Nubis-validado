@@ -9,12 +9,20 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function CreditStatusPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams, profileAnswers, loanPriority, nubankCustomer } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, urlParams, profileAnswers, loanPriority, nubankCustomer } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
+      return;
     }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/status-credito'
+    });
   }, [navigate, userData]);
 
   if (!userData) {

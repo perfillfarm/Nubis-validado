@@ -10,7 +10,9 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function DataVerificationPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const [currentStep, setCurrentStep] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -33,6 +35,11 @@ export default function DataVerificationPage() {
       navigate('/');
       return;
     }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/verificando-dados'
+    });
 
     const stepTimer = setInterval(() => {
       setCurrentStep((prev) => {

@@ -9,13 +9,22 @@ import { navigateWithParams } from '../utils/urlParams';
 export default function LoanTermsPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, loanAmount, selectedInstallments, installmentValue, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, loanAmount, selectedInstallments, installmentValue, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
-    }
+      return;
+    
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/loan-terms'
+    });
+  }
   }, [navigate, userData]);
 
   useEffect(() => {
