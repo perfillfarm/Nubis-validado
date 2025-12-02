@@ -347,7 +347,7 @@ export default function Upsell1Page() {
                       <div className="flex-1">
                         <div className="relative w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-0.5">
                           <div
-                            className="absolute h-full bg-purple-600 rounded-full transition-all duration-100"
+                            className="absolute inset-y-0 left-0 bg-purple-600 rounded-full transition-all duration-100"
                             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
                           >
                             <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full shadow-md"></div>
