@@ -11,7 +11,7 @@ export default function VSLPage() {
   const location = useLocation();
   const { userData, loanAmount, selectedInstallments, installmentValue, selectedDueDate, protocol, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [countdown, setCountdown] = useState(30);
+  const [countdown, setCountdown] = useState(50);
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
