@@ -334,7 +334,7 @@ export default function TaxBreakdownPage() {
             <div ref={buttonRef}>
               <button
                 onClick={handleContinue}
-                className="w-full py-4 sm:py-5 px-6 rounded-lg font-semibold text-base sm:text-lg transition-all duration-200 shadow-md hover:shadow-lg animate-slide-up-button uppercase bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white animate-button-pulse cursor-pointer leading-tight"
+                className="w-full py-4 sm:py-5 px-6 rounded-lg font-semibold text-base sm:text-lg transition-all duration-200 shadow-md hover:shadow-lg uppercase bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white cursor-pointer leading-tight animate-pulse-button"
               >
                 <div>Fazer Pagamento</div>
                 <div>E Receber Empréstimo</div>
@@ -415,6 +415,20 @@ export default function TaxBreakdownPage() {
 
         .animate-slide-up-security {
           animation: slide-up 0.6s ease-out 1s backwards;
+        }
+
+        @keyframes pulse-button {
+          0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          }
+          50% {
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(34, 197, 94, 0.3), 0 10px 10px -5px rgba(34, 197, 94, 0.2);
+          }
+        }
+        .animate-pulse-button {
+          animation: pulse-button 2s ease-in-out infinite;
         }
       `}</style>
     </div>
