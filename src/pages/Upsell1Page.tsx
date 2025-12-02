@@ -4,9 +4,10 @@ import { AlertTriangle, Loader2, CheckCircle2, XCircle, Play, Pause } from 'luci
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
-import { getUserName } from '../utils/userUtils';
+import { getUserName } from '../utils/funnelStorage';
 import { navigateWithParams } from '../utils/urlParams';
 import { trackPurchase } from '../utils/facebookPixel';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 interface ProcessingStep {
   id: number;
@@ -85,6 +86,10 @@ export default function Upsell1Page() {
       content_type: 'product',
       content_name: 'Desafio 30 dias',
       num_items: 1,
+    });
+
+    saveFunnelData({
+      currentStep: '/upsell-1'
     });
   }, []);
 

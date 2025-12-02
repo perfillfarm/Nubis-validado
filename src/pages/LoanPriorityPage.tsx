@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { Bell, User, TrendingUp, Zap, Shield, Percent, UserCheck, UserPlus, AlertTriangle, CheckCircle, CreditCard, Car, Home, ShoppingBag, Briefcase, MoreHorizontal, Loader2 } from 'lucide-react';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';

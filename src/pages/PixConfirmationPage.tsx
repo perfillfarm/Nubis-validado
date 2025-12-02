@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { User, Mail, Phone, Key } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';

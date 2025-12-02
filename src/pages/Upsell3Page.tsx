@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { AlertTriangle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -36,6 +37,12 @@ export default function Upsell3Page() {
       setProgressWidth(90);
     }, 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    saveFunnelData({
+      currentStep: '/upsell-3'
+    });
   }, []);
 
   useEffect(() => {

@@ -5,11 +5,16 @@ import Footer from '../components/Footer';
 import BackRedirect from '../components/BackRedirect';
 import { X, Check } from 'lucide-react';
 import { navigateWithParams } from '../utils/urlParams';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 const ChatPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cpf, indemnityAmount, urlParams, userData } = location.state || {};
+  const funnelData = getFunnelData();
+  const { cpf: stateCpf, indemnityAmount: stateIndemnityAmount, urlParams, userData: stateUserData } = location.state || {};
+  const cpf = stateCpf || funnelData.cpf;
+  const userData = stateUserData || funnelData.userData;
+  const indemnityAmount = stateIndemnityAmount || 7854.63;
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -21,8 +26,15 @@ const ChatPage: React.FC = () => {
 
     if (!cpf) {
       navigate('/');
+      return;
     }
-  }, [cpf, navigate]);
+
+    saveFunnelData({
+      cpf: cpf,
+      userData: userData,
+      currentStep: '/chat'
+    });
+  }, [cpf, userData, navigate]);
 
   if (!cpf) return null;
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { Upload, CheckCircle2, FileImage, X } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { navigateWithParams } from '../utils/urlParams';

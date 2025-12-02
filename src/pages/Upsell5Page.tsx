@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { XCircle, AlertTriangle, Clock, FileText } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -30,6 +31,10 @@ export default function Upsell5Page() {
       content_type: 'upsell',
       content_name: 'Upsell',
       num_items: 1,
+    });
+
+    saveFunnelData({
+      currentStep: '/upsell-5'
     });
   }, []);
 

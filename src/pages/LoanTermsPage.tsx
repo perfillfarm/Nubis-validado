@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { FileText } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';

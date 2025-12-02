@@ -4,16 +4,26 @@ import { ArrowRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { navigateWithParams } from '../utils/urlParams';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 export default function AvailableValuesPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount = 5960.50, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount: stateIndemnityAmount = 5960.50, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
+  const indemnityAmount = stateIndemnityAmount || 7854.63;
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
+      return;
     }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/valores-disponiveis'
+    });
   }, [navigate, userData]);
 
   if (!userData) {

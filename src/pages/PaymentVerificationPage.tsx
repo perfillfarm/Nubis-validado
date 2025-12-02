@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { CheckCircle, Clock, XCircle, AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';

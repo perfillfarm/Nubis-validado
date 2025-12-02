@@ -7,11 +7,15 @@ import { createTransaction } from '../services/pixService';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 export default function QRCodePaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userData, indemnityAmount, pixKeyType, pixKey, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount: stateIndemnityAmount, pixKeyType, pixKey, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
+  const indemnityAmount = stateIndemnityAmount || 7854.63;
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,6 +88,13 @@ export default function QRCodePaymentPage() {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/pagamento-pix'
+    });
+  }, [userData]);
 
   useEffect(() => {
     if (hasInitialized.current) return;

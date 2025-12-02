@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
 import { trackPurchase } from '../utils/facebookPixel';
+import { clearFunnelData } from '../utils/funnelStorage';
 
 export default function FinalPage() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function FinalPage() {
 
   const handleLogout = () => {
     sessionStorage.clear();
-    localStorage.clear();
+    clearFunnelData();
     navigate('/');
   };
 

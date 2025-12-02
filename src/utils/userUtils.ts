@@ -1,4 +1,11 @@
+import { getFunnelData } from './funnelStorage';
+
 export const getUserName = (): string => {
+  const funnelData = getFunnelData();
+  if (funnelData.userData?.nome) {
+    return funnelData.userData.nome.split(' ')[0];
+  }
+
   const userDataStr = sessionStorage.getItem('userData');
   if (userDataStr) {
     try {
@@ -12,6 +19,11 @@ export const getUserName = (): string => {
 };
 
 export const getUserData = () => {
+  const funnelData = getFunnelData();
+  if (funnelData.userData) {
+    return funnelData.userData;
+  }
+
   const userDataStr = sessionStorage.getItem('userData');
   if (userDataStr) {
     try {

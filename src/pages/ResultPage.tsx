@@ -6,11 +6,15 @@ import BackRedirect from '../components/BackRedirect';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { navigateWithParams } from '../utils/urlParams';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 const ResultPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userData, indemnityAmount, urlParams } = location.state || {};
+  const funnelData = getFunnelData();
+  const { userData: stateUserData, indemnityAmount: stateIndemnityAmount, urlParams } = location.state || {};
+  const userData = stateUserData || funnelData.userData;
+  const indemnityAmount = stateIndemnityAmount || 7854.63;
   const [showAmount, setShowAmount] = useState(false);
   const [progress, setProgress] = useState(0);
   const [verificationSteps, setVerificationSteps] = useState<string[]>([]);
@@ -25,6 +29,11 @@ const ResultPage: React.FC = () => {
       navigate(`/?${searchParams.toString()}`);
       return;
     }
+
+    saveFunnelData({
+      userData: userData,
+      currentStep: '/resultado'
+    });
 
     // Initialize verification steps
     const steps = [

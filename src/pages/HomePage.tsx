@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { navigateWithParams } from '../utils/urlParams';
 import { trackViewContent } from '../utils/facebookPixel';
+import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,6 +26,11 @@ const HomePage: React.FC = () => {
       content_name: 'Home Page',
       content_category: 'Landing Page',
     });
+
+    const funnelData = getFunnelData();
+    if (funnelData.currentStep && funnelData.currentStep !== '/') {
+      navigateWithParams(navigate, funnelData.currentStep, location);
+    }
   }, []);
 
   const handleCPFSubmit = async (cpf: string) => {
@@ -75,8 +81,13 @@ const HomePage: React.FC = () => {
         }
       };
 
-      // Save complete user data in sessionStorage
+      // Save complete user data in sessionStorage and localStorage
       sessionStorage.setItem('userData', JSON.stringify(userData));
+      saveFunnelData({
+        cpf: cpf,
+        userData: userData,
+        currentStep: '/resultado'
+      });
 
       // Navigate with URL parameters preserved
       navigateWithParams(
