@@ -151,7 +151,7 @@ export default function Upsell1Page() {
 
             setTimeout(() => {
               if (audioRef.current) {
-                audioRef.current.volume = 0.3;
+                audioRef.current.volume = 0.6;
                 audioRef.current.play().catch(err => {
                   console.log('Autoplay blocked:', err);
                 }).then(() => {
