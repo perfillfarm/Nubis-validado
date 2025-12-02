@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertCircle, CheckCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle, Video } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
@@ -11,12 +11,31 @@ export default function VSLPage() {
   const location = useLocation();
   const { userData, loanAmount, selectedInstallments, installmentValue, selectedDueDate, protocol, urlParams, profileAnswers, loanPriority, nubankCustomer, creditStatus } = location.state || {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [countdown, setCountdown] = useState(30);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!userData) {
       navigate('/');
     }
   }, [navigate, userData]);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsButtonEnabled(true);
+      setTimeout(() => {
+        if (buttonRef.current) {
+          buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 300);
+    }
+  }, [countdown]);
 
   useEffect(() => {
     const script1 = document.createElement('script');
@@ -131,7 +150,7 @@ export default function VSLPage() {
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 pt-24 sm:pt-28 pb-20 animate-slide-in-right">
         <div className="w-full max-w-sm sm:max-w-md">
           <div className="text-center mb-6 sm:mb-8 animate-fade-in-down">
-            <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-5 py-2.5 mb-5">
+            <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-5 py-2.5 mb-5 animate-pulse-urgent">
               <AlertCircle className="w-5 h-5 text-red-600" />
               <span className="text-sm sm:text-base font-semibold text-red-700">Informação Importante</span>
             </div>
@@ -145,15 +164,10 @@ export default function VSLPage() {
           </div>
 
           <div className="bg-white rounded-2xl p-5 sm:p-6 mb-5 shadow-lg animate-slide-up">
-            <div className="flex items-start gap-3 mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
-                </svg>
-              </div>
+            <div className="flex items-center gap-3 mb-4">
+              <Video className="w-6 h-6 text-purple-600 flex-shrink-0" />
               <div className="flex-1">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">Vídeo Explicativo</h2>
-                <p className="text-sm sm:text-base text-gray-600">Entenda por que do seguro prestamista.</p>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Vídeo Explicativo</h2>
               </div>
             </div>
 
@@ -240,20 +254,33 @@ export default function VSLPage() {
             </div>
           </div>
 
-          <button
-            onClick={handleContinue}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 animate-slide-up uppercase"
-          >
-            Fazer Pagamento e Receber Empréstimo
-          </button>
-
-          <div className="mt-5 text-center">
-            <p className="text-sm text-gray-500 flex items-center justify-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-              </svg>
-              Protegido por segurança bancária
-            </p>
+          <div ref={buttonRef} className="animate-slide-up">
+            {!isButtonEnabled ? (
+              <div className="w-full">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-3 flex items-center gap-4">
+                  <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-xl font-bold">{countdown}</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-blue-900 font-semibold text-sm">Aguarde para continuar</p>
+                    <p className="text-blue-700 text-xs">Revise as informações das taxas</p>
+                  </div>
+                </div>
+                <button
+                  disabled
+                  className="w-full bg-gray-300 text-gray-500 text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl uppercase cursor-not-allowed"
+                >
+                  Aguarde {countdown}s para continuar
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleContinue}
+                className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 uppercase animate-button-pulse"
+              >
+                Continuar e Receber
+              </button>
+            )}
           </div>
         </div>
       </main>
