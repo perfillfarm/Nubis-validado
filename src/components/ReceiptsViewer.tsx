@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FileImage, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { FileImage, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, X, Search, Filter, Download, Calendar } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -24,14 +24,27 @@ interface PaymentReceipt {
 
 export default function ReceiptsViewer() {
   const [receipts, setReceipts] = useState<PaymentReceipt[]>([]);
+  const [filteredReceipts, setFilteredReceipts] = useState<PaymentReceipt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expandedReceipt, setExpandedReceipt] = useState<string | null>(null);
   const [imageModal, setImageModal] = useState<string | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     loadReceipts();
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [receipts, searchTerm, statusFilter, startDate, endDate]);
 
   const loadReceipts = async () => {
     try {
@@ -52,6 +65,71 @@ export default function ReceiptsViewer() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const applyFilters = () => {
+    let filtered = [...receipts];
+
+    if (searchTerm) {
+      const search = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (receipt) =>
+          receipt.customer_name?.toLowerCase().includes(search) ||
+          receipt.cpf?.includes(search.replace(/\D/g, '')) ||
+          receipt.transaction_id?.toLowerCase().includes(search)
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter((receipt) => receipt.status === statusFilter);
+    }
+
+    if (startDate) {
+      filtered = filtered.filter(
+        (receipt) => new Date(receipt.created_at) >= new Date(startDate)
+      );
+    }
+
+    if (endDate) {
+      const endDateTime = new Date(endDate);
+      endDateTime.setHours(23, 59, 59, 999);
+      filtered = filtered.filter(
+        (receipt) => new Date(receipt.created_at) <= endDateTime
+      );
+    }
+
+    setFilteredReceipts(filtered);
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    setStartDate('');
+    setEndDate('');
+  };
+
+  const exportToCSV = () => {
+    const headers = ['Data', 'Nome', 'CPF', 'Valor', 'Status', 'ID Transação'];
+    const rows = filteredReceipts.map((receipt) => [
+      formatDate(receipt.created_at),
+      receipt.customer_name || 'N/A',
+      formatCPF(receipt.cpf),
+      formatCurrency(Number(receipt.amount)),
+      getStatusBadge(receipt.status).text,
+      receipt.transaction_id,
+    ]);
+
+    const csv = [
+      headers.join(','),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `comprovantes_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
   };
 
   const formatCurrency = (value: number) => {
@@ -136,29 +214,161 @@ export default function ReceiptsViewer() {
     );
   }
 
+  const totalPages = Math.ceil(filteredReceipts.length / itemsPerPage);
+  const paginatedReceipts = filteredReceipts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (searchTerm) count++;
+    if (statusFilter !== 'all') count++;
+    if (startDate || endDate) count++;
+    return count;
+  };
+
   return (
     <>
       <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8 mt-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-            Comprovantes de Pagamento
-          </h2>
-          <button
-            onClick={loadReceipts}
-            className="text-sm text-[#8A05BE] hover:underline"
-          >
-            Atualizar
-          </button>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Comprovantes de Pagamento
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              {filteredReceipts.length} de {receipts.length} comprovante{receipts.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors relative"
+            >
+              <Filter className="w-4 h-4" />
+              Filtros
+              {getActiveFiltersCount() > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#8A05BE] text-white text-xs rounded-full flex items-center justify-center">
+                  {getActiveFiltersCount()}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={exportToCSV}
+              disabled={filteredReceipts.length === 0}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[#8A05BE] rounded-lg hover:bg-[#8A05BE]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="w-4 h-4" />
+              Exportar
+            </button>
+            <button
+              onClick={loadReceipts}
+              className="px-4 py-2 text-sm font-medium text-[#8A05BE] hover:bg-[#8A05BE]/10 rounded-lg transition-colors"
+            >
+              Atualizar
+            </button>
+          </div>
         </div>
+
+        {showFilters && (
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Buscar
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Nome, CPF ou ID"
+                    className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                >
+                  <option value="all">Todos</option>
+                  <option value="pending_receipt">Aguardando Comprovante</option>
+                  <option value="receipt_uploaded">Comprovante Enviado</option>
+                  <option value="verified">Verificado</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data Início
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data Fim
+                </label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#8A05BE] focus:border-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {getActiveFiltersCount() > 0 && (
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-[#8A05BE] hover:underline font-medium"
+                >
+                  Limpar filtros
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {receipts.length === 0 ? (
           <div className="text-center py-12">
             <FileImage className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p className="text-gray-600">Nenhum comprovante encontrado</p>
           </div>
+        ) : filteredReceipts.length === 0 ? (
+          <div className="text-center py-12">
+            <AlertCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-600">Nenhum resultado para os filtros aplicados</p>
+            <button
+              onClick={clearFilters}
+              className="mt-4 text-sm text-[#8A05BE] hover:underline font-medium"
+            >
+              Limpar filtros
+            </button>
+          </div>
         ) : (
-          <div className="space-y-3 sm:space-y-4">
-            {receipts.map((receipt) => {
+          <>
+            <div className="space-y-3 sm:space-y-4">
+              {paginatedReceipts.map((receipt) => {
               const status = getStatusBadge(receipt.status);
               const StatusIcon = status.icon;
               const isExpanded = expandedReceipt === receipt.id;
@@ -263,6 +473,59 @@ export default function ReceiptsViewer() {
               );
             })}
           </div>
+
+          {totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-between border-t pt-4">
+              <p className="text-sm text-gray-600">
+                Página {currentPage} de {totalPages}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Anterior
+                </button>
+                <div className="hidden sm:flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                          currentPage === pageNum
+                            ? 'bg-[#8A05BE] text-white'
+                            : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Próximo
+                </button>
+              </div>
+            </div>
+          )}
+          </>
         )}
       </div>
 
