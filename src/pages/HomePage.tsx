@@ -21,12 +21,11 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'PageView');
       (window as any).fbq('track', 'ViewContent', {
         content_name: 'Home Page',
         content_category: 'Landing Page',
       });
-      console.log('Facebook Pixel: PageView and ViewContent events fired');
+      console.log('Facebook Pixel: ViewContent event fired');
     }
   }, []);
 
