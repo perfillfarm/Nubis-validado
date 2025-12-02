@@ -70,11 +70,16 @@ export default function TaxBreakdownPage() {
       return () => clearTimeout(timer);
     } else {
       setIsButtonEnabled(true);
-      if (buttonRef.current) {
-        buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
     }
   }, [countdown]);
+
+  useEffect(() => {
+    if (isButtonEnabled && buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
+  }, [isButtonEnabled]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -420,15 +425,15 @@ export default function TaxBreakdownPage() {
         @keyframes pulse-button {
           0%, 100% {
             transform: scale(1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.3), 0 4px 6px -2px rgba(34, 197, 94, 0.2);
           }
           50% {
-            transform: scale(1.05);
-            box-shadow: 0 20px 25px -5px rgba(34, 197, 94, 0.3), 0 10px 10px -5px rgba(34, 197, 94, 0.2);
+            transform: scale(1.08);
+            box-shadow: 0 25px 50px -12px rgba(34, 197, 94, 0.5), 0 10px 20px -5px rgba(34, 197, 94, 0.4);
           }
         }
         .animate-pulse-button {
-          animation: pulse-button 2s ease-in-out infinite;
+          animation: pulse-button 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
       `}</style>
     </div>
