@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { AlertTriangle, Loader2, CheckCircle2, XCircle, Volume2 } from 'lucide-react';
+import { AlertTriangle, Loader2, CheckCircle2, XCircle, Play, Pause } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
@@ -30,10 +30,53 @@ export default function Upsell1Page() {
   const [mostrarTaxa, setMostrarTaxa] = useState(false);
   const [popupCalculandoProgress, setPopupCalculandoProgress] = useState(0);
   const [showAudio, setShowAudio] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const handleMenuClick = () => setIsMenuOpen(!isMenuOpen);
   const handleMenuClose = () => setIsMenuOpen(false);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const togglePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleEnded = () => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateDuration = () => setDuration(audio.duration);
+
+    audio.addEventListener('timeupdate', updateTime);
+    audio.addEventListener('loadedmetadata', updateDuration);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('loadedmetadata', updateDuration);
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
 
   useEffect(() => {
     trackPurchase({
@@ -108,8 +151,11 @@ export default function Upsell1Page() {
 
             setTimeout(() => {
               if (audioRef.current) {
+                audioRef.current.volume = 0.3;
                 audioRef.current.play().catch(err => {
                   console.log('Autoplay blocked:', err);
+                }).then(() => {
+                  setIsPlaying(true);
                 });
               }
             }, 2000);
@@ -264,30 +310,64 @@ export default function Upsell1Page() {
           {mostrarTaxa && (
             <div className="space-y-4 animate-fade-in">
               {showAudio && (
-                <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl shadow-lg p-6 border-2 border-purple-200 animate-fade-in">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <Volume2 className="w-6 h-6 text-purple-600" />
+                <div className="bg-gradient-to-br from-purple-50 to-white border border-purple-200 rounded-xl p-4 mb-4 animate-slide-up shadow-sm">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
+                        <img
+                          src="/Screenshot_186.png"
+                          alt="Rafaela"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-gray-900">Mensagem Importante</h3>
-                      <p className="text-xs text-gray-600">Ouça a explicação completa</p>
+                    <div className="text-left flex-1">
+                      <h3 className="text-base font-bold text-gray-900">
+                        Rafaela
+                      </h3>
+                      <p className="text-xs text-purple-700">
+                        Gerente de Crédito
+                      </p>
                     </div>
                   </div>
-                  <audio
-                    ref={audioRef}
-                    controls
-                    className="w-full"
-                    style={{
-                      outline: 'none',
-                      borderRadius: '12px',
-                    }}
-                  >
-                    <source src="https://audio.jukehost.co.uk/pVutsGcgGTjg0ArHKrWGVShwHmFisCXW" type="audio/mpeg" />
-                    Seu navegador não suporta o elemento de áudio.
-                  </audio>
+
+                  <div className="bg-white rounded-lg p-3 shadow-sm">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={togglePlayPause}
+                        className="w-9 h-9 bg-purple-600 hover:bg-purple-700 text-white rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                      >
+                        {isPlaying ? (
+                          <Pause className="w-4 h-4" />
+                        ) : (
+                          <Play className="w-4 h-4 ml-0.5" />
+                        )}
+                      </button>
+
+                      <div className="flex-1">
+                        <div className="relative w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-0.5">
+                          <div
+                            className="absolute h-full bg-purple-600 rounded-full transition-all duration-100"
+                            style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                          >
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full shadow-md"></div>
+                          </div>
+                        </div>
+                        <div className="flex justify-between text-xs text-gray-500 mt-0.5">
+                          <span>{formatTime(currentTime)}</span>
+                          <span>{formatTime(duration)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
+
+              <audio
+                ref={audioRef}
+                src="https://audio.jukehost.co.uk/pVutsGcgGTjg0ArHKrWGVShwHmFisCXW"
+                preload="auto"
+              />
 
               <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 border-2 border-red-300">
                 <div className="mb-4">
