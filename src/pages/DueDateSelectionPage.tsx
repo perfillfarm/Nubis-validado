@@ -45,23 +45,47 @@ export default function DueDateSelectionPage() {
   const handleContinue = () => {
     if (!selectedDay) return;
 
-    navigateWithParams(
-      navigate,
-      '/vsl',
-      location,
-      {
-        userData,
-        loanAmount,
-        selectedInstallments,
-        installmentValue,
-        selectedDueDate: selectedDay,
-        protocol,
-        profileAnswers,
-        loanPriority,
-        nubankCustomer,
-        creditStatus
-      }
-    );
+    const mainElement = document.querySelector('main');
+    if (mainElement) {
+      mainElement.style.animation = 'slideOutLeft 0.4s ease-out forwards';
+      setTimeout(() => {
+        navigateWithParams(
+          navigate,
+          '/vsl',
+          location,
+          {
+            userData,
+            loanAmount,
+            selectedInstallments,
+            installmentValue,
+            selectedDueDate: selectedDay,
+            protocol,
+            profileAnswers,
+            loanPriority,
+            nubankCustomer,
+            creditStatus
+          }
+        );
+      }, 300);
+    } else {
+      navigateWithParams(
+        navigate,
+        '/vsl',
+        location,
+        {
+          userData,
+          loanAmount,
+          selectedInstallments,
+          installmentValue,
+          selectedDueDate: selectedDay,
+          protocol,
+          profileAnswers,
+          loanPriority,
+          nubankCustomer,
+          creditStatus
+        }
+      );
+    }
   };
 
   return (

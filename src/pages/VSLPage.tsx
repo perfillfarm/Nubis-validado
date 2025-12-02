@@ -128,7 +128,7 @@ export default function VSLPage() {
       <Header showUserIcon={true} onMenuClick={handleMenuClick} />
       <UserMenu isOpen={isMenuOpen} onClose={handleMenuClose} userName={firstName} />
 
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 pt-24 sm:pt-28 pb-20">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 pt-24 sm:pt-28 pb-20 animate-slide-in-right">
         <div className="w-full max-w-sm sm:max-w-md">
           <div className="text-center mb-6 sm:mb-8 animate-fade-in-down">
             <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 rounded-full px-5 py-2.5 mb-5">
