@@ -178,32 +178,17 @@ export default function VSLPage() {
             </div>
 
             <div ref={buttonRef} className="mt-5 animate-slide-up">
-              {!isButtonEnabled ? (
-                <div className="w-full">
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-3 flex items-center gap-4">
-                    <div className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-white text-xl font-bold">{countdown}</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-blue-900 font-semibold text-sm">Aguarde para continuar</p>
-                      <p className="text-blue-700 text-xs">Revise as informações das taxas</p>
-                    </div>
-                  </div>
-                  <button
-                    disabled
-                    className="w-full bg-gray-300 text-gray-500 text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl uppercase cursor-not-allowed"
-                  >
-                    Aguarde {countdown}s para continuar
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={handleContinue}
-                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 uppercase"
-                >
-                  Continuar e Receber
-                </button>
-              )}
+              <button
+                onClick={handleContinue}
+                disabled={!isButtonEnabled}
+                className={`w-full text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl transition-all duration-300 uppercase ${
+                  isButtonEnabled
+                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-1'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {isButtonEnabled ? 'Continuar e Receber' : `Aguarde ${countdown}s para continuar`}
+              </button>
             </div>
           </div>
 
