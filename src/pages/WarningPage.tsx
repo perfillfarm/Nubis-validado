@@ -3,21 +3,26 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AlertTriangle } from 'lucide-react';
+import { navigateWithParams } from '../utils/urlParams';
 
 const WarningPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { userData, cpf: stateCpf, indemnityAmount, urlParams } = location.state || {};
   const searchParams = new URLSearchParams(location.search);
-  const cpf = searchParams.get('cpf');
+  const cpf = stateCpf || searchParams.get('cpf');
 
   const handleContinue = () => {
-    // Preserve all URL parameters including UTMs when navigating to chat
-    navigate(`/chat${location.search}`, {
-      state: {
-        cpf: cpf,
-        urlParams: location.search
+    navigateWithParams(
+      navigate,
+      '/chat',
+      location,
+      {
+        cpf,
+        userData,
+        indemnityAmount
       }
-    });
+    );
   };
 
   return (
