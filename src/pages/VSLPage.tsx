@@ -177,19 +177,33 @@ export default function VSLPage() {
               ></iframe>
             </div>
 
-            <div ref={buttonRef} className="mt-5 animate-slide-up">
-              <button
-                onClick={handleContinue}
-                disabled={!isButtonEnabled}
-                className={`w-full text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl transition-all duration-300 uppercase ${
-                  isButtonEnabled
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-1 animate-pulse-subtle'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-              >
-                {isButtonEnabled ? 'Continuar e Receber' : `Aguarde ${countdown}s para continuar`}
-              </button>
-            </div>
+            {!isButtonEnabled && (
+              <div className="mt-5 animate-slide-up">
+                <div className="bg-purple-100 rounded-xl p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-purple-900 font-semibold text-sm">Preparando seu empréstimo...</span>
+                  </div>
+                  <div className="bg-white rounded-full h-2 overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-1000 ease-linear"
+                      style={{ width: `${((50 - countdown) / 50) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isButtonEnabled && (
+              <div ref={buttonRef} className="mt-5 animate-slide-up">
+                <button
+                  onClick={handleContinue}
+                  className="w-full text-base sm:text-lg font-bold py-4 sm:py-5 px-6 rounded-xl transition-all duration-300 uppercase bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-xl hover:shadow-2xl transform hover:-translate-y-1 animate-pulse-subtle-fast"
+                >
+                  Liberar Empréstimo Agora
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="bg-gradient-to-br from-purple-50 to-white rounded-2xl p-5 sm:p-6 mb-6 shadow-lg animate-slide-up border-l-4 border-purple-600">
