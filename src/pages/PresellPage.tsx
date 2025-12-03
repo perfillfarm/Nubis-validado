@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
+import { CheckCircle2, ChevronRight, ArrowRight, X } from 'lucide-react';
 import { initGooglePixel } from '../utils/googlePixel';
 import { navigateWithParams } from '../utils/urlParams';
 
@@ -182,8 +182,15 @@ export default function PresellPage() {
 
       {showTermsModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-2xl max-h-[80vh] overflow-y-auto p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Termos de Uso</h2>
+          <div className="bg-white rounded-2xl max-w-2xl max-h-[80vh] overflow-y-auto p-8 relative">
+            <button
+              onClick={() => setShowTermsModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Fechar"
+            >
+              <X className="w-6 h-6 text-gray-600" />
+            </button>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 pr-10">Termos de Uso</h2>
             <div className="text-gray-600 space-y-4 text-sm">
               <p>
                 <strong>1. Aceitação dos Termos</strong><br />
@@ -225,8 +232,15 @@ export default function PresellPage() {
 
       {showPrivacyModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-2xl max-h-[80vh] overflow-y-auto p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Política de Privacidade</h2>
+          <div className="bg-white rounded-2xl max-w-2xl max-h-[80vh] overflow-y-auto p-8 relative">
+            <button
+              onClick={() => setShowPrivacyModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Fechar"
+            >
+              <X className="w-6 h-6 text-gray-600" />
+            </button>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 pr-10">Política de Privacidade</h2>
             <div className="text-gray-600 space-y-4 text-sm">
               <p>
                 <strong>1. Coleta de Informações</strong><br />
