@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FileImage, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, X, Search, Filter, Download, Calendar } from 'lucide-react';
+import { FileImage, CheckCircle, Clock, AlertCircle, ChevronDown, ChevronUp, X, Search, Filter, Download, Calendar, Copy, Check } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -29,6 +29,7 @@ export default function ReceiptsViewer() {
   const [error, setError] = useState('');
   const [expandedReceipt, setExpandedReceipt] = useState<string | null>(null);
   const [imageModal, setImageModal] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -214,6 +215,16 @@ export default function ReceiptsViewer() {
 
   const toggleExpand = (id: string) => {
     setExpandedReceipt(expandedReceipt === id ? null : id);
+  };
+
+  const copyCustomerName = async (name: string, receiptId: string) => {
+    try {
+      await navigator.clipboard.writeText(name);
+      setCopiedId(receiptId);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch (err) {
+      console.error('Erro ao copiar nome:', err);
+    }
   };
 
   if (loading) {
@@ -477,15 +488,33 @@ export default function ReceiptsViewer() {
                       key={receipt.id}
                       className="group border-2 border-gray-100 rounded-xl overflow-hidden hover:border-[#8A05BE]/30 hover:shadow-lg transition-all duration-300"
                     >
-                      <button
-                        onClick={() => toggleExpand(receipt.id)}
-                        className="w-full p-5 flex items-center justify-between hover:bg-gray-50/50 transition-all duration-200 text-left"
-                      >
-                        <div className="flex-1 min-w-0">
+                      <div className="w-full p-5 flex items-center justify-between hover:bg-gray-50/50 transition-all duration-200">
+                        <button
+                          onClick={() => toggleExpand(receipt.id)}
+                          className="flex-1 min-w-0 text-left"
+                        >
                           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
-                            <h3 className="font-bold text-gray-900 text-base sm:text-lg group-hover:text-[#8A05BE] transition-colors">
-                              {receipt.customer_name || 'Cliente'}
-                            </h3>
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-bold text-gray-900 text-base sm:text-lg group-hover:text-[#8A05BE] transition-colors">
+                                {receipt.customer_name || 'Cliente'}
+                              </h3>
+                              {receipt.status === 'receipt_uploaded' && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copyCustomerName(receipt.customer_name || 'Cliente', receipt.id);
+                                  }}
+                                  className="p-1.5 hover:bg-[#8A05BE]/10 rounded-lg transition-all duration-200 group/copy"
+                                  title="Copiar nome do cliente"
+                                >
+                                  {copiedId === receipt.id ? (
+                                    <Check className="w-4 h-4 text-green-600" />
+                                  ) : (
+                                    <Copy className="w-4 h-4 text-gray-400 group-hover/copy:text-[#8A05BE]" />
+                                  )}
+                                </button>
+                              )}
+                            </div>
                             <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${status.color} w-fit animate-in slide-in-from-left duration-300`}>
                               <span className={`w-2 h-2 rounded-full ${status.dotColor} animate-pulse`}></span>
                               {status.text}
@@ -498,15 +527,18 @@ export default function ReceiptsViewer() {
                             <span className="hidden sm:inline text-gray-300">•</span>
                             <span className="text-gray-500">{formatDate(receipt.created_at)}</span>
                           </div>
-                        </div>
-                        <div className={`p-2 rounded-lg transition-all duration-200 ${isExpanded ? 'bg-[#8A05BE]/10' : 'group-hover:bg-gray-100'}`}>
+                        </button>
+                        <button
+                          onClick={() => toggleExpand(receipt.id)}
+                          className={`p-2 rounded-lg transition-all duration-200 ${isExpanded ? 'bg-[#8A05BE]/10' : 'group-hover:bg-gray-100'}`}
+                        >
                           {isExpanded ? (
                             <ChevronUp className="w-5 h-5 text-[#8A05BE] flex-shrink-0" />
                           ) : (
                             <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
                           )}
-                        </div>
-                      </button>
+                        </button>
+                      </div>
 
                       {isExpanded && (
                         <div className="border-t border-gray-100 p-5 bg-gradient-to-br from-gray-50 to-white animate-in slide-in-from-top duration-300">
