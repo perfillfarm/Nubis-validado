@@ -7,6 +7,7 @@ import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
 import { trackPurchase } from '../utils/facebookPixel';
 import { clearFunnelData } from '../utils/funnelStorage';
+import { initGooglePixel } from '../utils/googlePixel';
 
 export default function FinalPage() {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ export default function FinalPage() {
   };
 
   useEffect(() => {
+    initGooglePixel();
+
     trackPurchase({
       value: 17.30,
       currency: 'BRL',

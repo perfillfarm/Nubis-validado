@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { navigateWithParams } from '../utils/urlParams';
+import { initGooglePixel } from '../utils/googlePixel';
 
 export default function VSLPage() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ export default function VSLPage() {
   const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    initGooglePixel();
+
     if (!userData) {
       navigate('/');
     }

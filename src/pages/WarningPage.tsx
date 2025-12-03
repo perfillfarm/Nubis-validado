@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { AlertTriangle } from 'lucide-react';
 import { navigateWithParams } from '../utils/urlParams';
+import { initGooglePixel } from '../utils/googlePixel';
 
 const WarningPage: React.FC = () => {
   const location = useLocation();
@@ -11,6 +12,10 @@ const WarningPage: React.FC = () => {
   const { userData, cpf: stateCpf, indemnityAmount, urlParams } = location.state || {};
   const searchParams = new URLSearchParams(location.search);
   const cpf = stateCpf || searchParams.get('cpf');
+
+  useEffect(() => {
+    initGooglePixel();
+  }, []);
 
   const handleContinue = () => {
     navigateWithParams(

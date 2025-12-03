@@ -6,6 +6,7 @@ import BackRedirect from '../components/BackRedirect';
 import { X, Check } from 'lucide-react';
 import { navigateWithParams } from '../utils/urlParams';
 import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
+import { initGooglePixel } from '../utils/googlePixel';
 
 const ChatPage: React.FC = () => {
   const location = useLocation();
@@ -22,6 +23,7 @@ const ChatPage: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
+    initGooglePixel();
     window.scrollTo(0, 0);
 
     if (!cpf) {

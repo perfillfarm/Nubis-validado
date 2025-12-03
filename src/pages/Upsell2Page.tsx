@@ -8,6 +8,7 @@ import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
 import { navigateWithParams } from '../utils/urlParams';
 import { trackPurchase } from '../utils/facebookPixel';
+import { initGooglePixel } from '../utils/googlePixel';
 
 interface LoadingStep {
   id: number;
@@ -39,6 +40,8 @@ export default function Upsell2Page() {
   ];
 
   useEffect(() => {
+    initGooglePixel();
+
     trackPurchase({
       value: 39.90,
       currency: 'BRL',

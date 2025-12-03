@@ -8,6 +8,7 @@ import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
 import { navigateWithParams } from '../utils/urlParams';
 import { trackPurchase } from '../utils/facebookPixel';
+import { initGooglePixel } from '../utils/googlePixel';
 
 export default function Upsell5Page() {
   const navigate = useNavigate();
@@ -25,6 +26,8 @@ export default function Upsell5Page() {
   };
 
   useEffect(() => {
+    initGooglePixel();
+
     trackPurchase({
       value: 17.20,
       currency: 'BRL',
