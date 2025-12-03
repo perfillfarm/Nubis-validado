@@ -51,14 +51,38 @@ export default function ReceiptsViewer() {
       setLoading(true);
       setError('');
 
-      const { data, error: fetchError } = await supabase
-        .from('payment_receipts')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let allReceipts: PaymentReceipt[] = [];
+      let from = 0;
+      const batchSize = 1000;
+      let hasMore = true;
 
-      if (fetchError) throw fetchError;
+      console.log('🔄 Carregando TODOS os comprovantes...');
 
-      setReceipts(data || []);
+      while (hasMore) {
+        const { data, error: fetchError } = await supabase
+          .from('payment_receipts')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(from, from + batchSize - 1);
+
+        if (fetchError) throw fetchError;
+
+        if (data && data.length > 0) {
+          allReceipts = [...allReceipts, ...data];
+          console.log(`✓ Carregados ${allReceipts.length} comprovantes até agora...`);
+
+          if (data.length < batchSize) {
+            hasMore = false;
+          } else {
+            from += batchSize;
+          }
+        } else {
+          hasMore = false;
+        }
+      }
+
+      console.log(`✅ Total de ${allReceipts.length} comprovantes carregados`);
+      setReceipts(allReceipts);
     } catch (err: any) {
       console.error('Error loading receipts:', err);
       setError(err.message || 'Erro ao carregar comprovantes');
