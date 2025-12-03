@@ -325,132 +325,135 @@ export default function ReceiptsViewer() {
           </div>
         </div>
 
-        {showFilters && (
-          <div className="p-6 bg-gradient-to-br from-[#8A05BE]/5 via-white to-white border-b border-gray-100 animate-in slide-in-from-top duration-300">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-              <div className="bg-white p-4 rounded-xl border-2 border-gray-100 hover:border-[#8A05BE]/30 transition-all duration-200">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-gray-600">Total</span>
-                  <FileImage className="w-4 h-4 text-gray-400" />
-                </div>
-                <p className="text-2xl font-bold text-gray-900">{receipts.length}</p>
+        <div className="p-6 bg-gradient-to-br from-[#8A05BE]/5 via-white to-white border-b border-gray-100">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            <div className="bg-white p-4 rounded-xl border-2 border-gray-100 hover:border-[#8A05BE]/30 transition-all duration-200">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-gray-600">Total</span>
+                <FileImage className="w-4 h-4 text-gray-400" />
               </div>
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-xl border-2 border-yellow-200 hover:border-yellow-300 transition-all duration-200">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-yellow-800">Aguardando</span>
-                  <Clock className="w-4 h-4 text-yellow-600" />
-                </div>
-                <p className="text-2xl font-bold text-yellow-900">
-                  {receipts.filter(r => r.status === 'pending_receipt').length}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all duration-200">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-green-800">Enviados</span>
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                </div>
-                <p className="text-2xl font-bold text-green-900">
-                  {receipts.filter(r => r.status === 'receipt_uploaded').length}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-[#8A05BE]/10 to-purple-50 p-4 rounded-xl border-2 border-[#8A05BE]/30 hover:border-[#8A05BE]/50 transition-all duration-200">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-[#8A05BE]">Filtrados</span>
-                  <Filter className="w-4 h-4 text-[#8A05BE]" />
-                </div>
-                <p className="text-2xl font-bold text-[#8A05BE]">{filteredReceipts.length}</p>
-              </div>
+              <p className="text-2xl font-bold text-gray-900">{receipts.length}</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-1">
-                <label className="block text-sm font-bold text-gray-900 mb-2.5 flex items-center gap-2">
-                  <Search className="w-4 h-4 text-[#8A05BE]" />
-                  Buscar Comprovante
-                </label>
-                <div className="relative group">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#8A05BE] transition-colors" />
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Digite nome, CPF ou ID..."
-                    className="w-full pl-11 pr-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200 placeholder:text-gray-400"
-                  />
-                </div>
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-xl border-2 border-yellow-200 hover:border-yellow-300 transition-all duration-200">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-yellow-800">Aguardando</span>
+                <Clock className="w-4 h-4 text-yellow-600" />
               </div>
-
-              <div className="md:col-span-1">
-                <label className="block text-sm font-bold text-gray-900 mb-2.5 flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-[#8A05BE]" />
-                  Status do Comprovante
-                </label>
-                <div className="relative">
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-4 py-3 text-sm font-medium bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200 appearance-none cursor-pointer"
-                  >
-                    <option value="all">📋 Todos os Status</option>
-                    <option value="pending_receipt">⏳ Aguardando Comprovante</option>
-                    <option value="receipt_uploaded">✅ Comprovante Enviado</option>
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="md:col-span-1">
-                <label className="block text-sm font-bold text-gray-900 mb-2.5 flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-[#8A05BE]" />
-                  Período
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="relative group">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#8A05BE] transition-colors" />
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      placeholder="De"
-                      className="w-full pl-10 pr-3 py-3 text-xs bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200"
-                    />
-                  </div>
-                  <div className="relative group">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#8A05BE] transition-colors" />
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      placeholder="Até"
-                      className="w-full pl-10 pr-3 py-3 text-xs bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200"
-                    />
-                  </div>
-                </div>
-              </div>
+              <p className="text-2xl font-bold text-yellow-900">
+                {receipts.filter(r => r.status === 'pending_receipt').length}
+              </p>
             </div>
-
-            {getActiveFiltersCount() > 0 && (
-              <div className="mt-5 pt-4 border-t border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-semibold text-gray-700">Filtros ativos:</span>
-                  <span className="px-3 py-1 bg-[#8A05BE]/10 text-[#8A05BE] rounded-full font-bold text-xs">
-                    {getActiveFiltersCount()}
-                  </span>
-                </div>
-                <button
-                  onClick={clearFilters}
-                  className="group flex items-center gap-2 px-4 py-2 text-sm text-[#8A05BE] hover:bg-[#8A05BE] hover:text-white rounded-xl font-bold transition-all duration-200"
-                >
-                  <X className="w-4 h-4" />
-                  Limpar Filtros
-                </button>
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all duration-200">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-green-800">Enviados</span>
+                <CheckCircle className="w-4 h-4 text-green-600" />
               </div>
-            )}
+              <p className="text-2xl font-bold text-green-900">
+                {receipts.filter(r => r.status === 'receipt_uploaded').length}
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-[#8A05BE]/10 to-purple-50 p-4 rounded-xl border-2 border-[#8A05BE]/30 hover:border-[#8A05BE]/50 transition-all duration-200">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-[#8A05BE]">Filtrados</span>
+                <Filter className="w-4 h-4 text-[#8A05BE]" />
+              </div>
+              <p className="text-2xl font-bold text-[#8A05BE]">{filteredReceipts.length}</p>
+            </div>
           </div>
-        )}
+
+          {showFilters && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-2.5 flex items-center gap-2">
+                    <Search className="w-4 h-4 text-[#8A05BE]" />
+                    Buscar Comprovante
+                  </label>
+                  <div className="relative group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#8A05BE] transition-colors" />
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Digite nome, CPF ou ID..."
+                      className="w-full pl-11 pr-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200 placeholder:text-gray-400"
+                    />
+                  </div>
+                </div>
+
+                <div className="md:col-span-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-2.5 flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-[#8A05BE]" />
+                    Status do Comprovante
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                      className="w-full px-4 py-3 text-sm font-medium bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200 appearance-none cursor-pointer"
+                    >
+                      <option value="all">📋 Todos os Status</option>
+                      <option value="pending_receipt">⏳ Aguardando Comprovante</option>
+                      <option value="receipt_uploaded">✅ Comprovante Enviado</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="md:col-span-1">
+                  <label className="block text-sm font-bold text-gray-900 mb-2.5 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#8A05BE]" />
+                    Período
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="relative group">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#8A05BE] transition-colors" />
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        placeholder="De"
+                        className="w-full pl-10 pr-3 py-3 text-xs bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200"
+                      />
+                    </div>
+                    <div className="relative group">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-[#8A05BE] transition-colors" />
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        placeholder="Até"
+                        className="w-full pl-10 pr-3 py-3 text-xs bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE]/20 focus:border-[#8A05BE] transition-all duration-200"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {getActiveFiltersCount() > 0 && (
+                <div className="mt-5 pt-4 border-t border-gray-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-semibold text-gray-700">Filtros ativos:</span>
+                    <span className="px-3 py-1 bg-[#8A05BE]/10 text-[#8A05BE] rounded-full font-bold text-xs">
+                      {getActiveFiltersCount()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={clearFilters}
+                    className="group flex items-center gap-2 px-4 py-2 text-sm text-[#8A05BE] hover:bg-[#8A05BE] hover:text-white rounded-xl font-bold transition-all duration-200"
+                  >
+                    <X className="w-4 h-4" />
+                    Limpar Filtros
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
         <div className="p-6">
           {receipts.length === 0 ? (
