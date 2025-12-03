@@ -136,11 +136,11 @@ export default function Upsell2Page() {
   };
 
   const handleRegularizeTaxa = () => {
-    const cpf = sessionStorage.getItem('user_cpf') || localStorage.getItem('user_cpf');
-    console.log('Upsell2 - CPF from storage:', cpf);
+    const { userData } = location.state || {};
+    const cpf = userData?.cpf;
 
     if (!cpf) {
-      console.error('CPF not found in storage. Redirecting to home.');
+      console.error('CPF not found. Redirecting to home.');
       navigate('/');
       return;
     }
@@ -153,7 +153,8 @@ export default function Upsell2Page() {
         amount: 21.80,
         title: 'Tarifa de Cadastro',
         redirectPath: '/upsell-3',
-        cpf: cpf
+        cpf: cpf,
+        userData: userData
       }
     );
   };

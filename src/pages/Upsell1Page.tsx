@@ -177,11 +177,11 @@ export default function Upsell1Page() {
   };
 
   const handleRegularizarTaxa = () => {
-    const cpf = sessionStorage.getItem('user_cpf') || localStorage.getItem('user_cpf');
-    console.log('Upsell1 - CPF from storage:', cpf);
+    const { userData } = location.state || {};
+    const cpf = userData?.cpf;
 
     if (!cpf) {
-      console.error('CPF not found in storage. Redirecting to home.');
+      console.error('CPF not found. Redirecting to home.');
       navigate('/');
       return;
     }
@@ -194,7 +194,8 @@ export default function Upsell1Page() {
         amount: 39.90,
         title: 'Taxa de Verificação',
         redirectPath: '/upsell-2',
-        cpf: cpf
+        cpf: cpf,
+        userData: userData
       }
     );
   };

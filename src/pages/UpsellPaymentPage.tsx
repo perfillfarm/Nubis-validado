@@ -8,14 +8,12 @@ import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
-import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const funnelData = getFunnelData();
-  const { amount, title, redirectPath, cpf: stateCpf } = location.state || {};
-  const cpf = stateCpf || funnelData.cpf;
+  const { amount, title, redirectPath, cpf: stateCpf, userData } = location.state || {};
+  const cpf = stateCpf;
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,9 +94,6 @@ export default function UpsellPaymentPage() {
       try {
         setLoading(true);
         setError(null);
-
-        const userDataStr = sessionStorage.getItem('userData');
-        const userData = userDataStr ? JSON.parse(userDataStr) : null;
 
         const utmParams = extractUtmParams(location);
         console.log('Upsell - UTM Parameters extracted:', utmParams);

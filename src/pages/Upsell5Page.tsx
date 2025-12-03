@@ -48,11 +48,11 @@ export default function Upsell5Page() {
   ];
 
   const handleRetryPayment = () => {
-    const cpf = sessionStorage.getItem('user_cpf') || localStorage.getItem('user_cpf');
-    console.log('Upsell5 - CPF from storage:', cpf);
+    const { userData } = location.state || {};
+    const cpf = userData?.cpf;
 
     if (!cpf) {
-      console.error('CPF not found in storage. Redirecting to home.');
+      console.error('CPF not found. Redirecting to home.');
       navigate('/');
       return;
     }
@@ -65,7 +65,8 @@ export default function Upsell5Page() {
         amount: 17.30,
         title: 'Regularização de Taxa de Emissão',
         redirectPath: '/final',
-        cpf: cpf
+        cpf: cpf,
+        userData: userData
       }
     );
   };

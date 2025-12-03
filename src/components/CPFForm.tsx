@@ -53,7 +53,6 @@ const CPFForm: React.FC<CPFFormProps> = ({ onSubmit, isLoading }) => {
     const isValid = validateCPF(cpf);
     if (isValid) {
       const cpfDigits = cpf.replace(/\D/g, '');
-      sessionStorage.setItem('user_cpf', cpfDigits);
       logUserActivity('cpf_submit', {
         cpf_length: cpfDigits.length,
         has_valid_format: true,

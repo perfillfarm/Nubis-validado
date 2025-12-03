@@ -38,8 +38,6 @@ export default function FinalPage() {
   };
 
   const handleLogout = () => {
-    sessionStorage.clear();
-    clearFunnelData();
     navigate('/');
   };
 

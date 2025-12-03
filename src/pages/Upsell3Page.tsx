@@ -69,11 +69,11 @@ export default function Upsell3Page() {
   };
 
   const handlePayTariff = () => {
-    const cpf = sessionStorage.getItem('user_cpf') || localStorage.getItem('user_cpf');
-    console.log('Upsell3 - CPF from storage:', cpf);
+    const { userData } = location.state || {};
+    const cpf = userData?.cpf;
 
     if (!cpf) {
-      console.error('CPF not found in storage. Redirecting to home.');
+      console.error('CPF not found. Redirecting to home.');
       navigate('/');
       return;
     }
@@ -86,7 +86,8 @@ export default function Upsell3Page() {
         amount: 18.90,
         title: 'Tarifa de Validação',
         redirectPath: '/upsell-4',
-        cpf: cpf
+        cpf: cpf,
+        userData: userData
       }
     );
   };

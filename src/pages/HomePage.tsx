@@ -81,14 +81,6 @@ const HomePage: React.FC = () => {
         }
       };
 
-      // Save complete user data in sessionStorage and localStorage
-      sessionStorage.setItem('userData', JSON.stringify(userData));
-      saveFunnelData({
-        cpf: cpf,
-        userData: userData,
-        currentStep: '/resultado'
-      });
-
       // Navigate with URL parameters preserved
       navigateWithParams(
         navigate,

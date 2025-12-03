@@ -44,11 +44,11 @@ export default function Upsell4Page() {
   };
 
   const handlePayment = () => {
-    const cpf = sessionStorage.getItem('user_cpf') || localStorage.getItem('user_cpf');
-    console.log('Upsell4 - CPF from storage:', cpf);
+    const { userData } = location.state || {};
+    const cpf = userData?.cpf;
 
     if (!cpf) {
-      console.error('CPF not found in storage. Redirecting to home.');
+      console.error('CPF not found. Redirecting to home.');
       navigate('/');
       return;
     }
@@ -61,7 +61,8 @@ export default function Upsell4Page() {
         amount: 17.20,
         title: 'Taxa de Emissão de Nota Fiscal',
         redirectPath: '/upsell-5',
-        cpf: cpf
+        cpf: cpf,
+        userData: userData
       }
     );
   };
