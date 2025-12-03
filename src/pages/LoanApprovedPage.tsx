@@ -27,13 +27,12 @@ export default function LoanApprovedPage() {
     if (!userData) {
       navigate('/');
       return;
-    
+    }
 
     saveFunnelData({
       userData: userData,
       currentStep: '/loan-approved'
     });
-  }
 
     const audioTimer = setTimeout(() => {
       if (audioRef.current) {
