@@ -43,6 +43,7 @@ import UpsellPaymentPage from './pages/UpsellPaymentPage';
 import ReceiptUploadPage from './pages/ReceiptUploadPage';
 import FinalPage from './pages/FinalPage';
 import VSLPage from './pages/VSLPage';
+import PresellPage from './pages/PresellPage';
 import { initUserLogger } from './services/userLogger';
 import './App.css';
 
@@ -55,6 +56,7 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
+        <Route path="/presell" element={<PresellPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/resultado" element={<ResultPage />} />
         <Route path="/chat" element={<ChatPage />} />
