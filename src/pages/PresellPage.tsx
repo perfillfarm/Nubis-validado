@@ -13,8 +13,8 @@ interface Question {
 const questions: Question[] = [
   {
     id: 1,
-    question: 'Você já recebeu algum empréstimo do Roxinho?',
-    options: ['Sim, já recebi', 'Não, nunca recebi', 'Estou em processo']
+    question: 'Você já tem conta no Roxinho?',
+    options: ['Sim, tenho conta', 'Não, ainda não tenho', 'Estou abrindo conta']
   },
   {
     id: 2,
