@@ -35,19 +35,6 @@ export default function LoanApprovedPage() {
       currentStep: '/loan-approved'
     });
 
-    const audioTimer = setTimeout(() => {
-      if (audioRef.current) {
-        setIsAudioLoading(true);
-        audioRef.current.volume = 0.3;
-        audioRef.current.play().catch((error) => {
-          console.log('Autoplay prevented:', error);
-          setIsAudioLoading(false);
-        }).then(() => {
-          setIsPlaying(true);
-        });
-      }
-    }, 2000);
-
     const countdownInterval = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -63,10 +50,28 @@ export default function LoanApprovedPage() {
     }, 1000);
 
     return () => {
-      clearTimeout(audioTimer);
       clearInterval(countdownInterval);
     };
   }, [navigate, userData]);
+
+  useEffect(() => {
+    const audioTimer = setTimeout(() => {
+      if (audioRef.current) {
+        setIsAudioLoading(true);
+        audioRef.current.volume = 0.3;
+        audioRef.current.play().catch((error) => {
+          console.log('Autoplay prevented:', error);
+          setIsAudioLoading(false);
+        }).then(() => {
+          setIsPlaying(true);
+        });
+      }
+    }, 2000);
+
+    return () => {
+      clearTimeout(audioTimer);
+    };
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
