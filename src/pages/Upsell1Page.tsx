@@ -34,6 +34,7 @@ export default function Upsell1Page() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isAudioLoading, setIsAudioLoading] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const handleMenuClick = () => setIsMenuOpen(!isMenuOpen);
@@ -66,16 +67,25 @@ export default function Upsell1Page() {
     if (!audio) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
+    const updateDuration = () => {
+      setDuration(audio.duration);
+      setIsAudioLoading(false);
+    };
+    const handleCanPlay = () => setIsAudioLoading(false);
+    const handleWaiting = () => setIsAudioLoading(true);
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('waiting', handleWaiting);
 
     return () => {
       audio.removeEventListener('timeupdate', updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('waiting', handleWaiting);
     };
   }, []);
 
@@ -153,6 +163,7 @@ export default function Upsell1Page() {
             setShowPopupTaxa(false);
             setMostrarTaxa(true);
             setShowAudio(true);
+            setIsAudioLoading(true);
 
             setTimeout(() => {
               if (audioRef.current) {
@@ -352,16 +363,20 @@ export default function Upsell1Page() {
 
                       <div className="flex-1">
                         <div className="relative w-full h-1.5 bg-gray-200 rounded-full overflow-hidden mb-0.5">
-                          <div
-                            className="absolute inset-y-0 left-0 bg-purple-600 rounded-full transition-all duration-100"
-                            style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
-                          >
-                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full shadow-md"></div>
-                          </div>
+                          {isAudioLoading ? (
+                            <div className="absolute inset-0 bg-gradient-to-r from-gray-300 via-purple-300 to-gray-300 animate-shimmer"></div>
+                          ) : (
+                            <div
+                              className="absolute inset-y-0 left-0 bg-purple-600 rounded-full transition-all duration-100"
+                              style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                            >
+                              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-purple-600 rounded-full shadow-md"></div>
+                            </div>
+                          )}
                         </div>
                         <div className="flex justify-between text-xs text-gray-500 mt-0.5">
-                          <span>{formatTime(currentTime)}</span>
-                          <span>{formatTime(duration)}</span>
+                          <span>{isAudioLoading ? '--:--' : formatTime(currentTime)}</span>
+                          <span>{isAudioLoading ? '--:--' : formatTime(duration)}</span>
                         </div>
                       </div>
                     </div>
@@ -495,6 +510,19 @@ export default function Upsell1Page() {
         }
         .animate-scale-in {
           animation: scale-in 0.3s ease-out;
+        }
+
+        @keyframes shimmer {
+          0% {
+            background-position: -200% 0;
+          }
+          100% {
+            background-position: 200% 0;
+          }
+        }
+        .animate-shimmer {
+          background-size: 200% 100%;
+          animation: shimmer 1.5s ease-in-out infinite;
         }
       `}</style>
     </div>
