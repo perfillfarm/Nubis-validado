@@ -101,7 +101,7 @@ export default function PaymentVerificationPage() {
     setTimeout(() => {
       navigateWithParams(
         navigate,
-        '/account-verified',
+        '/upsell-1',
         location,
         {
           userData,
