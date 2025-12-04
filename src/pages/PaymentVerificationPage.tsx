@@ -12,6 +12,8 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
+const RECEIPT_UPLOAD_ENABLED = false;
+
 export default function PaymentVerificationPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,6 +43,25 @@ export default function PaymentVerificationPage() {
   const checkForReceipt = async () => {
     try {
       setReceiptChecked(true);
+
+      if (!RECEIPT_UPLOAD_ENABLED) {
+        setTimeout(() => {
+          navigateWithParams(
+            navigate,
+            '/upsell-1',
+            location,
+            {
+              userData,
+              indemnityAmount,
+              pixKeyType,
+              pixKey,
+              transactionId,
+              receiptUploaded: false
+            }
+          );
+        }, 1500);
+        return;
+      }
 
       const { data: existingReceipts, error: checkError } = await supabase
         .from('payment_receipts')
