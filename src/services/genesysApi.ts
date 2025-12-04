@@ -95,42 +95,7 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
       data,
     });
 
-    console.log('⚠️ GENESYS - VALOR RECEBIDO:', data.amount);
-
     const externalId = `nubank_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    const requestBody = {
-      external_id: externalId,
-      total_amount: data.amount,
-      payment_method: 'PIX',
-      webhook_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/genesys-webhook`,
-      items: [
-        {
-          id: 'product_' + Date.now(),
-          title: data.productName || 'Produto Digital',
-          description: `Pagamento ${data.productName || 'Produto Digital'}`,
-          quantity: 1,
-          price: data.amount,
-          is_physical: false,
-        },
-      ],
-      ip: '127.0.0.1',
-      customer: {
-        name: data.customerName || 'Cliente',
-        email: data.customerEmail || 'cliente@example.com',
-        document: data.cpf,
-        document_type: 'CPF',
-        phone: data.customerPhone || '11999999999',
-        ...(data.utmSource && { utm_source: data.utmSource }),
-        ...(data.utmMedium && { utm_medium: data.utmMedium }),
-        ...(data.utmCampaign && { utm_campaign: data.utmCampaign }),
-        ...(data.utmTerm && { utm_term: data.utmTerm }),
-        ...(data.utmContent && { utm_content: data.utmContent }),
-        ...(data.src && { src: data.src }),
-      },
-    };
-
-    console.log('⚠️ GENESYS - BODY ENVIADO:', JSON.stringify(requestBody, null, 2));
 
     const response = await fetch(`${config.apiUrl}/v1/transactions`, {
       method: 'POST',

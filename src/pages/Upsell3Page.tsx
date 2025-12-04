@@ -35,10 +35,10 @@ export default function Upsell3Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 18.90,
+      value: 21.80,
       currency: 'BRL',
       content_type: 'upsell',
-      content_name: 'Tarifa de Validação',
+      content_name: 'Upsell',
       num_items: 1,
     });
 

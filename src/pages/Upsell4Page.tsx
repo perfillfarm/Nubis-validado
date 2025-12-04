@@ -32,10 +32,10 @@ export default function Upsell4Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 17.20,
+      value: 18.90,
       currency: 'BRL',
       content_type: 'upsell',
-      content_name: 'Taxa de Emissão de Nota Fiscal',
+      content_name: 'Upsell',
       num_items: 1,
     });
 

@@ -33,10 +33,10 @@ export default function Upsell5Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 17.30,
+      value: 17.20,
       currency: 'BRL',
       content_type: 'upsell',
-      content_name: 'Regularização de Taxa de Emissão',
+      content_name: 'Upsell',
       num_items: 1,
     });
 

@@ -51,10 +51,10 @@ export default function Upsell2Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 21.80,
+      value: 39.90,
       currency: 'BRL',
       content_type: 'upsell',
-      content_name: 'Tarifa de Cadastro',
+      content_name: 'Upsell',
       num_items: 1,
     });
 
