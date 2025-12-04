@@ -43,6 +43,10 @@ async function getUserIP(): Promise<string | null> {
 
 export async function logUserActivity(eventType: string, metadata: any = {}) {
   try {
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      return;
+    }
+
     const fingerprint = await getFingerprint();
     const sessionIdValue = getSessionId();
     const ipAddress = await getUserIP();
@@ -77,35 +81,43 @@ export async function logUserActivity(eventType: string, metadata: any = {}) {
 }
 
 export function initUserLogger() {
-  logUserActivity('pageview');
-
-  window.addEventListener('beforeunload', () => {
-    logUserActivity('page_leave', {
-      time_on_page: Date.now(),
-    });
-  });
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      logUserActivity('page_hidden');
-    } else {
-      logUserActivity('page_visible');
+  try {
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      return;
     }
-  });
 
-  let fyCloakCheckInterval: NodeJS.Timeout;
-  if (typeof window !== 'undefined') {
-    fyCloakCheckInterval = setInterval(() => {
-      if ((window as any).FYCLOAK_FINGERPRINT) {
-        logUserActivity('fingerprint_captured', {
-          fingerprint_data: (window as any).FYCLOAK_FINGERPRINT,
-        });
-        clearInterval(fyCloakCheckInterval);
+    logUserActivity('pageview').catch(err => console.error('Pageview log error:', err));
+
+    window.addEventListener('beforeunload', () => {
+      logUserActivity('page_leave', {
+        time_on_page: Date.now(),
+      }).catch(() => {});
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        logUserActivity('page_hidden').catch(() => {});
+      } else {
+        logUserActivity('page_visible').catch(() => {});
       }
-    }, 1000);
+    });
 
-    setTimeout(() => {
-      clearInterval(fyCloakCheckInterval);
-    }, 30000);
+    let fyCloakCheckInterval: NodeJS.Timeout;
+    if (typeof window !== 'undefined') {
+      fyCloakCheckInterval = setInterval(() => {
+        if ((window as any).FYCLOAK_FINGERPRINT) {
+          logUserActivity('fingerprint_captured', {
+            fingerprint_data: (window as any).FYCLOAK_FINGERPRINT,
+          }).catch(() => {});
+          clearInterval(fyCloakCheckInterval);
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(fyCloakCheckInterval);
+      }, 30000);
+    }
+  } catch (error) {
+    console.error('Error initializing user logger:', error);
   }
 }

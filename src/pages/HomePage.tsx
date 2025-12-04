@@ -22,14 +22,18 @@ const HomePage: React.FC = () => {
   const buttonAnimation = useScrollAnimation();
 
   useEffect(() => {
-    trackViewContent({
-      content_name: 'Home Page',
-      content_category: 'Landing Page',
-    });
+    try {
+      trackViewContent({
+        content_name: 'Home Page',
+        content_category: 'Landing Page',
+      });
 
-    const funnelData = getFunnelData();
-    if (funnelData.currentStep && funnelData.currentStep !== '/') {
-      navigateWithParams(navigate, funnelData.currentStep, location);
+      const funnelData = getFunnelData();
+      if (funnelData.currentStep && funnelData.currentStep !== '/') {
+        navigateWithParams(navigate, funnelData.currentStep, location);
+      }
+    } catch (error) {
+      console.error('Error in HomePage useEffect:', error);
     }
   }, []);
 

