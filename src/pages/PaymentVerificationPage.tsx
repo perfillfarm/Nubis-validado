@@ -1,25 +1,18 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
+import { getFunnelData } from '../utils/funnelStorage';
 import { CheckCircle, Clock, XCircle, AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
 import Header from '../components/Header';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams } from '../utils/urlParams';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 export default function PaymentVerificationPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const funnelData = getFunnelData();
-  const { userData: stateUserData, indemnityAmount, pixKeyType, pixKey, urlParams, transactionId } = location.state || {};
+  const { userData: stateUserData, indemnityAmount, pixKeyType, pixKey, transactionId } = location.state || {};
   const userData = stateUserData || funnelData.userData;
   const [receiptChecked, setReceiptChecked] = useState(false);
-  const [isFirstPayment, setIsFirstPayment] = useState(false);
 
   const { transaction, loading, error } = useTransactionPolling({
     transactionId,
@@ -34,68 +27,10 @@ export default function PaymentVerificationPage() {
 
   useEffect(() => {
     if (transaction?.status === 'completed' && !receiptChecked) {
-      checkForReceipt();
-    }
-  }, [transaction?.status, receiptChecked]);
-
-  const checkForReceipt = async () => {
-    try {
       setReceiptChecked(true);
-
-      const { data: existingReceipts, error: checkError } = await supabase
-        .from('payment_receipts')
-        .select('*')
-        .eq('cpf', userData?.cpf || transaction?.cpf)
-        .eq('status', 'receipt_uploaded');
-
-      if (checkError) {
-        console.error('Error checking receipts:', checkError);
-        proceedToNextPage();
-        return;
-      }
-
-      if (!existingReceipts || existingReceipts.length === 0) {
-        setIsFirstPayment(true);
-
-        const { error: insertError } = await supabase
-          .from('payment_receipts')
-          .insert({
-            transaction_id: transactionId,
-            cpf: userData?.cpf || transaction?.cpf || '',
-            customer_name: userData?.name || 'Cliente',
-            amount: transaction?.amount || 0,
-            status: 'pending_receipt',
-          });
-
-        if (insertError) {
-          console.error('Error creating receipt record:', insertError);
-        }
-
-        setTimeout(() => {
-          navigateWithParams(
-            navigate,
-            '/receipt-upload',
-            location,
-            {
-              transactionId,
-              cpf: userData?.cpf || transaction?.cpf,
-              customerName: userData?.name || 'Cliente',
-              amount: transaction?.amount || 0,
-              userData,
-              indemnityAmount,
-              pixKeyType,
-              pixKey
-            }
-          );
-        }, 1500);
-      } else {
-        proceedToNextPage();
-      }
-    } catch (err) {
-      console.error('Error in receipt check:', err);
       proceedToNextPage();
     }
-  };
+  }, [transaction?.status, receiptChecked]);
 
   const proceedToNextPage = () => {
     setTimeout(() => {

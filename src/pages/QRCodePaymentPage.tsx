@@ -47,11 +47,11 @@ export default function QRCodePaymentPage() {
       if (isPaid && !hasNavigated.current) {
         hasNavigated.current = true;
         setPaymentCompleted(true);
-        console.log('Main payment completed! Redirecting to receipt upload');
+        console.log('Main payment completed! Redirecting to upsell-1');
         setTimeout(() => {
           navigateWithParams(
             navigate,
-            '/enviar-comprovante',
+            '/upsell-1',
             location,
             {
               userData,
