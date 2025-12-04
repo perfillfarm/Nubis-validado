@@ -40,6 +40,10 @@ export default function Upsell2Page() {
   ];
 
   useEffect(() => {
+    const { userData: stateUserData } = location.state || {};
+    const funnelData = getFunnelData();
+    const userData = stateUserData || funnelData.userData;
+
     initGooglePixel();
 
     trackPurchase({
@@ -50,10 +54,13 @@ export default function Upsell2Page() {
       num_items: 1,
     });
 
-    saveFunnelData({
-      currentStep: '/upsell-2'
-    });
-  }, []);
+    if (userData) {
+      saveFunnelData({
+        userData: userData,
+        currentStep: '/upsell-2'
+      });
+    }
+  }, [location.state]);
 
   useEffect(() => {
     let stepIndex = 0;
@@ -136,8 +143,13 @@ export default function Upsell2Page() {
   };
 
   const handleRegularizeTaxa = () => {
-    const { userData } = location.state || {};
+    const funnelData = getFunnelData();
+    const { userData: stateUserData } = location.state || {};
+    const userData = stateUserData || funnelData.userData;
     const cpf = userData?.cpf;
+
+    console.log('handleRegularizeTaxa - userData:', userData);
+    console.log('handleRegularizeTaxa - CPF:', cpf);
 
     if (!cpf) {
       console.error('CPF not found. Redirecting to home.');

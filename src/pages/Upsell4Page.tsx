@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { AlertTriangle, FileText, Clock } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
+import { navigateWithParams } from '../utils/urlParams';
 import { trackPurchase } from '../utils/facebookPixel';
 import { initGooglePixel } from '../utils/googlePixel';
 
 export default function Upsell4Page() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
 
@@ -23,6 +25,10 @@ export default function Upsell4Page() {
   };
 
   useEffect(() => {
+    const { userData: stateUserData } = location.state || {};
+    const funnelData = getFunnelData();
+    const userData = stateUserData || funnelData.userData;
+
     initGooglePixel();
 
     trackPurchase({
@@ -33,10 +39,13 @@ export default function Upsell4Page() {
       num_items: 1,
     });
 
-    saveFunnelData({
-      currentStep: '/upsell-4'
-    });
-  }, []);
+    if (userData) {
+      saveFunnelData({
+        userData: userData,
+        currentStep: '/upsell-4'
+      });
+    }
+  }, [location.state]);
 
   const getPaymentDeadline = () => {
     const now = new Date();
@@ -44,8 +53,13 @@ export default function Upsell4Page() {
   };
 
   const handlePayment = () => {
-    const { userData } = location.state || {};
+    const funnelData = getFunnelData();
+    const { userData: stateUserData } = location.state || {};
+    const userData = stateUserData || funnelData.userData;
     const cpf = userData?.cpf;
+
+    console.log('handlePayment - userData:', userData);
+    console.log('handlePayment - CPF:', cpf);
 
     if (!cpf) {
       console.error('CPF not found. Redirecting to home.');

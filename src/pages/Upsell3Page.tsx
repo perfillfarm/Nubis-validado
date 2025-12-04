@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 import { AlertTriangle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import UserMenu from '../components/UserMenu';
 import { getUserName } from '../utils/userUtils';
+import { navigateWithParams } from '../utils/urlParams';
 import { trackPurchase } from '../utils/facebookPixel';
 import { initGooglePixel } from '../utils/googlePixel';
 
 export default function Upsell3Page() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('');
@@ -26,6 +28,10 @@ export default function Upsell3Page() {
   };
 
   useEffect(() => {
+    const { userData: stateUserData } = location.state || {};
+    const funnelData = getFunnelData();
+    const userData = stateUserData || funnelData.userData;
+
     initGooglePixel();
 
     trackPurchase({
@@ -36,17 +42,18 @@ export default function Upsell3Page() {
       num_items: 1,
     });
 
+    if (userData) {
+      saveFunnelData({
+        userData: userData,
+        currentStep: '/upsell-3'
+      });
+    }
+
     const timer = setTimeout(() => {
       setProgressWidth(90);
     }, 100);
     return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    saveFunnelData({
-      currentStep: '/upsell-3'
-    });
-  }, []);
+  }, [location.state]);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -69,8 +76,13 @@ export default function Upsell3Page() {
   };
 
   const handlePayTariff = () => {
-    const { userData } = location.state || {};
+    const funnelData = getFunnelData();
+    const { userData: stateUserData } = location.state || {};
+    const userData = stateUserData || funnelData.userData;
     const cpf = userData?.cpf;
+
+    console.log('handlePayTariff - userData:', userData);
+    console.log('handlePayTariff - CPF:', cpf);
 
     if (!cpf) {
       console.error('CPF not found. Redirecting to home.');

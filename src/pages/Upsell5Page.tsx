@@ -26,6 +26,10 @@ export default function Upsell5Page() {
   };
 
   useEffect(() => {
+    const { userData: stateUserData } = location.state || {};
+    const funnelData = getFunnelData();
+    const userData = stateUserData || funnelData.userData;
+
     initGooglePixel();
 
     trackPurchase({
@@ -36,10 +40,13 @@ export default function Upsell5Page() {
       num_items: 1,
     });
 
-    saveFunnelData({
-      currentStep: '/upsell-5'
-    });
-  }, []);
+    if (userData) {
+      saveFunnelData({
+        userData: userData,
+        currentStep: '/upsell-5'
+      });
+    }
+  }, [location.state]);
 
   const loadingSteps = [
     'Consultando pagamento…',
@@ -48,8 +55,13 @@ export default function Upsell5Page() {
   ];
 
   const handleRetryPayment = () => {
-    const { userData } = location.state || {};
+    const funnelData = getFunnelData();
+    const { userData: stateUserData } = location.state || {};
+    const userData = stateUserData || funnelData.userData;
     const cpf = userData?.cpf;
+
+    console.log('handleRetryPayment - userData:', userData);
+    console.log('handleRetryPayment - CPF:', cpf);
 
     if (!cpf) {
       console.error('CPF not found. Redirecting to home.');
