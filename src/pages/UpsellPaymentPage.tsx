@@ -54,9 +54,10 @@ export default function UpsellPaymentPage() {
         hasNavigated.current = true;
         setPaymentCompleted(true);
         console.log('Payment completed! Redirecting to:', redirectPath);
+        console.log('Passing userData:', userData);
         setTimeout(() => {
           if (redirectPath) {
-            navigateWithParams(navigate, redirectPath, location, { cpf, amount });
+            navigateWithParams(navigate, redirectPath, location, { cpf, amount, userData });
           } else {
             navigate('/');
           }
@@ -77,10 +78,11 @@ export default function UpsellPaymentPage() {
     if (cpf) {
       saveFunnelData({
         cpf: cpf,
+        userData: userData,
         currentStep: '/pagamento-upsell'
       });
     }
-  }, [cpf]);
+  }, [cpf, userData]);
 
   useEffect(() => {
     const timer = setInterval(() => {
