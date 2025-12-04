@@ -194,7 +194,7 @@ export default function UpsellPaymentPage() {
 
       setTimeout(() => {
         if (redirectPath) {
-          navigateWithParams(navigate, redirectPath, location, { cpf, amount });
+          navigateWithParams(navigate, redirectPath, location, { cpf, amount, userData });
         } else {
           navigate('/');
         }
