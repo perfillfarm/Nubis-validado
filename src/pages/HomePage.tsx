@@ -11,7 +11,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { navigateWithParams } from '../utils/urlParams';
 import { trackViewContent } from '../utils/facebookPixel';
-import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,11 +26,6 @@ const HomePage: React.FC = () => {
         content_name: 'Home Page',
         content_category: 'Landing Page',
       });
-
-      const funnelData = getFunnelData();
-      if (funnelData.currentStep && funnelData.currentStep !== '/') {
-        navigateWithParams(navigate, funnelData.currentStep, location);
-      }
     } catch (error) {
       console.error('Error in HomePage useEffect:', error);
     }

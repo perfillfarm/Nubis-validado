@@ -8,7 +8,6 @@ import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
-import { saveFunnelData } from '../utils/funnelStorage';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
@@ -83,17 +82,6 @@ export default function UpsellPaymentPage() {
     setIsMenuOpen(false);
   };
 
-  useEffect(() => {
-    if (cpf) {
-      const finalUserData = userData || { cpf };
-      console.log('Saving to localStorage - userData:', finalUserData);
-      saveFunnelData({
-        cpf: cpf,
-        userData: finalUserData,
-        currentStep: '/pagamento-upsell'
-      });
-    }
-  }, [cpf, userData]);
 
   useEffect(() => {
     const timer = setInterval(() => {
