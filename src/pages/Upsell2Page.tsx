@@ -40,9 +40,13 @@ export default function Upsell2Page() {
   ];
 
   useEffect(() => {
+    console.log('Upsell2Page - location.state:', location.state);
     const { userData: stateUserData } = location.state || {};
+    console.log('Upsell2Page - stateUserData:', stateUserData);
     const funnelData = getFunnelData();
+    console.log('Upsell2Page - funnelData:', funnelData);
     const userData = stateUserData || funnelData.userData;
+    console.log('Upsell2Page - final userData:', userData);
 
     initGooglePixel();
 
@@ -59,6 +63,9 @@ export default function Upsell2Page() {
         userData: userData,
         currentStep: '/upsell-2'
       });
+      console.log('Upsell2Page - userData saved to storage');
+    } else {
+      console.error('Upsell2Page - NO USERDATA FOUND!');
     }
   }, [location.state]);
 
