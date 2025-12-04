@@ -26,19 +26,26 @@ export default function UpsellPaymentPage() {
   const hasInitialized = useRef(false);
   const hasNavigated = useRef(false);
 
-  console.log('UpsellPaymentPage - State received:', location.state);
-  console.log('UpsellPaymentPage - CPF received:', cpf);
-  console.log('UpsellPaymentPage - Amount:', amount);
-  console.log('UpsellPaymentPage - UserData:', userData);
+  console.log('=== UpsellPaymentPage Debug ===');
+  console.log('Full location.state:', JSON.stringify(location.state, null, 2));
+  console.log('Amount:', amount);
+  console.log('Title:', title);
+  console.log('RedirectPath:', redirectPath);
+  console.log('CPF from state:', stateCpf);
+  console.log('UserData:', userData);
+  console.log('Final CPF:', cpf);
+  console.log('=================================');
 
   if (!amount) {
-    console.error('Missing amount - redirecting. Amount:', amount);
+    console.error('CRITICAL: Missing amount - redirecting back');
     navigate(-1);
     return null;
   }
 
   if (!cpf && !userData?.cpf) {
-    console.error('Missing CPF - redirecting. CPF:', cpf, 'UserData CPF:', userData?.cpf);
+    console.error('CRITICAL: Missing CPF - no CPF in state or userData');
+    console.error('State CPF:', stateCpf);
+    console.error('UserData:', userData);
     navigate(-1);
     return null;
   }
@@ -55,9 +62,11 @@ export default function UpsellPaymentPage() {
         setPaymentCompleted(true);
         console.log('Payment completed! Redirecting to:', redirectPath);
         console.log('Passing userData:', userData);
+        const finalUserData = userData || { cpf };
+        console.log('Final userData being passed:', finalUserData);
         setTimeout(() => {
           if (redirectPath) {
-            navigateWithParams(navigate, redirectPath, location, { cpf, amount, userData });
+            navigateWithParams(navigate, redirectPath, location, { cpf, amount, userData: finalUserData });
           } else {
             navigate('/');
           }
@@ -76,9 +85,11 @@ export default function UpsellPaymentPage() {
 
   useEffect(() => {
     if (cpf) {
+      const finalUserData = userData || { cpf };
+      console.log('Saving to localStorage - userData:', finalUserData);
       saveFunnelData({
         cpf: cpf,
-        userData: userData,
+        userData: finalUserData,
         currentStep: '/pagamento-upsell'
       });
     }
@@ -192,9 +203,12 @@ export default function UpsellPaymentPage() {
       setPaymentCompleted(true);
       hasNavigated.current = true;
 
+      const finalUserData = userData || { cpf };
+      console.log('Manual payment - Final userData being passed:', finalUserData);
+
       setTimeout(() => {
         if (redirectPath) {
-          navigateWithParams(navigate, redirectPath, location, { cpf, amount, userData });
+          navigateWithParams(navigate, redirectPath, location, { cpf, amount, userData: finalUserData });
         } else {
           navigate('/');
         }
