@@ -42,12 +42,12 @@ export default function VSLPage() {
 
     const preloadEmbed = document.createElement('link');
     preloadEmbed.rel = 'preload';
-    preloadEmbed.href = 'https://scripts.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/players/692e3b983dbab420e99085ca/v4/embed.html';
+    preloadEmbed.href = 'https://scripts.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/players/6930d27b1c7a1b2bd3186c71/v4/embed.html';
     document.head.appendChild(preloadEmbed);
 
     const preloadPlayer = document.createElement('link');
     preloadPlayer.rel = 'preload';
-    preloadPlayer.href = 'https://scripts.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/players/692e3b983dbab420e99085ca/v4/player.js';
+    preloadPlayer.href = 'https://scripts.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/players/6930d27b1c7a1b2bd3186c71/v4/player.js';
     preloadPlayer.as = 'script';
     document.head.appendChild(preloadPlayer);
 
@@ -59,7 +59,7 @@ export default function VSLPage() {
 
     const preloadVideo = document.createElement('link');
     preloadVideo.rel = 'preload';
-    preloadVideo.href = 'https://cdn.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/692e3b878c029b83a0a378e2/main.m3u8';
+    preloadVideo.href = 'https://cdn.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/6930d25ea93efe8639a077fc/main.m3u8';
     preloadVideo.as = 'fetch';
     document.head.appendChild(preloadVideo);
 
@@ -171,8 +171,8 @@ export default function VSLPage() {
 
             <div className="relative w-full rounded-xl overflow-hidden bg-gray-900 shadow-md" style={{ paddingTop: '133.33%' }}>
               <iframe
-                id="panda-692e3b98-3dba-b420-e990-85ca"
-                src="https://scripts.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/players/692e3b983dbab420e99085ca/v4/embed.html"
+                id="panda-6930d27b-1c7a-1b2b-d318-6c71"
+                src="https://scripts.converteai.net/f5ab9e88-cc1b-4dce-a537-c7de7e019d8b/players/6930d27b1c7a1b2bd3186c71/v4/embed.html"
                 className="absolute top-0 left-0 w-full h-full"
                 style={{ border: 'none' }}
                 allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
