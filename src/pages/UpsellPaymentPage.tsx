@@ -8,12 +8,13 @@ import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
+import { saveFunnelData } from '../utils/funnelStorage';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { amount, title, redirectPath, cpf: stateCpf, userData } = location.state || {};
-  const cpf = stateCpf;
+  const cpf = stateCpf || userData?.cpf;
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,12 +26,20 @@ export default function UpsellPaymentPage() {
   const hasInitialized = useRef(false);
   const hasNavigated = useRef(false);
 
+  console.log('UpsellPaymentPage - State received:', location.state);
   console.log('UpsellPaymentPage - CPF received:', cpf);
   console.log('UpsellPaymentPage - Amount:', amount);
+  console.log('UpsellPaymentPage - UserData:', userData);
 
-  if (!amount || !cpf) {
-    console.log('Missing data - redirecting. Amount:', amount, 'CPF:', cpf);
-    navigate('/');
+  if (!amount) {
+    console.error('Missing amount - redirecting. Amount:', amount);
+    navigate(-1);
+    return null;
+  }
+
+  if (!cpf && !userData?.cpf) {
+    console.error('Missing CPF - redirecting. CPF:', cpf, 'UserData CPF:', userData?.cpf);
+    navigate(-1);
     return null;
   }
 
@@ -65,10 +74,12 @@ export default function UpsellPaymentPage() {
   };
 
   useEffect(() => {
-    saveFunnelData({
-      cpf: cpf,
-      currentStep: '/pagamento-upsell'
-    });
+    if (cpf) {
+      saveFunnelData({
+        cpf: cpf,
+        currentStep: '/pagamento-upsell'
+      });
+    }
   }, [cpf]);
 
   useEffect(() => {

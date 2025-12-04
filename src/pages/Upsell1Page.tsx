@@ -90,6 +90,10 @@ export default function Upsell1Page() {
   }, []);
 
   useEffect(() => {
+    const { userData: stateUserData } = location.state || {};
+    const funnelData = getFunnelData();
+    const userData = stateUserData || funnelData.userData;
+
     trackPurchase({
       value: 57.47,
       currency: 'BRL',
@@ -98,10 +102,13 @@ export default function Upsell1Page() {
       num_items: 1,
     });
 
-    saveFunnelData({
-      currentStep: '/upsell-1'
-    });
-  }, []);
+    if (userData) {
+      saveFunnelData({
+        userData: userData,
+        currentStep: '/upsell-1'
+      });
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const processSteps = async () => {
@@ -188,8 +195,13 @@ export default function Upsell1Page() {
   };
 
   const handleRegularizarTaxa = () => {
-    const { userData } = location.state || {};
+    const funnelData = getFunnelData();
+    const { userData: stateUserData } = location.state || {};
+    const userData = stateUserData || funnelData.userData;
     const cpf = userData?.cpf;
+
+    console.log('handleRegularizarTaxa - userData:', userData);
+    console.log('handleRegularizarTaxa - CPF:', cpf);
 
     if (!cpf) {
       console.error('CPF not found. Redirecting to home.');
