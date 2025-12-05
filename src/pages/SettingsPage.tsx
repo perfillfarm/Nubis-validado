@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, AlertCircle, CheckCircle2, Settings, CreditCard } from 'lucide-react';
+import { ArrowLeft, Save, AlertCircle, CheckCircle2, Settings, CreditCard, LogOut } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { useAuth } from '../contexts/AuthContext';
 import UserLogsViewer from '../components/UserLogsViewer';
 import ReceiptsViewer from '../components/ReceiptsViewer';
 
@@ -23,6 +24,7 @@ interface ProviderSettings {
 
 export default function SettingsPage() {
   const navigate = useNavigate();
+  const { signOut, user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -102,6 +104,15 @@ export default function SettingsPage() {
         [field]: value,
       },
     }));
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (err) {
+      console.error('Error logging out:', err);
+    }
   };
 
   const handleSave = async () => {
@@ -218,15 +229,31 @@ export default function SettingsPage() {
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-6">
           <div className="bg-gradient-to-r from-[#8A05BE] to-[#a020f0] p-6 sm:p-8">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                <Settings className="w-8 h-8 text-white" />
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                  <Settings className="w-8 h-8 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white">
+                    Configurações do Sistema
+                  </h1>
+                  <p className="text-white/90 mt-1">Gerencie provedores de pagamento e comprovantes</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">
-                  Configurações do Sistema
-                </h1>
-                <p className="text-white/90 mt-1">Gerencie provedores de pagamento e comprovantes</p>
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:block text-right">
+                  <p className="text-xs text-white/70">Logado como</p>
+                  <p className="text-sm font-medium text-white">{user?.email}</p>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="group flex items-center gap-2 px-4 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-xl transition-all duration-300 border border-white/20 hover:border-white/30"
+                  title="Sair"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="hidden sm:inline font-medium">Sair</span>
+                </button>
               </div>
             </div>
           </div>
