@@ -105,13 +105,13 @@ Deno.serve(async (req: Request) => {
       updateData.completed_at = payload.timestamp || new Date().toISOString();
     }
 
-    if (!transaction.webhook_payload) {
-      updateData.webhook_payload = [payload];
+    if (!transaction.webhook_data) {
+      updateData.webhook_data = [payload];
     } else {
-      const existingPayloads = Array.isArray(transaction.webhook_payload)
-        ? transaction.webhook_payload
-        : [transaction.webhook_payload];
-      updateData.webhook_payload = [...existingPayloads, payload];
+      const existingPayloads = Array.isArray(transaction.webhook_data)
+        ? transaction.webhook_data
+        : [transaction.webhook_data];
+      updateData.webhook_data = [...existingPayloads, payload];
     }
 
     const { data: updatedTransaction, error: updateError } = await supabase
