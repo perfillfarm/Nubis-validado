@@ -24,6 +24,13 @@ const ResultPage: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
 
+    console.log('=== ResultPage - Data check ===');
+    console.log('location.state:', location.state);
+    console.log('funnelData:', funnelData);
+    console.log('userData:', userData);
+    console.log('userData.cpf:', userData?.cpf);
+    console.log('===============================');
+
     if (!userData) {
       const searchParams = new URLSearchParams(location.search);
       navigate(`/?${searchParams.toString()}`);
