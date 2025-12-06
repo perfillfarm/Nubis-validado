@@ -29,7 +29,11 @@ export function useTransactionPolling({
 
     const pollStatus = async () => {
       try {
+        console.log('🔄 Polling transaction status for:', transactionId);
         const updatedTransaction = await getTransactionStatus(transactionId);
+        console.log('📊 Transaction status:', updatedTransaction.status);
+        console.log('📊 Previous status:', previousStatusRef.current);
+
         setTransaction(updatedTransaction);
         setError(null);
         setLoading(false);
@@ -39,19 +43,21 @@ export function useTransactionPolling({
           previousStatusRef.current !== updatedTransaction.status &&
           onStatusChange
         ) {
+          console.log('🔔 Status changed from', previousStatusRef.current, 'to', updatedTransaction.status);
           onStatusChange(updatedTransaction);
         }
 
         previousStatusRef.current = updatedTransaction.status;
 
         if (updatedTransaction.status === 'completed' || updatedTransaction.status === 'authorized' || updatedTransaction.status === 'approved' || updatedTransaction.status === 'failed') {
+          console.log('⏹️ Stopping polling - final status:', updatedTransaction.status);
           if (intervalRef.current) {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
           }
         }
       } catch (err: any) {
-        console.error('Error polling transaction status:', err);
+        console.error('❌ Error polling transaction status:', err);
         setError(err.message || 'Erro ao verificar status do pagamento');
         setLoading(false);
       }

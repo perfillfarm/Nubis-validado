@@ -42,13 +42,20 @@ export default function QRCodePaymentPage() {
     enabled: !!transactionData?.id && !paymentCompleted,
     interval: 5000,
     onStatusChange: (transaction) => {
-      console.log('Main payment status changed:', transaction.status);
+      console.log('=== MAIN PAYMENT STATUS CHANGED ===');
+      console.log('Transaction ID:', transaction.id);
+      console.log('New Status:', transaction.status);
+      console.log('Has Navigated:', hasNavigated.current);
+      console.log('Payment Completed:', paymentCompleted);
+      console.log('===================================');
+
       const isPaid = transaction.status === 'completed' || transaction.status === 'authorized' || transaction.status === 'approved';
       if (isPaid && !hasNavigated.current) {
         hasNavigated.current = true;
         setPaymentCompleted(true);
-        console.log('Main payment completed! Redirecting to upsell-1');
+        console.log('✅ Main payment completed! Redirecting to upsell-1 in 2 seconds...');
         setTimeout(() => {
+          console.log('🚀 Navigating to /upsell-1 now...');
           navigateWithParams(
             navigate,
             '/upsell-1',

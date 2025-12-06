@@ -116,6 +116,11 @@ export async function getTransactionStatus(transactionId: string): Promise<Trans
 
   const provider = await getActiveProvider();
 
+  if (provider.provider === 'paradise') {
+    console.log('Paradise uses webhook - returning database status:', transaction.status);
+    return transaction as Transaction;
+  }
+
   let newStatus: string;
 
   if (provider.provider === 'aureo') {
@@ -146,22 +151,6 @@ export async function getTransactionStatus(transactionId: string): Promise<Trans
 
     newStatus = await getMangofyTransactionStatus(
       mangofyConfig,
-      transaction.genesys_transaction_id
-    );
-  } else if (provider.provider === 'paradise') {
-    if (!provider.secret_key || !provider.recipient_id) {
-      throw new Error('Paradise keys not configured');
-    }
-
-    const paradiseConfig: ParadiseConfig = {
-      apiUrl: provider.api_url,
-      secretKey: provider.secret_key,
-      recipientId: provider.recipient_id,
-      productCode: provider.product_code,
-    };
-
-    newStatus = await getParadiseTransactionStatus(
-      paradiseConfig,
       transaction.genesys_transaction_id
     );
   } else {
