@@ -14,9 +14,24 @@ export default function UpsellPaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const funnelData = getFunnelData();
+
+  console.log('=== UpsellPaymentPage Debug ===');
+  console.log('location.state:', location.state);
+  console.log('funnelData:', funnelData);
+
   const { amount, title, redirectPath, cpf: stateCpf, userData: stateUserData } = location.state || {};
   const userData = stateUserData || funnelData.userData;
   const cpf = stateCpf || userData?.cpf;
+
+  console.log('amount:', amount, 'type:', typeof amount);
+  console.log('title:', title);
+  console.log('redirectPath:', redirectPath);
+  console.log('stateCpf:', stateCpf);
+  console.log('stateUserData:', stateUserData);
+  console.log('userData (final):', userData);
+  console.log('cpf (final):', cpf);
+  console.log('=================================');
+
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,11 +44,13 @@ export default function UpsellPaymentPage() {
   const hasNavigated = useRef(false);
 
   if (!amount) {
+    console.error('REDIRECTING: amount is falsy:', amount);
     navigate('/');
     return null;
   }
 
   if (!cpf) {
+    console.error('REDIRECTING: cpf is falsy:', cpf);
     navigate('/');
     return null;
   }
