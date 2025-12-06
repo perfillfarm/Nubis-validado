@@ -29,7 +29,7 @@ export default function TaxBreakdownPage() {
   }
 
   const firstName = userData.nome.split(' ')[0];
-  const iof = 5.90;
+  const iof = 4.57;
   const processingFee = 30.00;
   const totalTaxes = iof + processingFee;
   const netAmount = 12600.00;
@@ -256,7 +256,7 @@ export default function TaxBreakdownPage() {
                     IOF - Imposto sobre Operações Financeiras
                   </h3>
                   <p className="text-purple-600 font-bold text-xl sm:text-2xl whitespace-nowrap">
-                    R$ 5,90
+                    R$ {formatCurrency(iof)}
                   </p>
                 </div>
                 <p className="text-gray-500 text-xs">
@@ -270,7 +270,7 @@ export default function TaxBreakdownPage() {
                     Seguro Prestamista
                   </h3>
                   <p className="text-purple-600 font-bold text-xl sm:text-2xl whitespace-nowrap">
-                    R$ 30,00
+                    R$ {formatCurrency(processingFee)}
                   </p>
                 </div>
                 <p className="text-gray-500 text-xs">
