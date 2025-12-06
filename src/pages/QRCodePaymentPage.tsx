@@ -133,6 +133,14 @@ export default function QRCodePaymentPage() {
           src: utmParams.src,
         });
 
+        console.log('Transaction data received:', {
+          id: transaction.id,
+          hasQrCode: !!transaction.qr_code,
+          hasQrCodeImage: !!transaction.qr_code_image,
+          qrCodeImageLength: transaction.qr_code_image?.length,
+          qrCodeImagePrefix: transaction.qr_code_image?.substring(0, 50),
+        });
+
         setTransactionData(transaction);
         setLoading(false);
 
