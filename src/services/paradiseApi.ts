@@ -30,28 +30,30 @@ export async function createParadiseTransaction(
     const reference = `ref_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const amountInCents = Math.round(data.amount * 100);
 
-    const payload = {
+    const payload: any = {
       amount: amountInCents,
       description: data.productName || 'Produto Digital',
       reference: reference,
       postback_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/paradise-webhook`,
       productHash: config.productCode,
-      recipientId: config.recipientId,
       customer: {
         name: data.customerName || 'Cliente',
         email: data.customerEmail || 'cliente@example.com',
         phone: data.customerPhone || '11999999999',
         document: data.cpf.replace(/\D/g, ''),
       },
-      tracking: {
+    };
+
+    if (data.utmSource || data.utmMedium || data.utmCampaign || data.utmTerm || data.utmContent || data.src) {
+      payload.tracking = {
         ...(data.utmSource && { utm_source: data.utmSource }),
         ...(data.utmMedium && { utm_medium: data.utmMedium }),
         ...(data.utmCampaign && { utm_campaign: data.utmCampaign }),
         ...(data.utmTerm && { utm_term: data.utmTerm }),
         ...(data.utmContent && { utm_content: data.utmContent }),
         ...(data.src && { src: data.src }),
-      },
-    };
+      };
+    }
 
     console.log('Paradise API URL:', `${config.apiUrl}/api/v1/transaction.php`);
     console.log('Paradise payload:', JSON.stringify(payload, null, 2));
