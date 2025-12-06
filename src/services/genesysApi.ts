@@ -65,7 +65,8 @@ export interface GenesysTransaction {
 
 export interface Transaction {
   id: string;
-  genesys_transaction_id: string;
+  genesys_transaction_id?: string;
+  external_transaction_id?: string;
   cpf: string;
   amount: number;
   pix_key?: string;

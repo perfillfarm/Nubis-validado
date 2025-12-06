@@ -77,17 +77,11 @@ export async function createParadiseTransaction(
 
     const paradiseTransaction = await response.json();
     console.log('Paradise transaction created:', paradiseTransaction);
-    console.log('Paradise qr_code exists:', !!paradiseTransaction.qr_code);
-    console.log('Paradise qr_code_base64 exists:', !!paradiseTransaction.qr_code_base64);
-    console.log('Paradise qr_code_base64 length:', paradiseTransaction.qr_code_base64?.length);
 
     const transactionId = crypto.randomUUID();
 
     const qrCodeText = paradiseTransaction.qr_code || '';
     const qrCodeImage = paradiseTransaction.qr_code_base64 || '';
-
-    console.log('Mapped qr_code_image length:', qrCodeImage.length);
-    console.log('Mapped qr_code_image prefix:', qrCodeImage.substring(0, 50));
 
     const transaction: Transaction = {
       id: transactionId,
@@ -96,7 +90,7 @@ export async function createParadiseTransaction(
       qr_code: qrCodeText,
       qr_code_image: qrCodeImage,
       cpf: data.cpf,
-      genesys_transaction_id: (paradiseTransaction.transaction_id || paradiseTransaction.id || transactionId).toString(),
+      external_transaction_id: (paradiseTransaction.transaction_id || paradiseTransaction.id || transactionId).toString(),
       provider: 'paradise',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
