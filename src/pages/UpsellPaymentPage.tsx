@@ -28,6 +28,8 @@ export default function UpsellPaymentPage() {
   console.log('=== UpsellPaymentPage Debug ===');
   console.log('Full location.state:', JSON.stringify(location.state, null, 2));
   console.log('Amount:', amount);
+  console.log('Amount type:', typeof amount);
+  console.log('Amount falsy check:', !amount);
   console.log('Title:', title);
   console.log('RedirectPath:', redirectPath);
   console.log('CPF from state:', stateCpf);
@@ -35,9 +37,11 @@ export default function UpsellPaymentPage() {
   console.log('Final CPF:', cpf);
   console.log('=================================');
 
-  if (!amount) {
-    console.error('CRITICAL: Missing amount - redirecting back');
-    navigate(-1);
+  if (!amount || amount === undefined) {
+    console.error('CRITICAL: Missing amount - redirecting to home');
+    console.error('Amount value:', amount);
+    console.error('Location state:', location.state);
+    navigate('/');
     return null;
   }
 
@@ -45,7 +49,7 @@ export default function UpsellPaymentPage() {
     console.error('CRITICAL: Missing CPF - no CPF in state or userData');
     console.error('State CPF:', stateCpf);
     console.error('UserData:', userData);
-    navigate(-1);
+    navigate('/');
     return null;
   }
 
