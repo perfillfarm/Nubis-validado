@@ -8,7 +8,7 @@ import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
-import { getFunnelData } from '../utils/funnelStorage';
+import { getFunnelData, saveFunnelData } from '../utils/funnelStorage';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
@@ -88,6 +88,14 @@ export default function UpsellPaymentPage() {
     setIsMenuOpen(false);
   };
 
+  useEffect(() => {
+    if (userData) {
+      saveFunnelData({
+        userData: userData,
+        currentStep: '/upsell-payment'
+      });
+    }
+  }, [userData]);
 
   useEffect(() => {
     const timer = setInterval(() => {

@@ -10,22 +10,48 @@ interface FunnelData {
   urlParams?: any;
 }
 
+const STORAGE_KEY = 'funnel_data';
+
 export const saveFunnelData = (data: Partial<FunnelData>) => {
-  console.log('FunnelStorage - saveFunnelData called (no-op):', data);
+  try {
+    const currentData = getFunnelData();
+    const mergedData = { ...currentData, ...data };
+    console.log('FunnelStorage - Saving data:', mergedData);
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(mergedData));
+  } catch (error) {
+    console.error('FunnelStorage - Error saving data:', error);
+  }
 };
 
 export const getFunnelData = (): FunnelData => {
+  try {
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const data = JSON.parse(stored);
+      console.log('FunnelStorage - Retrieved data:', data);
+      return data;
+    }
+  } catch (error) {
+    console.error('FunnelStorage - Error getting data:', error);
+  }
   return {};
 };
 
 export const clearFunnelData = () => {
-  console.log('FunnelStorage - clearFunnelData called (no-op)');
+  try {
+    console.log('FunnelStorage - Clearing data');
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.error('FunnelStorage - Error clearing data:', error);
+  }
 };
 
 export const getUserName = (): string => {
-  return 'Usuário';
+  const data = getFunnelData();
+  return data.userData?.nome?.split(' ')[0] || 'Usuário';
 };
 
 export const getUserData = () => {
-  return null;
+  const data = getFunnelData();
+  return data.userData || null;
 };
