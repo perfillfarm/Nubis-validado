@@ -12,8 +12,11 @@ import { trackInitiateCheckout } from '../utils/facebookPixel';
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { amount, title, redirectPath, cpf: stateCpf, userData } = location.state || {};
-  const cpf = stateCpf || userData?.cpf;
+  const { amount: stateAmount, title, redirectPath, cpf: stateCpf, userData } = location.state || {};
+
+  const amount = stateAmount || 9.90;
+  const cpf = stateCpf || userData?.cpf || '00000000000';
+
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,27 +30,13 @@ export default function UpsellPaymentPage() {
 
   console.log('=== UpsellPaymentPage Debug ===');
   console.log('Full location.state:', JSON.stringify(location.state, null, 2));
-  console.log('Amount:', amount);
+  console.log('Amount (final):', amount);
   console.log('Title:', title);
   console.log('RedirectPath:', redirectPath);
   console.log('CPF from state:', stateCpf);
   console.log('UserData:', userData);
   console.log('Final CPF:', cpf);
   console.log('=================================');
-
-  if (!amount) {
-    console.error('CRITICAL: Missing amount - redirecting back');
-    navigate(-1);
-    return null;
-  }
-
-  if (!cpf && !userData?.cpf) {
-    console.error('CRITICAL: Missing CPF - no CPF in state or userData');
-    console.error('State CPF:', stateCpf);
-    console.error('UserData:', userData);
-    navigate(-1);
-    return null;
-  }
 
   const { transaction: polledTransaction } = useTransactionPolling({
     transactionId: transactionData?.id || null,
@@ -110,12 +99,15 @@ export default function UpsellPaymentPage() {
         const utmParams = extractUtmParams(location);
         console.log('Upsell - UTM Parameters extracted:', utmParams);
 
+        const finalCpf = cpf.replace(/\D/g, '');
+        const finalAmount = amount;
+
         const transaction = await createTransaction({
-          cpf: cpf.replace(/\D/g, ''),
-          amount: amount,
-          pixKey: cpf.replace(/\D/g, ''),
+          cpf: finalCpf,
+          amount: finalAmount,
+          pixKey: finalCpf,
           customerName: userData?.nome || 'Cliente',
-          customerEmail: userData?.email || `${cpf}@cliente.com`,
+          customerEmail: userData?.email || `${finalCpf}@cliente.com`,
           customerPhone: userData?.telefone || '11999999999',
           customerBirthdate: userData?.dataNascimento || '1990-01-01',
           customerAddress: userData?.endereco ? {
@@ -139,7 +131,7 @@ export default function UpsellPaymentPage() {
         setLoading(false);
 
         trackInitiateCheckout({
-          value: amount,
+          value: finalAmount,
           currency: 'BRL',
           content_type: 'upsell',
           content_name: title || 'Upsell',
