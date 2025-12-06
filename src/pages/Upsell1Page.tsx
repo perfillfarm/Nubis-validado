@@ -200,20 +200,6 @@ export default function Upsell1Page() {
     const userData = stateUserData || funnelData.userData;
     const cpf = userData?.cpf;
 
-    console.log('=== handleRegularizarTaxa Debug ===');
-    console.log('FunnelData:', funnelData);
-    console.log('State userData:', stateUserData);
-    console.log('Final userData:', userData);
-    console.log('CPF:', cpf);
-    console.log('Navigation params:', {
-      amount: 39.90,
-      title: 'Taxa de Verificação',
-      redirectPath: '/upsell-2',
-      cpf: cpf,
-      userData: userData
-    });
-    console.log('====================================');
-
     if (!cpf) {
       console.error('CPF not found. Redirecting to home.');
       navigate('/');
