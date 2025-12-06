@@ -13,19 +13,9 @@ export default function QRCodePaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const funnelData = getFunnelData();
-  console.log('=== QRCodePaymentPage Debug ===');
-  console.log('location.state:', location.state);
-  console.log('funnelData:', funnelData);
-
   const { userData: stateUserData, indemnityAmount: stateIndemnityAmount, pixKeyType, pixKey, urlParams } = location.state || {};
   const userData = stateUserData || funnelData.userData;
   const indemnityAmount = stateIndemnityAmount || 7854.63;
-
-  console.log('userData:', userData);
-  console.log('userData.cpf:', userData?.cpf);
-  console.log('pixKeyType:', pixKeyType);
-  console.log('pixKey:', pixKey);
-  console.log('=================================');
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,14 +48,6 @@ export default function QRCodePaymentPage() {
         hasNavigated.current = true;
         setPaymentCompleted(true);
         console.log('Main payment completed! Redirecting to upsell-1');
-        console.log('Passing to upsell-1:', {
-          userData,
-          'userData.cpf': userData?.cpf,
-          indemnityAmount,
-          pixKeyType,
-          pixKey,
-          transactionId: transactionData?.id
-        });
         setTimeout(() => {
           navigateWithParams(
             navigate,

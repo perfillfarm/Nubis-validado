@@ -65,15 +65,14 @@ export interface GenesysTransaction {
 
 export interface Transaction {
   id: string;
-  genesys_transaction_id?: string;
-  external_transaction_id?: string;
+  genesys_transaction_id: string;
   cpf: string;
   amount: number;
-  pix_key?: string;
+  pix_key: string;
   qr_code: string;
   qr_code_image: string;
   status: string;
-  expires_at?: string;
+  expires_at: string;
   completed_at?: string;
   created_at: string;
   updated_at: string;
@@ -83,7 +82,6 @@ export interface Transaction {
   utm_term?: string;
   utm_content?: string;
   src?: string;
-  provider?: string;
 }
 
 export async function createTransaction(data: CreateTransactionRequest): Promise<Transaction> {

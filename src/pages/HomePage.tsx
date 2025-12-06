@@ -79,15 +79,6 @@ const HomePage: React.FC = () => {
         }
       };
 
-      console.log('=== HomePage - userData created ===');
-      console.log('userData:', userData);
-      console.log('userData.cpf:', userData.cpf);
-      console.log('Navigating to /resultado with:', {
-        userData,
-        indemnityAmount: 7854.63
-      });
-      console.log('====================================');
-
       // Navigate with URL parameters preserved
       navigateWithParams(
         navigate,

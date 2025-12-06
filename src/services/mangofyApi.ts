@@ -40,19 +40,17 @@ export interface MangofyTransaction {
 
 export interface Transaction {
   id: string;
-  genesys_transaction_id?: string;
-  external_transaction_id?: string;
+  genesys_transaction_id: string;
   cpf: string;
   amount: number;
-  pix_key?: string;
+  pix_key: string;
   qr_code: string;
   qr_code_image: string;
   status: string;
-  expires_at?: string;
+  expires_at: string;
   completed_at?: string;
   created_at: string;
   updated_at: string;
-  provider?: string;
 }
 
 export async function createMangofyTransaction(

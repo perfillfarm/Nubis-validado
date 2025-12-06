@@ -8,30 +8,12 @@ import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
 import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
-import { getFunnelData, saveFunnelData } from '../utils/funnelStorage';
 
 export default function UpsellPaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const funnelData = getFunnelData();
-
-  console.log('=== UpsellPaymentPage Debug ===');
-  console.log('location.state:', location.state);
-  console.log('funnelData:', funnelData);
-
-  const { amount, title, redirectPath, cpf: stateCpf, userData: stateUserData } = location.state || {};
-  const userData = stateUserData || funnelData.userData;
+  const { amount, title, redirectPath, cpf: stateCpf, userData } = location.state || {};
   const cpf = stateCpf || userData?.cpf;
-
-  console.log('amount:', amount, 'type:', typeof amount);
-  console.log('title:', title);
-  console.log('redirectPath:', redirectPath);
-  console.log('stateCpf:', stateCpf);
-  console.log('stateUserData:', stateUserData);
-  console.log('userData (final):', userData);
-  console.log('cpf (final):', cpf);
-  console.log('=================================');
-
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,15 +25,27 @@ export default function UpsellPaymentPage() {
   const hasInitialized = useRef(false);
   const hasNavigated = useRef(false);
 
+  console.log('=== UpsellPaymentPage Debug ===');
+  console.log('Full location.state:', JSON.stringify(location.state, null, 2));
+  console.log('Amount:', amount);
+  console.log('Title:', title);
+  console.log('RedirectPath:', redirectPath);
+  console.log('CPF from state:', stateCpf);
+  console.log('UserData:', userData);
+  console.log('Final CPF:', cpf);
+  console.log('=================================');
+
   if (!amount) {
-    console.error('REDIRECTING: amount is falsy:', amount);
-    navigate('/');
+    console.error('CRITICAL: Missing amount - redirecting back');
+    navigate(-1);
     return null;
   }
 
-  if (!cpf) {
-    console.error('REDIRECTING: cpf is falsy:', cpf);
-    navigate('/');
+  if (!cpf && !userData?.cpf) {
+    console.error('CRITICAL: Missing CPF - no CPF in state or userData');
+    console.error('State CPF:', stateCpf);
+    console.error('UserData:', userData);
+    navigate(-1);
     return null;
   }
 
@@ -88,14 +82,6 @@ export default function UpsellPaymentPage() {
     setIsMenuOpen(false);
   };
 
-  useEffect(() => {
-    if (userData) {
-      saveFunnelData({
-        userData: userData,
-        currentStep: '/upsell-payment'
-      });
-    }
-  }, [userData]);
 
   useEffect(() => {
     const timer = setInterval(() => {

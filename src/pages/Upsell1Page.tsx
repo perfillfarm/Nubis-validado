@@ -90,20 +90,9 @@ export default function Upsell1Page() {
   }, []);
 
   useEffect(() => {
-    console.log('=== Upsell1Page Initial Load ===');
-    console.log('location.state:', location.state);
-
     const { userData: stateUserData } = location.state || {};
     const funnelData = getFunnelData();
-
-    console.log('stateUserData:', stateUserData);
-    console.log('funnelData:', funnelData);
-
     const userData = stateUserData || funnelData.userData;
-
-    console.log('userData (merged):', userData);
-    console.log('cpf found?:', userData?.cpf);
-    console.log('====================================');
 
     trackPurchase({
       value: 57.47,
@@ -211,19 +200,8 @@ export default function Upsell1Page() {
     const userData = stateUserData || funnelData.userData;
     const cpf = userData?.cpf;
 
-    console.log('=== Upsell1 handleRegularizarTaxa ===');
-    console.log('funnelData:', funnelData);
-    console.log('stateUserData:', stateUserData);
-    console.log('userData (final):', userData);
-    console.log('cpf:', cpf);
-    console.log('Navigating with params:', {
-      amount: 39.90,
-      title: 'Taxa de Verificação',
-      redirectPath: '/upsell-2',
-      cpf: cpf,
-      userData: userData
-    });
-    console.log('=====================================');
+    console.log('handleRegularizarTaxa - userData:', userData);
+    console.log('handleRegularizarTaxa - CPF:', cpf);
 
     if (!cpf) {
       console.error('CPF not found. Redirecting to home.');

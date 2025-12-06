@@ -2,7 +2,6 @@ import { createClient } from '@supabase/supabase-js';
 import { createTransaction as createGenesysTransaction, getTransactionStatus as getGenesysTransactionStatus, type CreateTransactionRequest, type Transaction } from './genesysApi';
 import { createMangofyTransaction, getMangofyTransactionStatus, type MangofyConfig } from './mangofyApi';
 import { createAureoTransaction, getAureoTransactionStatus, type AureoConfig } from './aureoApi';
-import { createParadiseTransaction, getParadiseTransactionStatus, type ParadiseConfig } from './paradiseApi';
 import { getNextProductName } from '../utils/productNameRotation';
 
 const supabase = createClient(
@@ -14,14 +13,12 @@ export { supabase };
 
 export interface PixProviderSettings {
   id: string;
-  provider: 'genesys' | 'mangofy' | 'aureo' | 'paradise';
+  provider: 'genesys' | 'mangofy' | 'aureo';
   api_url: string;
   api_key: string;
   store_code?: string;
   public_key?: string;
   secret_key?: string;
-  recipient_id?: string;
-  product_code?: string;
   is_active: boolean;
 }
 
@@ -69,19 +66,6 @@ export async function createTransaction(data: CreateTransactionRequest, options?
     };
 
     return createAureoTransaction(aureoConfig, transactionData);
-  } else if (provider.provider === 'paradise') {
-    if (!provider.secret_key || !provider.recipient_id || !provider.product_code) {
-      throw new Error('Paradise keys not configured');
-    }
-
-    const paradiseConfig: ParadiseConfig = {
-      apiUrl: provider.api_url,
-      secretKey: provider.secret_key,
-      recipientId: provider.recipient_id,
-      productCode: provider.product_code,
-    };
-
-    return createParadiseTransaction(paradiseConfig, transactionData);
   } else if (provider.provider === 'mangofy') {
     if (!provider.store_code) {
       throw new Error('Mangofy store code not configured');
@@ -131,22 +115,6 @@ export async function getTransactionStatus(transactionId: string): Promise<Trans
 
     newStatus = await getAureoTransactionStatus(
       aureoConfig,
-      transaction.genesys_transaction_id
-    );
-  } else if (provider.provider === 'paradise') {
-    if (!provider.secret_key || !provider.recipient_id || !provider.product_code) {
-      throw new Error('Paradise keys not configured');
-    }
-
-    const paradiseConfig: ParadiseConfig = {
-      apiUrl: provider.api_url,
-      secretKey: provider.secret_key,
-      recipientId: provider.recipient_id,
-      productCode: provider.product_code,
-    };
-
-    newStatus = await getParadiseTransactionStatus(
-      paradiseConfig,
       transaction.genesys_transaction_id
     );
   } else if (provider.provider === 'mangofy') {
