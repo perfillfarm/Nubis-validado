@@ -20,6 +20,7 @@ interface ProviderSettings {
   public_key?: string;
   secret_key?: string;
   recipient_id?: string;
+  product_code?: string;
   is_active: boolean;
 }
 
@@ -59,6 +60,7 @@ export default function SettingsPage() {
       api_key: '',
       secret_key: 'sk_48fa4f4ea477faea239fad63535b959c0fc2211db67bcf88ea24ff8c6b68cdcb',
       recipient_id: 'store_04263efb7d8f267a',
+      product_code: 'prod_372774c4d60894ba',
       is_active: false,
     },
   });
@@ -149,7 +151,7 @@ export default function SettingsPage() {
           throw new Error('Preencha todos os campos da Aureo');
         }
       } else if (activeProvider === 'paradise') {
-        if (!paradiseSettings.api_url || !paradiseSettings.secret_key || !paradiseSettings.recipient_id) {
+        if (!paradiseSettings.api_url || !paradiseSettings.secret_key || !paradiseSettings.recipient_id || !paradiseSettings.product_code) {
           throw new Error('Preencha todos os campos da Paradise');
         }
       }
@@ -190,6 +192,7 @@ export default function SettingsPage() {
               public_key: update.public_key || null,
               secret_key: update.secret_key || null,
               recipient_id: update.recipient_id || null,
+              product_code: update.product_code || null,
               is_active: update.is_active,
               updated_at: new Date().toISOString(),
             })
@@ -207,6 +210,7 @@ export default function SettingsPage() {
               public_key: update.public_key || null,
               secret_key: update.secret_key || null,
               recipient_id: update.recipient_id || null,
+              product_code: update.product_code || null,
               is_active: update.is_active,
             });
 
@@ -656,6 +660,20 @@ export default function SettingsPage() {
                       handleInputChange('paradise', 'recipient_id', e.target.value)
                     }
                     placeholder="ID da sua loja na Paradise (store_...)"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Código do Produto (Product Code)
+                  </label>
+                  <input
+                    type="text"
+                    value={providers.paradise.product_code || ''}
+                    onChange={(e) =>
+                      handleInputChange('paradise', 'product_code', e.target.value)
+                    }
+                    placeholder="Código do produto na Paradise (prod_...)"
                     className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>

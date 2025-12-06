@@ -10,6 +10,7 @@ export interface ParadiseConfig {
   apiUrl: string;
   secretKey: string;
   recipientId: string;
+  productCode: string;
 }
 
 export async function createParadiseTransaction(
@@ -23,6 +24,7 @@ export async function createParadiseTransaction(
       hasSecretKey: !!config.secretKey,
       secretKeyPrefix: config.secretKey?.substring(0, 10),
       recipientId: config.recipientId,
+      productCode: config.productCode,
     });
 
     const reference = `ref_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -33,7 +35,8 @@ export async function createParadiseTransaction(
       description: data.productName || 'Produto Digital',
       reference: reference,
       postback_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/paradise-webhook`,
-      productHash: config.recipientId,
+      productHash: config.productCode,
+      recipientId: config.recipientId,
       customer: {
         name: data.customerName || 'Cliente',
         email: data.customerEmail || 'cliente@example.com',

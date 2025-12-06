@@ -21,6 +21,7 @@ export interface PixProviderSettings {
   public_key?: string;
   secret_key?: string;
   recipient_id?: string;
+  product_code?: string;
   is_active: boolean;
 }
 
@@ -69,7 +70,7 @@ export async function createTransaction(data: CreateTransactionRequest, options?
 
     return createAureoTransaction(aureoConfig, transactionData);
   } else if (provider.provider === 'paradise') {
-    if (!provider.secret_key || !provider.recipient_id) {
+    if (!provider.secret_key || !provider.recipient_id || !provider.product_code) {
       throw new Error('Paradise keys not configured');
     }
 
@@ -77,6 +78,7 @@ export async function createTransaction(data: CreateTransactionRequest, options?
       apiUrl: provider.api_url,
       secretKey: provider.secret_key,
       recipientId: provider.recipient_id,
+      productCode: provider.product_code,
     };
 
     return createParadiseTransaction(paradiseConfig, transactionData);
@@ -132,7 +134,7 @@ export async function getTransactionStatus(transactionId: string): Promise<Trans
       transaction.genesys_transaction_id
     );
   } else if (provider.provider === 'paradise') {
-    if (!provider.secret_key || !provider.recipient_id) {
+    if (!provider.secret_key || !provider.recipient_id || !provider.product_code) {
       throw new Error('Paradise keys not configured');
     }
 
@@ -140,6 +142,7 @@ export async function getTransactionStatus(transactionId: string): Promise<Trans
       apiUrl: provider.api_url,
       secretKey: provider.secret_key,
       recipientId: provider.recipient_id,
+      productCode: provider.product_code,
     };
 
     newStatus = await getParadiseTransactionStatus(
