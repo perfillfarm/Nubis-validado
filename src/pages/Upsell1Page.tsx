@@ -90,9 +90,20 @@ export default function Upsell1Page() {
   }, []);
 
   useEffect(() => {
+    console.log('=== Upsell1Page Initial Load ===');
+    console.log('location.state:', location.state);
+
     const { userData: stateUserData } = location.state || {};
     const funnelData = getFunnelData();
+
+    console.log('stateUserData:', stateUserData);
+    console.log('funnelData:', funnelData);
+
     const userData = stateUserData || funnelData.userData;
+
+    console.log('userData (merged):', userData);
+    console.log('cpf found?:', userData?.cpf);
+    console.log('====================================');
 
     trackPurchase({
       value: 57.47,
