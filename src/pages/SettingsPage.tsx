@@ -13,12 +13,13 @@ const supabase = createClient(
 
 interface ProviderSettings {
   id?: string;
-  provider: 'genesys' | 'mangofy' | 'aureo';
+  provider: 'genesys' | 'mangofy' | 'aureo' | 'paradise';
   api_url: string;
   api_key: string;
   store_code?: string;
   public_key?: string;
   secret_key?: string;
+  recipient_id?: string;
   is_active: boolean;
 }
 
@@ -29,7 +30,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [activeProvider, setActiveProvider] = useState<'genesys' | 'mangofy' | 'aureo'>('genesys');
+  const [activeProvider, setActiveProvider] = useState<'genesys' | 'mangofy' | 'aureo' | 'paradise'>('genesys');
   const [providers, setProviders] = useState<Record<string, ProviderSettings>>({
     genesys: {
       provider: 'genesys',
@@ -52,6 +53,14 @@ export default function SettingsPage() {
       secret_key: 'sk_XDmA6-QzA8YbdMBSKKfXoLmeVC9_u2N3gGMl-9nRN5kfxdwM',
       is_active: false,
     },
+    paradise: {
+      provider: 'paradise',
+      api_url: 'https://multi.paradisepags.com',
+      api_key: '',
+      secret_key: 'sk_48fa4f4ea477faea239fad63535b959c0fc2211db67bcf88ea24ff8c6b68cdcb',
+      recipient_id: 'store_04263efb7d8f267a',
+      is_active: false,
+    },
   });
 
   useEffect(() => {
@@ -69,7 +78,7 @@ export default function SettingsPage() {
 
       if (data && data.length > 0) {
         const settingsMap: Record<string, ProviderSettings> = {};
-        let active: 'genesys' | 'mangofy' | 'aureo' = 'genesys';
+        let active: 'genesys' | 'mangofy' | 'aureo' | 'paradise' = 'genesys';
 
         data.forEach((setting: any) => {
           settingsMap[setting.provider] = setting;
@@ -82,6 +91,7 @@ export default function SettingsPage() {
           genesys: settingsMap.genesys || prev.genesys,
           mangofy: settingsMap.mangofy || prev.mangofy,
           aureo: settingsMap.aureo || prev.aureo,
+          paradise: settingsMap.paradise || prev.paradise,
         }));
         setActiveProvider(active);
       }
@@ -93,7 +103,7 @@ export default function SettingsPage() {
   };
 
   const handleInputChange = (
-    provider: 'genesys' | 'mangofy' | 'aureo',
+    provider: 'genesys' | 'mangofy' | 'aureo' | 'paradise',
     field: keyof ProviderSettings,
     value: string
   ) => {
@@ -124,6 +134,7 @@ export default function SettingsPage() {
       const genesysSettings = providers.genesys;
       const mangofySettings = providers.mangofy;
       const aureoSettings = providers.aureo;
+      const paradiseSettings = providers.paradise;
 
       if (activeProvider === 'genesys') {
         if (!genesysSettings.api_url || !genesysSettings.api_key) {
@@ -136,6 +147,10 @@ export default function SettingsPage() {
       } else if (activeProvider === 'aureo') {
         if (!aureoSettings.api_url || !aureoSettings.public_key || !aureoSettings.secret_key) {
           throw new Error('Preencha todos os campos da Aureo');
+        }
+      } else if (activeProvider === 'paradise') {
+        if (!paradiseSettings.api_url || !paradiseSettings.secret_key || !paradiseSettings.recipient_id) {
+          throw new Error('Preencha todos os campos da Paradise');
         }
       }
 
@@ -158,6 +173,10 @@ export default function SettingsPage() {
           ...aureoSettings,
           is_active: activeProvider === 'aureo',
         },
+        {
+          ...paradiseSettings,
+          is_active: activeProvider === 'paradise',
+        },
       ];
 
       for (const update of updates) {
@@ -170,6 +189,7 @@ export default function SettingsPage() {
               store_code: update.store_code || null,
               public_key: update.public_key || null,
               secret_key: update.secret_key || null,
+              recipient_id: update.recipient_id || null,
               is_active: update.is_active,
               updated_at: new Date().toISOString(),
             })
@@ -186,6 +206,7 @@ export default function SettingsPage() {
               store_code: update.store_code || null,
               public_key: update.public_key || null,
               secret_key: update.secret_key || null,
+              recipient_id: update.recipient_id || null,
               is_active: update.is_active,
             });
 
@@ -302,7 +323,7 @@ export default function SettingsPage() {
               <div className="w-1.5 h-5 bg-[#8A05BE] rounded-full"></div>
               Provedor Ativo
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <button
                 onClick={() => setActiveProvider('genesys')}
                 className={`group relative py-4 px-5 rounded-xl border-2 font-semibold text-sm transition-all duration-300 touch-manipulation overflow-hidden ${
@@ -363,6 +384,27 @@ export default function SettingsPage() {
                   )}
                 </div>
                 {activeProvider === 'aureo' && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#8A05BE]/5 to-transparent"></div>
+                )}
+              </button>
+              <button
+                onClick={() => setActiveProvider('paradise')}
+                className={`group relative py-4 px-5 rounded-xl border-2 font-semibold text-sm transition-all duration-300 touch-manipulation overflow-hidden ${
+                  activeProvider === 'paradise'
+                    ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/10 to-[#8A05BE]/5 text-[#8A05BE] shadow-lg shadow-[#8A05BE]/20'
+                    : 'border-gray-200 bg-white text-gray-700 hover:border-[#8A05BE]/50 hover:shadow-md'
+                }`}
+              >
+                <div className="relative z-10 flex flex-col items-center gap-2">
+                  <span className="text-base">Paradise</span>
+                  {activeProvider === 'paradise' && (
+                    <span className="flex items-center gap-1.5 text-xs font-medium">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      Ativo
+                    </span>
+                  )}
+                </div>
+                {activeProvider === 'paradise' && (
                   <div className="absolute inset-0 bg-gradient-to-br from-[#8A05BE]/5 to-transparent"></div>
                 )}
               </button>
@@ -548,6 +590,72 @@ export default function SettingsPage() {
                       handleInputChange('aureo', 'secret_key', e.target.value)
                     }
                     placeholder="Sua chave secreta da Aureo"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div
+              className={`p-6 rounded-xl border-2 transition-all duration-300 ${
+                activeProvider === 'paradise'
+                  ? 'border-[#8A05BE] bg-gradient-to-br from-[#8A05BE]/5 to-transparent shadow-lg'
+                  : 'border-gray-200 bg-gray-50/50'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <div className={`w-1 h-6 rounded-full ${
+                    activeProvider === 'paradise' ? 'bg-[#8A05BE]' : 'bg-gray-300'
+                  }`}></div>
+                  Configuração Paradise
+                </h2>
+                {activeProvider === 'paradise' && (
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                    PROVEDOR ATIVO
+                  </span>
+                )}
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    URL da API
+                  </label>
+                  <input
+                    type="text"
+                    value={providers.paradise.api_url}
+                    onChange={(e) =>
+                      handleInputChange('paradise', 'api_url', e.target.value)
+                    }
+                    placeholder="https://multi.paradisepags.com"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Chave Secreta (Secret Key)
+                  </label>
+                  <input
+                    type="password"
+                    value={providers.paradise.secret_key || ''}
+                    onChange={(e) =>
+                      handleInputChange('paradise', 'secret_key', e.target.value)
+                    }
+                    placeholder="Sua chave secreta da Paradise (sk_...)"
+                    className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Store ID (Recipient ID)
+                  </label>
+                  <input
+                    type="text"
+                    value={providers.paradise.recipient_id || ''}
+                    onChange={(e) =>
+                      handleInputChange('paradise', 'recipient_id', e.target.value)
+                    }
+                    placeholder="ID da sua loja na Paradise (store_...)"
                     className="w-full px-4 py-3 text-sm bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#8A05BE] focus:border-[#8A05BE] transition-all duration-200 touch-manipulation"
                   />
                 </div>
