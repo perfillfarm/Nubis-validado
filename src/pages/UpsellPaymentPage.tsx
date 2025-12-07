@@ -43,16 +43,26 @@ export default function UpsellPaymentPage() {
     enabled: !!transactionData?.id && !paymentCompleted,
     interval: 5000,
     onStatusChange: (transaction) => {
-      console.log('Payment status changed:', transaction.status);
+      console.log('=== UPSELL PAYMENT STATUS CHANGED ===');
+      console.log('Transaction ID:', transaction.id);
+      console.log('New Status:', transaction.status);
+      console.log('Has Navigated:', hasNavigated.current);
+      console.log('Payment Completed:', paymentCompleted);
+      console.log('Redirect Path:', redirectPath);
+      console.log('Amount:', amount);
+      console.log('Title:', title);
+      console.log('=====================================');
+
       const isPaid = transaction.status === 'completed' || transaction.status === 'authorized' || transaction.status === 'approved';
       if (isPaid && !hasNavigated.current) {
         hasNavigated.current = true;
         setPaymentCompleted(true);
-        console.log('Payment completed! Redirecting to:', redirectPath);
+        console.log('✅ Upsell payment completed! Redirecting to:', redirectPath, 'in 2 seconds...');
         console.log('Passing userData:', userData);
         const finalUserData = userData || { cpf };
         console.log('Final userData being passed:', finalUserData);
         setTimeout(() => {
+          console.log('🚀 Navigating to', redirectPath, 'now...');
           if (redirectPath) {
             navigateWithParams(navigate, redirectPath, location, { cpf, amount, userData: finalUserData });
           } else {
