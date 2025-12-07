@@ -32,7 +32,7 @@ export default function Upsell4Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 18.90,
+      value: 17.90,
       currency: 'BRL',
       content_type: 'upsell',
       content_name: 'Upsell',
@@ -72,7 +72,7 @@ export default function Upsell4Page() {
       '/upsell-payment',
       location,
       {
-        amount: 17.20,
+        amount: 15.90,
         title: 'Taxa de Emissão de Nota Fiscal',
         redirectPath: '/upsell-5',
         cpf: cpf,
@@ -129,7 +129,7 @@ export default function Upsell4Page() {
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <span className="text-sm text-gray-600 font-medium">Valor:</span>
-                <span className="text-lg font-bold text-green-600">R$ 17,20</span>
+                <span className="text-lg font-bold text-green-600">R$ 15,90</span>
               </div>
 
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">

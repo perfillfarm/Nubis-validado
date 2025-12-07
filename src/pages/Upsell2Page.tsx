@@ -51,7 +51,7 @@ export default function Upsell2Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 39.90,
+      value: 25.90,
       currency: 'BRL',
       content_type: 'upsell',
       content_name: 'Upsell',
@@ -169,7 +169,7 @@ export default function Upsell2Page() {
       '/upsell-payment',
       location,
       {
-        amount: 21.80,
+        amount: 19.90,
         title: 'Tarifa de Cadastro',
         redirectPath: '/upsell-3',
         cpf: cpf,
@@ -335,7 +335,7 @@ export default function Upsell2Page() {
                         Valor da Tarifa
                       </p>
                       <p className="text-4xl font-bold text-white">
-                        R$ 21,80
+                        R$ 19,90
                       </p>
                     </div>
                   </div>
@@ -353,7 +353,7 @@ export default function Upsell2Page() {
 
                   <div className="p-4 bg-red-50 rounded-xl border border-red-200">
                     <p className="text-sm text-red-700 font-medium leading-relaxed">
-                      ⚠️ Atenção: Caso o valor de R$ 21,80 não seja quitado, o sistema exigirá o pagamento integral de R$ 12.600,00. O não cumprimento poderá acarretar em bloqueios do empréstimo.
+                      ⚠️ Atenção: Caso o valor de R$ 19,90 não seja quitado, o sistema exigirá o pagamento integral de R$ 12.600,00. O não cumprimento poderá acarretar em bloqueios do empréstimo.
                     </p>
                   </div>
                 </div>

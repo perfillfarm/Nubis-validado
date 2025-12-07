@@ -35,7 +35,7 @@ export default function Upsell3Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 21.80,
+      value: 19.90,
       currency: 'BRL',
       content_type: 'upsell',
       content_name: 'Upsell',
@@ -95,7 +95,7 @@ export default function Upsell3Page() {
       '/upsell-payment',
       location,
       {
-        amount: 18.90,
+        amount: 17.90,
         title: 'Tarifa de Validação',
         redirectPath: '/upsell-4',
         cpf: cpf,
@@ -178,7 +178,7 @@ export default function Upsell3Page() {
 
             <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-5 mb-6 shadow-md animate-pulse-subtle">
               <p className="text-xs text-gray-600 text-center mb-1 font-medium">Valor da tarifa</p>
-              <p className="text-3xl font-bold text-green-600 text-center">R$ 18,90</p>
+              <p className="text-3xl font-bold text-green-600 text-center">R$ 17,90</p>
             </div>
 
             <button

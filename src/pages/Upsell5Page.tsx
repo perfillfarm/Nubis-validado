@@ -33,7 +33,7 @@ export default function Upsell5Page() {
     initGooglePixel();
 
     trackPurchase({
-      value: 17.20,
+      value: 15.90,
       currency: 'BRL',
       content_type: 'upsell',
       content_name: 'Upsell',
@@ -74,7 +74,7 @@ export default function Upsell5Page() {
       '/upsell-payment',
       location,
       {
-        amount: 17.30,
+        amount: 15.80,
         title: 'Regularização de Taxa de Emissão',
         redirectPath: '/final',
         cpf: cpf,
@@ -164,7 +164,7 @@ export default function Upsell5Page() {
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200 animate-fade-in-left" style={{ animationDelay: '0.4s' }}>
                 <span className="text-sm text-gray-600 font-medium">Valor da taxa:</span>
-                <span className="text-base font-bold text-green-600 animate-pulse-value">R$ 17,30</span>
+                <span className="text-base font-bold text-green-600 animate-pulse-value">R$ 15,80</span>
               </div>
 
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all duration-200 animate-fade-in-left" style={{ animationDelay: '0.5s' }}>

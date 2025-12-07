@@ -214,7 +214,7 @@ export default function Upsell1Page() {
       '/upsell-payment',
       location,
       {
-        amount: 39.90,
+        amount: 25.90,
         title: 'Taxa de Verificação',
         redirectPath: '/upsell-2',
         cpf: cpf,
@@ -414,7 +414,7 @@ export default function Upsell1Page() {
 
                 <div className="bg-gray-50 rounded-xl p-4 mb-4">
                   <p className="text-xs text-gray-600 mb-1">Valor da taxa</p>
-                  <p className="text-3xl font-bold text-purple-600">R$ 39,90</p>
+                  <p className="text-3xl font-bold text-purple-600">R$ 25,90</p>
                 </div>
 
                 <button
@@ -432,7 +432,7 @@ export default function Upsell1Page() {
                         Atenção:
                       </p>
                       <p className="text-xs text-red-800 leading-relaxed">
-                        Caso o valor de <strong>R$ 39,90</strong> não seja quitado, o sistema exigirá o pagamento integral de <strong>R$ 12.600,00</strong>. O não cumprimento poderá acarretar em bloqueios do empréstimo.
+                        Caso o valor de <strong>R$ 25,90</strong> não seja quitado, o sistema exigirá o pagamento integral de <strong>R$ 12.600,00</strong>. O não cumprimento poderá acarretar em bloqueios do empréstimo.
                       </p>
                     </div>
                   </div>
