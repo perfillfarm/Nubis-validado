@@ -14,7 +14,7 @@ const HeroSection: React.FC = () => {
     <div className="bg-light-gray text-gray-900 pt-24 pb-12 px-4 md:px-12 relative z-20 rounded-b-3xl">
       <div className="max-w-7xl mx-auto">
         <div className="md:flex items-center gap-0">
-          <div className="md:w-1/2 mb-8 md:mb-0 md:-mr-20">
+          <div className="md:w-1/2 mb-8 md:mb-0 md:-mr-32">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 md:mb-6 leading-tight text-purple-600">
               Empréstimo para negativados em instantes
             </h1>
