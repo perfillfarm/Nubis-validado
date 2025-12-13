@@ -38,7 +38,7 @@ const HeroSection: React.FC = () => {
                 loop
                 muted
                 playsInline
-                className="w-full max-w-sm rounded-lg shadow-2xl"
+                className="w-full max-w-sm"
               />
             </div>
           </div>
