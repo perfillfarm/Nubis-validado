@@ -32,9 +32,12 @@ const HeroSection: React.FC = () => {
             </div>
 
             <div className="mt-8 flex justify-center md:justify-start">
-              <img
-                src="/screenshot_4-photoroom.png"
-                alt="App Nubank"
+              <video
+                src="https://hyqwwgracfjpsnkmqtwd.supabase.co/storage/v1/object/public/payment-receipts/00091668077/high.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="w-full max-w-sm rounded-lg shadow-2xl"
               />
             </div>
