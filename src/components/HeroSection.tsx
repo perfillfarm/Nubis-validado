@@ -30,6 +30,14 @@ const HeroSection: React.FC = () => {
                 Consultar agora
               </button>
             </div>
+
+            <div className="mt-8 flex justify-center md:justify-start">
+              <img
+                src="/screenshot_4-photoroom.png"
+                alt="App Nubank"
+                className="w-full max-w-sm rounded-lg shadow-2xl"
+              />
+            </div>
           </div>
 
           <div className="md:w-1/2 flex justify-center md:justify-end">

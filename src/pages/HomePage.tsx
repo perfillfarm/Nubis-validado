@@ -158,16 +158,6 @@ const HomePage: React.FC = () => {
             Consultar Agora
           </button>
         </div>
-
-        <div className="py-12 px-4 text-center bg-white">
-          <div className="max-w-4xl mx-auto">
-            <img
-              src="/screenshot_4-photoroom.png"
-              alt="App Nubank"
-              className="w-full max-w-2xl mx-auto rounded-lg shadow-2xl"
-            />
-          </div>
-        </div>
       </main>
 
       <Footer />
