@@ -109,7 +109,7 @@ const HomePage: React.FC = () => {
           <div
             className="absolute inset-0 -z-10"
             style={{
-              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/dawdawd.webp')`,
+              backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/dawdawd copy.webp')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
