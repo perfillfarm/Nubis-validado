@@ -344,7 +344,7 @@ export default function Upsell1Page() {
                     <div className="w-12 h-12 flex-shrink-0">
                       <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
                         <img
-                          src="/Screenshot_186.png"
+                          src="/screenshot_186.png"
                           alt="Rafaela"
                           className="w-full h-full object-cover"
                         />
