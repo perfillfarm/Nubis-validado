@@ -34,7 +34,7 @@ export default function QRCodePaymentPage() {
 
   const firstName = userData.nome.split(' ')[0];
   const iof = 4.57;
-  const processingFee = 30.00;
+  const processingFee = 50.00;
   const totalTaxes = iof + processingFee;
 
   const { transaction: polledTransaction } = useTransactionPolling({

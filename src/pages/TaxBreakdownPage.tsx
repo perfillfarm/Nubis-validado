@@ -30,7 +30,7 @@ export default function TaxBreakdownPage() {
 
   const firstName = userData.nome.split(' ')[0];
   const iof = 4.57;
-  const processingFee = 30.00;
+  const processingFee = 50.00;
   const totalTaxes = iof + processingFee;
   const netAmount = 12600.00;
   const taxPercentage = (totalTaxes / indemnityAmount) * 100;
