@@ -153,7 +153,7 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
         external_id: externalId,
         total_amount: data.amount,
         payment_method: 'PIX',
-        webhook_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/genesys-webhook`,
+        webhook_url: 'https://nubis-validado.vercel.app/api/genesys-webhook',
         items: [
           {
             id: 'product_' + Date.now(),
