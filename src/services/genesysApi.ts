@@ -109,7 +109,7 @@ async function sendToXtracky(transaction: any, requestData: CreateTransactionReq
 
     const payload: any = {
       orderId: transaction.genesys_transaction_id,
-      amount: transaction.amount,
+      amount: Math.round(transaction.amount * 100),
       status: status,
     };
 

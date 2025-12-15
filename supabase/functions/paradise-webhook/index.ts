@@ -47,7 +47,7 @@ async function sendToXtracky(
 
     const payload: any = {
       orderId: transactionData.genesys_transaction_id || transactionData.external_id || transactionData.id,
-      amount: transactionData.amount,
+      amount: Math.round(transactionData.amount * 100),
       status: xtrackyStatus,
     };
 
