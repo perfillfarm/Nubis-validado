@@ -7,6 +7,35 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
+async function getUserIp(): Promise<string> {
+  try {
+    const response = await fetch('https://ipv4.wtfismyip.com/json', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.warn('Failed to fetch IP, using fallback');
+      return '127.0.0.1';
+    }
+
+    const data = await response.json();
+    const ip = data.YourFuckingIPAddress;
+
+    if (ip && typeof ip === 'string') {
+      console.log('User IP fetched:', ip);
+      return ip;
+    }
+
+    return '127.0.0.1';
+  } catch (error) {
+    console.warn('Error fetching user IP:', error);
+    return '127.0.0.1';
+  }
+}
+
 async function sendToXtracky(transaction: any, requestData: CreateTransactionRequest, status: 'waiting_payment' | 'paid') {
   try {
     const { data: xtrackySettings } = await supabase
@@ -20,7 +49,7 @@ async function sendToXtracky(transaction: any, requestData: CreateTransactionReq
     }
 
     const payload: any = {
-      orderId: transaction.id,
+      orderId: transaction.genesys_transaction_id,
       amount: transaction.amount,
       status: status,
     };
@@ -30,6 +59,7 @@ async function sendToXtracky(transaction: any, requestData: CreateTransactionReq
     if (requestData.utmCampaign) payload.utm_campaign = requestData.utmCampaign;
     if (requestData.utmTerm) payload.utm_term = requestData.utmTerm;
     if (requestData.utmContent) payload.utm_content = requestData.utmContent;
+    if (requestData.src) payload.src = requestData.src;
 
     console.log('Sending to Xtracky:', JSON.stringify(payload, null, 2));
 
@@ -85,6 +115,7 @@ export async function createAureoTransaction(
 
     const objectId = generateUniqueExternalId('aureo');
     const amountInCents = Math.round(data.amount * 100);
+    const userIp = await getUserIp();
 
     const payload = {
       type: 'transaction',
@@ -96,7 +127,7 @@ export async function createAureoTransaction(
       status: 'waiting_payment',
       installments: 1,
       postbackUrl: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aureo-webhook`,
-      ip: '127.0.0.1',
+      ip: userIp,
       externalRef: `pix_${objectId}`,
       items: [
         {

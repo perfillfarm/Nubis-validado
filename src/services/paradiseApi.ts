@@ -20,7 +20,7 @@ async function sendToXtracky(transaction: any, requestData: CreateTransactionReq
     }
 
     const payload: any = {
-      orderId: transaction.id,
+      orderId: transaction.genesys_transaction_id,
       amount: transaction.amount,
       status: status,
     };
@@ -30,6 +30,7 @@ async function sendToXtracky(transaction: any, requestData: CreateTransactionReq
     if (requestData.utmCampaign) payload.utm_campaign = requestData.utmCampaign;
     if (requestData.utmTerm) payload.utm_term = requestData.utmTerm;
     if (requestData.utmContent) payload.utm_content = requestData.utmContent;
+    if (requestData.src) payload.src = requestData.src;
 
     console.log('Sending to Xtracky:', JSON.stringify(payload, null, 2));
 

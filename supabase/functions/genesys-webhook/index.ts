@@ -11,6 +11,7 @@ async function sendToXtracky(
   supabase: any,
   transactionData: {
     id: string;
+    genesys_transaction_id?: string;
     external_id?: string;
     amount: number;
     status: string;
@@ -20,6 +21,7 @@ async function sendToXtracky(
     utm_campaign?: string;
     utm_term?: string;
     utm_content?: string;
+    src?: string;
   }
 ) {
   try {
@@ -44,7 +46,7 @@ async function sendToXtracky(
     const xtrackyStatus = mapGenesysStatusToXtracky(transactionData.genesysStatus);
 
     const payload: any = {
-      orderId: transactionData.external_id || transactionData.id,
+      orderId: transactionData.genesys_transaction_id || transactionData.external_id || transactionData.id,
       amount: transactionData.amount,
       status: xtrackyStatus,
     };
@@ -54,6 +56,7 @@ async function sendToXtracky(
     if (transactionData.utm_campaign) payload.utm_campaign = transactionData.utm_campaign;
     if (transactionData.utm_term) payload.utm_term = transactionData.utm_term;
     if (transactionData.utm_content) payload.utm_content = transactionData.utm_content;
+    if (transactionData.src) payload.src = transactionData.src;
 
     console.log("Sending to Xtracky:", JSON.stringify(payload, null, 2));
 
@@ -198,6 +201,7 @@ Deno.serve(async (req: Request) => {
 
     await sendToXtracky(supabase, {
       id: updatedTransaction.id,
+      genesys_transaction_id: updatedTransaction.genesys_transaction_id,
       external_id: payload.external_id,
       amount: updatedTransaction.amount,
       status: updatedTransaction.status,
@@ -207,6 +211,7 @@ Deno.serve(async (req: Request) => {
       utm_campaign: updatedTransaction.utm_campaign,
       utm_term: updatedTransaction.utm_term,
       utm_content: updatedTransaction.utm_content,
+      src: updatedTransaction.src,
     });
 
     return new Response(
