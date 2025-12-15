@@ -217,12 +217,6 @@ Deno.serve(async (req: Request) => {
         qr_code_image: qrCodeImageUrl,
         status: mangofyTransaction.status.toLowerCase() === "pending" ? "pending" : "completed",
         expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        utm_source: data.utmSource,
-        utm_medium: data.utmMedium,
-        utm_campaign: data.utmCampaign,
-        utm_term: data.utmTerm,
-        utm_content: data.utmContent,
-        src: data.src,
       })
       .select()
       .single();
@@ -244,11 +238,11 @@ Deno.serve(async (req: Request) => {
       id: transaction.id,
       amount: transaction.amount,
       status: transaction.status,
-      utm_source: transaction.utm_source,
-      utm_medium: transaction.utm_medium,
-      utm_campaign: transaction.utm_campaign,
-      utm_term: transaction.utm_term,
-      utm_content: transaction.utm_content,
+      utm_source: data.utmSource,
+      utm_medium: data.utmMedium,
+      utm_campaign: data.utmCampaign,
+      utm_term: data.utmTerm,
+      utm_content: data.utmContent,
     });
 
     return new Response(JSON.stringify(transaction), {

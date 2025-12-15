@@ -223,12 +223,6 @@ export async function createAureoTransaction(
       provider: 'aureo',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      utm_source: data.utmSource,
-      utm_medium: data.utmMedium,
-      utm_campaign: data.utmCampaign,
-      utm_term: data.utmTerm,
-      utm_content: data.utmContent,
-      src: data.src,
     };
 
     const { error } = await supabase.from('transactions').insert(transaction);
