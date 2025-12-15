@@ -31,6 +31,20 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/gh/xTracky/static@latest/utm-handler.js';
+    script.setAttribute('data-token', 'e8bee46b-1409-4ec6-a493-6682464b7096');
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
   const handleCPFSubmit = async (cpf: string) => {
     setIsLoading(true);
     setError(null);
