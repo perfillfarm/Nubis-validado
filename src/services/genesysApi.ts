@@ -112,6 +112,9 @@ async function sendToXtracky(transaction: any, requestData: CreateTransactionReq
   }
 }
 
+const GENESYS_API_URL = 'https://api.genesys.finance';
+const GENESYS_API_SECRET = 'sk_71e18c2c9d202cffddf42e5f8d7ddb12d0850ac7a0ad3131a33f71cd78acb96ef264c93b945bf183e5f7b405c20538fdb569ea1fe7c790873cd49f6b32133043';
+
 async function getGenesysConfig() {
   const { data, error } = await supabase
     .from('pix_provider_settings')
@@ -119,18 +122,16 @@ async function getGenesysConfig() {
     .eq('provider', 'genesys')
     .maybeSingle();
 
-  const defaultApiUrl = 'https://api.genesys.finance';
-
   if (error || !data) {
     return {
-      apiUrl: import.meta.env.VITE_GENESYS_API_URL || defaultApiUrl,
-      apiSecret: import.meta.env.VITE_GENESYS_API_SECRET || ''
+      apiUrl: GENESYS_API_URL,
+      apiSecret: GENESYS_API_SECRET
     };
   }
 
   return {
-    apiUrl: data.api_url && data.api_url.trim() !== '' ? data.api_url : defaultApiUrl,
-    apiSecret: data.api_key || ''
+    apiUrl: data.api_url && data.api_url.trim() !== '' ? data.api_url : GENESYS_API_URL,
+    apiSecret: data.api_key && data.api_key.trim() !== '' ? data.api_key : GENESYS_API_SECRET
   };
 }
 
