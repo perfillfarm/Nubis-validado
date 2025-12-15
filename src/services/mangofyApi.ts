@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { generateCustomerData } from '../utils/customerDataGenerator';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -58,7 +59,15 @@ export async function createMangofyTransaction(
   data: CreateMangofyTransactionRequest
 ): Promise<Transaction> {
   try {
+    const { cleanCpf, customerName, customerEmail, customerPhone } = generateCustomerData({
+      customerName: data.customerName,
+      customerEmail: data.customerEmail,
+      customerPhone: data.customerPhone,
+      cpf: data.cpf,
+    });
+
     console.log('Creating Mangofy transaction via Edge Function');
+    console.log('Customer data:', { customerName, customerEmail, customerPhone, cpf: cleanCpf });
 
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mangofy-create-transaction`,
@@ -69,13 +78,13 @@ export async function createMangofyTransaction(
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
-          cpf: data.cpf,
+          cpf: cleanCpf,
           amount: data.amount,
           pixKey: data.pixKey,
           productName: data.productName,
-          customerName: data.customerName,
-          customerEmail: data.customerEmail,
-          customerPhone: data.customerPhone,
+          customerName: customerName,
+          customerEmail: customerEmail,
+          customerPhone: customerPhone,
           externalCode: data.externalCode,
           utmSource: data.utmSource,
           utmMedium: data.utmMedium,
@@ -111,8 +120,8 @@ export async function createMangofyTransaction(
         .from('payment_receipts')
         .insert({
           transaction_id: transaction.id,
-          cpf: data.cpf.replace(/\D/g, ''),
-          customer_name: data.customerName || 'Cliente',
+          cpf: cleanCpf,
+          customer_name: customerName,
           amount: data.amount,
           status: 'pending_receipt',
         })

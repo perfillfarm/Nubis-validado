@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { CreateTransactionRequest, Transaction } from './genesysApi';
+import { generateCustomerData, generateUniqueExternalId, formatCpf } from '../utils/customerDataGenerator';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -63,6 +64,13 @@ export async function createAureoTransaction(
   data: CreateTransactionRequest
 ): Promise<Transaction> {
   try {
+    const { cleanCpf, customerName, customerEmail, customerPhone } = generateCustomerData({
+      customerName: data.customerName,
+      customerEmail: data.customerEmail,
+      customerPhone: data.customerPhone,
+      cpf: data.cpf,
+    });
+
     console.log('Creating Aureo transaction with amount:', data.amount);
     console.log('Aureo config:', {
       apiUrl: config.apiUrl,
@@ -71,10 +79,11 @@ export async function createAureoTransaction(
       hasSecretKey: !!config.secretKey,
       secretKeyPrefix: config.secretKey?.substring(0, 10),
     });
+    console.log('Customer data:', { customerName, customerEmail, customerPhone, cpf: cleanCpf });
 
     const auth = 'Basic ' + btoa(config.publicKey + ':' + config.secretKey);
 
-    const objectId = Date.now().toString();
+    const objectId = generateUniqueExternalId('aureo');
     const amountInCents = Math.round(data.amount * 100);
 
     const payload = {
@@ -99,20 +108,19 @@ export async function createAureoTransaction(
         },
       ],
       customer: {
-        name: data.customerName || 'Cliente',
-        email: data.customerEmail || 'cliente@example.com',
-        phone: data.customerPhone || '11999999999',
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
         birthdate: data.customerBirthdate || '1990-01-01',
         document: {
           type: 'cpf',
-          number: data.cpf,
+          number: cleanCpf,
         },
         ...(data.utmSource && { utm_source: data.utmSource }),
         ...(data.utmMedium && { utm_medium: data.utmMedium }),
         ...(data.utmCampaign && { utm_campaign: data.utmCampaign }),
         ...(data.utmTerm && { utm_term: data.utmTerm }),
         ...(data.utmContent && { utm_content: data.utmContent }),
-        ...(data.src && { src: data.src }),
         address: data.customerAddress ? {
           street: data.customerAddress.street || 'Rua Principal',
           streetNumber: data.customerAddress.number || '100',
@@ -179,7 +187,7 @@ export async function createAureoTransaction(
       status: 'pending',
       qr_code: qrCodeText,
       qr_code_image: qrCodeImage,
-      cpf: data.cpf,
+      cpf: cleanCpf,
       genesys_transaction_id: (aureoTransaction.data?.id || aureoTransaction.id || transactionId).toString(),
       provider: 'aureo',
       created_at: new Date().toISOString(),
@@ -206,8 +214,8 @@ export async function createAureoTransaction(
         .from('payment_receipts')
         .insert({
           transaction_id: transactionId,
-          cpf: data.cpf,
-          customer_name: data.customerName || 'Cliente',
+          cpf: cleanCpf,
+          customer_name: customerName,
           amount: data.amount,
           status: 'pending_receipt',
         })

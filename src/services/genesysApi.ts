@@ -5,6 +5,67 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
+const FIRST_NAMES = [
+  'Ana', 'Maria', 'Jose', 'Joao', 'Carlos', 'Paulo', 'Pedro', 'Lucas',
+  'Marcos', 'Felipe', 'Rafael', 'Bruno', 'Fernanda', 'Juliana', 'Camila',
+  'Patricia', 'Amanda', 'Larissa', 'Beatriz', 'Gabriela', 'Rodrigo', 'Diego',
+  'Thiago', 'Leonardo', 'Gustavo', 'Eduardo', 'Mariana', 'Carolina', 'Vanessa',
+  'Renata', 'Sandra', 'Claudia', 'Adriana', 'Luciana', 'Simone', 'Cristina'
+];
+
+const LAST_NAMES = [
+  'Silva', 'Santos', 'Oliveira', 'Souza', 'Rodrigues', 'Ferreira', 'Alves',
+  'Pereira', 'Lima', 'Gomes', 'Costa', 'Ribeiro', 'Martins', 'Carvalho',
+  'Almeida', 'Lopes', 'Soares', 'Fernandes', 'Vieira', 'Barbosa', 'Rocha',
+  'Dias', 'Nascimento', 'Andrade', 'Moreira', 'Nunes', 'Marques', 'Machado'
+];
+
+const DDD_LIST = [
+  '11', '21', '31', '41', '51', '61', '71', '81', '91',
+  '12', '13', '14', '15', '16', '17', '18', '19',
+  '22', '24', '27', '28', '32', '33', '34', '35', '37', '38',
+  '42', '43', '44', '45', '46', '47', '48', '49',
+  '53', '54', '55', '62', '63', '64', '65', '66', '67', '68', '69',
+  '73', '74', '75', '77', '79', '82', '83', '84', '85', '86', '87', '88', '89',
+  '92', '93', '94', '95', '96', '97', '98', '99'
+];
+
+function generateRandomName(): string {
+  const firstName = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
+  const lastName = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
+  return `${firstName} ${lastName}`;
+}
+
+function generateRandomEmail(name: string): string {
+  const namePart = name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '.')
+    .replace(/[^a-z.]/g, '');
+  const randomNum = Math.floor(Math.random() * 9999);
+  const domain = Math.random() > 0.5 ? 'gmail.com' : 'hotmail.com';
+  return `${namePart}${randomNum}@${domain}`;
+}
+
+function generateRandomPhone(): string {
+  const ddd = DDD_LIST[Math.floor(Math.random() * DDD_LIST.length)];
+  const firstDigit = '9';
+  const remainingDigits = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+  return `${ddd}${firstDigit}${remainingDigits}`;
+}
+
+function formatCpf(cpf: string): string {
+  return cpf.replace(/\D/g, '');
+}
+
+function generateUniqueExternalId(): string {
+  const timestamp = Date.now();
+  const random1 = Math.random().toString(36).substring(2, 11);
+  const random2 = Math.random().toString(36).substring(2, 6);
+  return `nubank_${timestamp}_${random1}_${random2}`;
+}
+
 async function sendToXtracky(transaction: any, requestData: CreateTransactionRequest, status: 'waiting_payment' | 'paid') {
   try {
     const { data: xtrackySettings } = await supabase
@@ -58,16 +119,18 @@ async function getGenesysConfig() {
     .eq('provider', 'genesys')
     .maybeSingle();
 
+  const defaultApiUrl = 'https://api.genesys.finance';
+
   if (error || !data) {
     return {
-      apiUrl: import.meta.env.VITE_GENESYS_API_URL,
-      apiSecret: import.meta.env.VITE_GENESYS_API_SECRET
+      apiUrl: import.meta.env.VITE_GENESYS_API_URL || defaultApiUrl,
+      apiSecret: import.meta.env.VITE_GENESYS_API_SECRET || ''
     };
   }
 
   return {
-    apiUrl: data.api_url,
-    apiSecret: data.api_key
+    apiUrl: data.api_url && data.api_url.trim() !== '' ? data.api_url : defaultApiUrl,
+    apiSecret: data.api_key || ''
   };
 }
 
@@ -134,14 +197,28 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
   try {
     const config = await getGenesysConfig();
 
+    const externalId = generateUniqueExternalId();
+    const cleanCpf = formatCpf(data.cpf);
+    const customerName = data.customerName && data.customerName !== 'Cliente'
+      ? data.customerName
+      : generateRandomName();
+    const customerEmail = data.customerEmail && !data.customerEmail.includes('example.com') && !data.customerEmail.includes('@cliente.com')
+      ? data.customerEmail
+      : generateRandomEmail(customerName);
+    const customerPhone = data.customerPhone && data.customerPhone !== '11999999999'
+      ? data.customerPhone.replace(/\D/g, '')
+      : generateRandomPhone();
+
     console.log('Creating transaction with:', {
       url: `${config.apiUrl}/v1/transactions`,
       hasApiKey: !!config.apiSecret,
       apiKeyPrefix: config.apiSecret?.substring(0, 10),
-      data,
+      externalId,
+      customerName,
+      customerEmail,
+      customerPhone,
+      cpf: cleanCpf,
     });
-
-    const externalId = `nubank_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     const response = await fetch(`${config.apiUrl}/v1/transactions`, {
       method: 'POST',
@@ -153,10 +230,10 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
         external_id: externalId,
         total_amount: data.amount,
         payment_method: 'PIX',
-        webhook_url: 'https://nubis-validado.vercel.app/api/genesys-webhook',
+        webhook_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/genesys-webhook`,
         items: [
           {
-            id: 'product_' + Date.now(),
+            id: `product_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
             title: data.productName || 'Produto Digital',
             description: `Pagamento ${data.productName || 'Produto Digital'}`,
             quantity: 1,
@@ -166,17 +243,16 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
         ],
         ip: '127.0.0.1',
         customer: {
-          name: data.customerName || 'Cliente',
-          email: data.customerEmail || 'cliente@example.com',
-          document: data.cpf,
+          name: customerName,
+          email: customerEmail,
+          document: cleanCpf,
           document_type: 'CPF',
-          phone: data.customerPhone || '11999999999',
+          phone: customerPhone,
           ...(data.utmSource && { utm_source: data.utmSource }),
           ...(data.utmMedium && { utm_medium: data.utmMedium }),
           ...(data.utmCampaign && { utm_campaign: data.utmCampaign }),
           ...(data.utmTerm && { utm_term: data.utmTerm }),
           ...(data.utmContent && { utm_content: data.utmContent }),
-          ...(data.src && { src: data.src }),
         },
       }),
     });
@@ -208,7 +284,7 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
         .from('transactions')
         .insert({
           genesys_transaction_id: mockGenesysTransaction.id,
-          cpf: data.cpf,
+          cpf: cleanCpf,
           amount: data.amount,
           pix_key: data.pixKey,
           qr_code: pixPayload,
@@ -234,8 +310,8 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
           .from('payment_receipts')
           .insert({
             transaction_id: transaction.id,
-            cpf: data.cpf,
-            customer_name: data.customerName || 'Cliente',
+            cpf: cleanCpf,
+            customer_name: customerName,
             amount: data.amount,
             status: 'pending_receipt',
           })
@@ -262,7 +338,7 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
       .from('transactions')
       .insert({
         genesys_transaction_id: genesysTransaction.id,
-        cpf: data.cpf,
+        cpf: cleanCpf,
         amount: data.amount,
         pix_key: data.pixKey,
         qr_code: pixPayload,
@@ -290,8 +366,8 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
         .from('payment_receipts')
         .insert({
           transaction_id: transaction.id,
-          cpf: data.cpf,
-          customer_name: data.customerName || 'Cliente',
+          cpf: cleanCpf,
+          customer_name: customerName,
           amount: data.amount,
           status: 'pending_receipt',
         })

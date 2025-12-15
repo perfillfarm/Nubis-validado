@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { CreateTransactionRequest, Transaction } from './genesysApi';
+import { generateCustomerData, generateUniqueExternalId } from '../utils/customerDataGenerator';
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -64,6 +65,13 @@ export async function createParadiseTransaction(
   data: CreateTransactionRequest
 ): Promise<Transaction> {
   try {
+    const { cleanCpf, customerName, customerEmail, customerPhone } = generateCustomerData({
+      customerName: data.customerName,
+      customerEmail: data.customerEmail,
+      customerPhone: data.customerPhone,
+      cpf: data.cpf,
+    });
+
     console.log('Creating Paradise transaction with amount:', data.amount);
     console.log('Paradise config:', {
       apiUrl: config.apiUrl,
@@ -72,8 +80,9 @@ export async function createParadiseTransaction(
       recipientId: config.recipientId,
       productCode: config.productCode,
     });
+    console.log('Customer data:', { customerName, customerEmail, customerPhone, cpf: cleanCpf });
 
-    const reference = `REF-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const reference = generateUniqueExternalId('paradise');
     const amountInCents = Math.round(data.amount * 100);
 
     const payload: any = {
@@ -81,10 +90,10 @@ export async function createParadiseTransaction(
       description: data.productName || 'Produto Digital',
       reference: reference,
       customer: {
-        name: data.customerName || 'Cliente',
-        email: data.customerEmail || `${data.cpf}@cliente.com`,
-        phone: data.customerPhone?.replace(/\D/g, '') || '11999999999',
-        document: data.cpf,
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
+        document: cleanCpf,
       },
       postback_url: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/paradise-webhook`,
     };
@@ -150,7 +159,7 @@ export async function createParadiseTransaction(
       status: 'pending',
       qr_code: qrCodeText,
       qr_code_image: qrCodeImage,
-      cpf: data.cpf,
+      cpf: cleanCpf,
       genesys_transaction_id: (paradiseTransaction.transaction_id || paradiseTransaction.id || reference).toString(),
       provider: 'paradise',
       created_at: new Date().toISOString(),
@@ -177,8 +186,8 @@ export async function createParadiseTransaction(
         .from('payment_receipts')
         .insert({
           transaction_id: transactionId,
-          cpf: data.cpf,
-          customer_name: data.customerName || 'Cliente',
+          cpf: cleanCpf,
+          customer_name: customerName,
           amount: data.amount,
           status: 'pending_receipt',
         })
