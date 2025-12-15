@@ -51,12 +51,6 @@ export interface UtmParams {
 }
 
 export const extractUtmParams = (location: any): UtmParams => {
-  let params = new URLSearchParams(location.search);
-
-  if (!params.toString() && location.state?.urlParams) {
-    params = new URLSearchParams(location.state.urlParams);
-  }
-
   const utmParams: UtmParams = {};
 
   const utmKeys: (keyof UtmParams)[] = [
@@ -68,12 +62,27 @@ export const extractUtmParams = (location: any): UtmParams => {
     'src'
   ];
 
+  if (location.state?.urlParams) {
+    const stateParams = new URLSearchParams(location.state.urlParams);
+    utmKeys.forEach(key => {
+      const value = stateParams.get(key);
+      if (value) {
+        utmParams[key] = value;
+      }
+    });
+  }
+
+  const searchParams = new URLSearchParams(location.search);
   utmKeys.forEach(key => {
-    const value = params.get(key);
+    const value = searchParams.get(key);
     if (value) {
       utmParams[key] = value;
     }
   });
+
+  console.log('extractUtmParams - location.search:', location.search);
+  console.log('extractUtmParams - location.state?.urlParams:', location.state?.urlParams);
+  console.log('extractUtmParams - final utmParams:', utmParams);
 
   return utmParams;
 };
