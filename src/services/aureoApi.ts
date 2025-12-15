@@ -6,6 +6,52 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
+async function sendToXtracky(transaction: any, requestData: CreateTransactionRequest, status: 'waiting_payment' | 'paid') {
+  try {
+    const { data: xtrackySettings } = await supabase
+      .from('xtracky_settings')
+      .select('api_url, is_active')
+      .maybeSingle();
+
+    if (!xtrackySettings || !xtrackySettings.is_active) {
+      console.log('Xtracky is not active, skipping');
+      return;
+    }
+
+    const payload: any = {
+      orderId: transaction.id,
+      amount: transaction.amount,
+      status: status,
+    };
+
+    if (requestData.utmSource) payload.utm_source = requestData.utmSource;
+    if (requestData.utmMedium) payload.utm_medium = requestData.utmMedium;
+    if (requestData.utmCampaign) payload.utm_campaign = requestData.utmCampaign;
+    if (requestData.utmTerm) payload.utm_term = requestData.utmTerm;
+    if (requestData.utmContent) payload.utm_content = requestData.utmContent;
+
+    console.log('Sending to Xtracky:', JSON.stringify(payload, null, 2));
+
+    const response = await fetch(xtrackySettings.api_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Xtracky API error:', response.status, errorText);
+    } else {
+      const responseData = await response.json();
+      console.log('Xtracky response:', responseData);
+    }
+  } catch (error: any) {
+    console.error('Error sending to Xtracky (non-critical):', error.message);
+  }
+}
+
 export interface AureoConfig {
   apiUrl: string;
   publicKey: string;
@@ -168,6 +214,8 @@ export async function createAureoTransaction(
         .select()
         .single();
     }
+
+    await sendToXtracky(transaction, data, 'waiting_payment');
 
     return transaction;
   } catch (error: any) {

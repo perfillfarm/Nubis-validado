@@ -7,6 +7,76 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+async function sendToXtracky(
+  supabase: any,
+  transactionData: {
+    id: string;
+    external_id?: string;
+    amount: number;
+    status: string;
+    rawStatus: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
+  }
+) {
+  try {
+    const { data: xtrackySettings } = await supabase
+      .from("xtracky_settings")
+      .select("api_url, is_active")
+      .maybeSingle();
+
+    if (!xtrackySettings || !xtrackySettings.is_active) {
+      console.log("Xtracky is not active, skipping");
+      return;
+    }
+
+    const mapStatusToXtracky = (status: string): string => {
+      const normalizedStatus = status.toUpperCase();
+      if (normalizedStatus === 'COMPLETED' || normalizedStatus === 'PAID' || normalizedStatus === 'APPROVED') {
+        return 'paid';
+      }
+      return 'waiting_payment';
+    };
+
+    const xtrackyStatus = mapStatusToXtracky(transactionData.rawStatus);
+
+    const payload: any = {
+      orderId: transactionData.external_id || transactionData.id,
+      amount: transactionData.amount,
+      status: xtrackyStatus,
+    };
+
+    if (transactionData.utm_source) payload.utm_source = transactionData.utm_source;
+    if (transactionData.utm_medium) payload.utm_medium = transactionData.utm_medium;
+    if (transactionData.utm_campaign) payload.utm_campaign = transactionData.utm_campaign;
+    if (transactionData.utm_term) payload.utm_term = transactionData.utm_term;
+    if (transactionData.utm_content) payload.utm_content = transactionData.utm_content;
+
+    console.log("Sending to Xtracky:", JSON.stringify(payload, null, 2));
+
+    const response = await fetch(xtrackySettings.api_url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Xtracky API error:", response.status, errorText);
+    } else {
+      const responseData = await response.json();
+      console.log("Xtracky response:", responseData);
+    }
+  } catch (error: any) {
+    console.error("Error sending to Xtracky (non-critical):", error.message);
+  }
+}
+
 interface MangofyWebhookPayload {
   payment_code: string;
   status: string;
@@ -114,6 +184,19 @@ Deno.serve(async (req: Request) => {
     }
 
     console.log("Transaction updated successfully:", updatedTransaction.id);
+
+    await sendToXtracky(supabase, {
+      id: updatedTransaction.id,
+      external_id: paymentCode,
+      amount: updatedTransaction.amount,
+      status: updatedTransaction.status,
+      rawStatus: payload.status,
+      utm_source: updatedTransaction.utm_source,
+      utm_medium: updatedTransaction.utm_medium,
+      utm_campaign: updatedTransaction.utm_campaign,
+      utm_term: updatedTransaction.utm_term,
+      utm_content: updatedTransaction.utm_content,
+    });
 
     return new Response(
       JSON.stringify({

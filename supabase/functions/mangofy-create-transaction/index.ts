@@ -7,6 +7,64 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+async function sendToXtracky(
+  supabase: any,
+  transactionData: {
+    id: string;
+    amount: number;
+    status: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
+  }
+) {
+  try {
+    const { data: xtrackySettings } = await supabase
+      .from("xtracky_settings")
+      .select("api_url, is_active")
+      .maybeSingle();
+
+    if (!xtrackySettings || !xtrackySettings.is_active) {
+      console.log("Xtracky is not active, skipping");
+      return;
+    }
+
+    const payload: any = {
+      orderId: transactionData.id,
+      amount: transactionData.amount,
+      status: 'waiting_payment',
+    };
+
+    if (transactionData.utm_source) payload.utm_source = transactionData.utm_source;
+    if (transactionData.utm_medium) payload.utm_medium = transactionData.utm_medium;
+    if (transactionData.utm_campaign) payload.utm_campaign = transactionData.utm_campaign;
+    if (transactionData.utm_term) payload.utm_term = transactionData.utm_term;
+    if (transactionData.utm_content) payload.utm_content = transactionData.utm_content;
+
+    console.log("Sending to Xtracky:", JSON.stringify(payload, null, 2));
+
+    const response = await fetch(xtrackySettings.api_url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Xtracky API error:", response.status, errorText);
+    } else {
+      const responseData = await response.json();
+      console.log("Xtracky response:", responseData);
+    }
+  } catch (error: any) {
+    console.error("Error sending to Xtracky (non-critical):", error.message);
+  }
+}
+
 interface CreateTransactionRequest {
   cpf: string;
   amount: number;
@@ -181,6 +239,17 @@ Deno.serve(async (req: Request) => {
     }
 
     console.log("Transaction saved to database:", transaction.id);
+
+    await sendToXtracky(supabase, {
+      id: transaction.id,
+      amount: transaction.amount,
+      status: transaction.status,
+      utm_source: transaction.utm_source,
+      utm_medium: transaction.utm_medium,
+      utm_campaign: transaction.utm_campaign,
+      utm_term: transaction.utm_term,
+      utm_content: transaction.utm_content,
+    });
 
     return new Response(JSON.stringify(transaction), {
       status: 200,
