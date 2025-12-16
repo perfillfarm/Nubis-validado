@@ -62,6 +62,16 @@ export const extractUtmParams = (location: any): UtmParams => {
     'src'
   ];
 
+  try {
+    const storedUtms = localStorage.getItem('nubank_utm_params');
+    if (storedUtms) {
+      const parsed = JSON.parse(storedUtms);
+      Object.assign(utmParams, parsed);
+    }
+  } catch (error) {
+    console.error('Error reading stored UTMs:', error);
+  }
+
   if (location.state?.urlParams) {
     const stateParams = new URLSearchParams(location.state.urlParams);
     utmKeys.forEach(key => {
@@ -79,6 +89,15 @@ export const extractUtmParams = (location: any): UtmParams => {
       utmParams[key] = value;
     }
   });
+
+  if (Object.keys(utmParams).length > 0) {
+    try {
+      localStorage.setItem('nubank_utm_params', JSON.stringify(utmParams));
+      console.log('UTM params saved to localStorage:', utmParams);
+    } catch (error) {
+      console.error('Error saving UTMs to localStorage:', error);
+    }
+  }
 
   console.log('extractUtmParams - location.search:', location.search);
   console.log('extractUtmParams - location.state?.urlParams:', location.state?.urlParams);

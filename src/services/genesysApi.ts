@@ -325,6 +325,12 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
           qr_code_image: qrCodeImageUrl,
           status: 'pending',
           expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+          utm_source: data.utmSource,
+          utm_medium: data.utmMedium,
+          utm_campaign: data.utmCampaign,
+          utm_term: data.utmTerm,
+          utm_content: data.utmContent,
+          src: data.src,
         })
         .select()
         .single();
@@ -373,6 +379,12 @@ export async function createTransaction(data: CreateTransactionRequest): Promise
         qr_code_image: qrCodeImageUrl,
         status: genesysTransaction.status.toLowerCase(),
         expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        utm_source: data.utmSource,
+        utm_medium: data.utmMedium,
+        utm_campaign: data.utmCampaign,
+        utm_term: data.utmTerm,
+        utm_content: data.utmContent,
+        src: data.src,
       })
       .select()
       .single();

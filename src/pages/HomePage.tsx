@@ -9,8 +9,9 @@ import FAQSection from '../components/FAQSection';
 import BackRedirect from '../components/BackRedirect';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { navigateWithParams } from '../utils/urlParams';
+import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
 import { trackViewContent } from '../utils/facebookPixel';
+import { saveUtmParams } from '../utils/funnelStorage';
 
 const HomePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,12 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     try {
+      const utmParams = extractUtmParams(location);
+      if (Object.keys(utmParams).length > 0) {
+        saveUtmParams(utmParams);
+        console.log('HomePage - UTM params captured and saved:', utmParams);
+      }
+
       trackViewContent({
         content_name: 'Home Page',
         content_category: 'Landing Page',
@@ -29,7 +36,7 @@ const HomePage: React.FC = () => {
     } catch (error) {
       console.error('Error in HomePage useEffect:', error);
     }
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     const script = document.createElement('script');
