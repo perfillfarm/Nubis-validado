@@ -6,7 +6,7 @@ import UserMenu from '../components/UserMenu';
 import { createTransaction } from '../services/pixService';
 import { getUserName } from '../utils/userUtils';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
-import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
+import { navigateWithParams, getUtmParamsWithFallback } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
 
 export default function UpsellPaymentPage() {
@@ -106,8 +106,8 @@ export default function UpsellPaymentPage() {
         setLoading(true);
         setError(null);
 
-        const utmParams = extractUtmParams(location);
-        console.log('Upsell - UTM Parameters extracted:', utmParams);
+        const utmParams = getUtmParamsWithFallback(location);
+        console.log('Upsell - UTM Parameters (with localStorage fallback):', utmParams);
 
         const finalCpf = cpf.replace(/\D/g, '');
         const finalAmount = amount;

@@ -5,7 +5,7 @@ import Header from '../components/Header';
 import UserMenu from '../components/UserMenu';
 import { createTransaction } from '../services/pixService';
 import { useTransactionPolling } from '../hooks/useTransactionPolling';
-import { navigateWithParams, extractUtmParams } from '../utils/urlParams';
+import { navigateWithParams, getUtmParamsWithFallback } from '../utils/urlParams';
 import { trackInitiateCheckout } from '../utils/facebookPixel';
 import { saveFunnelData, getFunnelData } from '../utils/funnelStorage';
 
@@ -112,8 +112,8 @@ export default function QRCodePaymentPage() {
         setLoading(true);
         setError(null);
 
-        const utmParams = extractUtmParams(location);
-        console.log('UTM Parameters extracted:', utmParams);
+        const utmParams = getUtmParamsWithFallback(location);
+        console.log('UTM Parameters (with localStorage fallback):', utmParams);
 
         const transaction = await createTransaction({
           cpf: userData.cpf.replace(/\D/g, ''),
