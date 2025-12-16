@@ -122,30 +122,34 @@ export default function ReceiptUploadPage() {
         })
         .eq('transaction_id', transactionId);
 
-      navigate('/upsell-1', {
-        state: {
+      navigateWithParams(
+        navigate,
+        '/upsell-1',
+        location,
+        {
           userData,
           indemnityAmount,
           pixKeyType,
           pixKey,
-          urlParams,
           transactionId,
           receiptUploaded: false
-        },
-      });
+        }
+      );
     } catch (err) {
       console.error('Error updating status:', err);
-      navigate('/upsell-1', {
-        state: {
+      navigateWithParams(
+        navigate,
+        '/upsell-1',
+        location,
+        {
           userData,
           indemnityAmount,
           pixKeyType,
           pixKey,
-          urlParams,
           transactionId,
           receiptUploaded: false
-        },
-      });
+        }
+      );
     }
   };
 

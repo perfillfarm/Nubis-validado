@@ -1,18 +1,31 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { extractUtmParams } from '../utils/urlParams';
-import { saveUtmParams } from '../utils/funnelStorage';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { extractUtmParams, preserveUrlParams } from '../utils/urlParams';
 
 export default function UtmPersistence() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const utmParams = extractUtmParams(location);
-    if (Object.keys(utmParams).length > 0) {
-      saveUtmParams(utmParams);
-      console.log(`[UTM Persistence] UTMs captured on ${location.pathname}:`, utmParams);
+    const currentSearch = new URLSearchParams(location.search);
+
+    let needsUpdate = false;
+    Object.entries(utmParams).forEach(([key, value]) => {
+      if (value && !currentSearch.has(key)) {
+        currentSearch.set(key, value);
+        needsUpdate = true;
+      }
+    });
+
+    if (needsUpdate) {
+      const newSearch = currentSearch.toString();
+      navigate(`${location.pathname}${newSearch ? `?${newSearch}` : ''}`, {
+        replace: true,
+        state: { ...location.state, utmParams }
+      });
     }
-  }, [location.pathname, location.search, location.state]);
+  }, [location.pathname]);
 
   return null;
 }
