@@ -1,6 +1,20 @@
 export const preserveUrlParams = (location: any): string => {
   const currentParams = new URLSearchParams(location.search);
 
+  try {
+    const storedUtms = localStorage.getItem('nubank_utm_params');
+    if (storedUtms) {
+      const parsed = JSON.parse(storedUtms);
+      Object.entries(parsed).forEach(([key, value]) => {
+        if (!currentParams.has(key) && value) {
+          currentParams.set(key, value as string);
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error reading stored UTMs for preservation:', error);
+  }
+
   if (location.state?.urlParams) {
     const stateParams = new URLSearchParams(location.state.urlParams);
     stateParams.forEach((value, key) => {

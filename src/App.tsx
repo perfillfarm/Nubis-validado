@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import UtmPersistence from './components/UtmPersistence';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -65,6 +66,7 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <ScrollToTop />
+          <UtmPersistence />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/presell" element={<PresellPage />} />
